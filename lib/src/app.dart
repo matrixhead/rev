@@ -1,9 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/global/colors.dart';
+import 'package:rebar/src/common/bloc/app_bloc.dart';
 import 'package:rebar/src/routes.dart';
+import 'package:rebar/src/utils/theme/theme_builder.dart';
 import 'package:revolt_client/revolt_client.dart';
-import 'global/bloc/app_bloc.dart';
 
 class MyApp extends StatelessWidget {
   final RevoltClient revoltClient;
@@ -35,39 +36,15 @@ class _AppViewState extends State<AppView> {
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
 
-  ThemeData _buildTheme() {
-    final ThemeData base = ThemeData.dark();
-    return base.copyWith(
-      colorScheme: base.colorScheme.copyWith(
-        primary: primary,
-        secondary: secondary,
-      ),
-      // textTheme: _buildTextTheme(base.textTheme),
-      scaffoldBackgroundColor: surface,
-    );
-  }
-
-  // TextTheme _buildTextTheme(TextTheme base) {
-  //   return base
-  //       .copyWith(
-  //         headline5: base.headline5!.copyWith(
-  //           fontWeight: FontWeight.w500,
-  //         ),
-  //       )
-  //       .apply(
-  //         fontFamily: 'Rubik',
-  //         displayColor: kShrineBrown900,
-  //         bodyColor: kShrineBrown900,
-  //       );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
       navigatorKey: _navigatorKey,
       routes: routes,
       initialRoute: "/",
-      theme: _buildTheme(),
+      theme: buildDefaultTheme(),
       builder: (context, child) {
         return BlocListener<AppBloc, AppState>(
           listener: (context, state) {
