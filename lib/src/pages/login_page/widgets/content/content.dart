@@ -12,7 +12,7 @@ class Content extends StatelessWidget {
         children: [
           Text(
             "Logo",
-            style: Theme.of(context).textTheme.headline1,
+            // style: Theme.of(context).textTheme.headline1,
           ),
           const LoginForm(),
           ElevatedButton(onPressed: () {}, child: const Text("Login"))
