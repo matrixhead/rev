@@ -1,15 +1,17 @@
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
-import 'package:revolt_client/src/exceptions/auth/login_exceptions.dart';
-import 'package:revolt_client/src/models/client_config.dart';
+import 'package:revolt_client/src/exceptions/exceptions.dart';
+import 'package:revolt_client/src/http_client.dart';
+import 'package:revolt_client/src/models/api_error_response/api_error_response.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:revolt_client/src/models/models.dart';
 
-class AuthRepo {
+class RevAuth {
   BehaviorSubject<AuthStatus> authEvents = BehaviorSubject<AuthStatus>()
     ..add(AuthStatus.unknown);
+
   SessionDetails? session;
 
-  login(ClientConfig clientConfig,
+  login(RevHttpClient clientConfig,
       {required String email,
       String? password,
       String? challenge,
@@ -24,16 +26,31 @@ class AuthRepo {
           friendlyName: friendlyName,
           captcha: captcha);
       authEvents.add(AuthStatus.authsucess);
-    } on LoginException {
+    } on RevApiError catch (e) {
       authEvents.add(AuthStatus.authFailed);
+      switch (e.errorResponse.errortype) {
+        case ErrorType.unverifiedAccount:
+          throw AccountNotVeifiedError();
+        default:
+          throw RevAuthError(e.errorResponse.errortype.toString());
+      }
     }
   }
 
-  signUp(ClientConfig clientConfig,
+ Future<void> verifyAccount(RevHttpClient clientConfig, String verificationCode) async {
+  try{
+    return await api.verifyAccount(clientConfig, verificationCode);
+  } on RevApiError catch (e){
+    throw VerificationException(e.errorResponse.errortype.toString());
+  }
+  }
+
+  signUp(RevHttpClient clientConfig,
       {required String email,
       required String password,
       String? invite,
       String? captcha}) async {
+    try{
     await api.signUp(
       clientConfig,
       email: email,
@@ -41,5 +58,8 @@ class AuthRepo {
       invite: invite,
       captcha: captcha,
     );
+    } on RevApiError catch (e){
+          throw SignUpException(e.errorResponse.errortype.toString()); 
+    }
   }
 }

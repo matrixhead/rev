@@ -3,12 +3,12 @@ import 'package:rxdart/rxdart.dart';
 import 'models/models.dart';
 
 class RevoltClient {
-  final ClientConfig clientConfig;
-  AuthRepo authRepo;
+  final RevHttpClient clientConfig;
+  RevAuth revAuth;
 
   RevoltClient({httpClient, clientConfig})
-      : clientConfig = clientConfig ?? ClientConfig(httpClient: httpClient),
-        authRepo = AuthRepo();
+      : clientConfig = clientConfig ?? RevHttpClient(httpClient: httpClient),
+        revAuth = RevAuth();
 
   login(
           {required String email,
@@ -16,19 +16,22 @@ class RevoltClient {
           String? challenge,
           String? friendlyName,
           String? captcha}) async =>
-      authRepo.login(clientConfig,
+      revAuth.login(clientConfig,
           email: email,
           password: password,
           challenge: challenge,
           friendlyName: friendlyName,
           captcha: captcha);
 
+  verifyAccount({required String verificationCode}) async =>
+      revAuth.verifyAccount(clientConfig, verificationCode);
+
   signUp(
           {required String email,
           required String password,
           String? invite,
           String? captcha}) async =>
-      authRepo.signUp(
+      revAuth.signUp(
         clientConfig,
         email: email,
         password: password,
@@ -36,5 +39,5 @@ class RevoltClient {
         invite: invite,
       );
 
-  BehaviorSubject<AuthStatus> get authEvents => authRepo.authEvents;
+  BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
 }

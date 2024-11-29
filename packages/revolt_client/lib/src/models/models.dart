@@ -1,2 +1,2 @@
-export 'client_config.dart';
+export '../http_client.dart';
 export 'authmodels/authmodels.dart';

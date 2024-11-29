@@ -3,5 +3,6 @@ enum AuthStatus {
   submitted,
   authsucess,
   authFailed,
+  notVerified,
   loggedout,
 }
