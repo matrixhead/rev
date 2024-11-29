@@ -5,10 +5,19 @@ void main() async {
   revoltClient.authEvents.listen((value) {
     print(value);
   });
-  // await revoltClient.signUp(email: "example1@gmail.com", password: "22jUhEtnRS3vJBf");
-  // await revoltClient.verifyAccount(verificationCode: "VfN-y_8cNEicLz9hB2ZITj35i8fR3Tex");
+
+  final email = "example2@gmail.com";
+  final password = "22jUhEtnRS3vJBf";
+
+  // await revoltClient.signUp(email: email, password: password);
+
+  // await revoltClient.verifyAccount(verificationCode: "ishjy9ZgvwwrzdTw4x1gxwikz73vbEky");
+
   await revoltClient.login(
-      email: "example1@gmail.com", password: "22jUhEtnRS3vJBf");
+      email: email, password:password);
+  // await revoltClient.completeOnboarding(username: "hi");
+  // print(revoltClient.revAuth.session);
+  final res = await revoltClient.fetchSelf();
+  print(res);
   while (true){}
-  print(revoltClient.revAuth.session);
 }

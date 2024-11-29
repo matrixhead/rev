@@ -1,14 +1,34 @@
-import 'package:revolt_client/src/auth_repo/auth_repo.dart';
+import 'package:revolt_client/src/auth/auth.dart';
+import 'package:revolt_client/src/data/data.dart';
+import 'package:revolt_client/src/models/user/user.dart';
 import 'package:rxdart/rxdart.dart';
 import 'models/models.dart';
 
 class RevoltClient {
-  final RevHttpClient clientConfig;
-  RevAuth revAuth;
+  final RevHttpClient httpClient;
+  final RevAuth revAuth;
+  final RevData revData;
 
   RevoltClient({httpClient, clientConfig})
-      : clientConfig = clientConfig ?? RevHttpClient(httpClient: httpClient),
-        revAuth = RevAuth();
+      : httpClient = clientConfig ?? RevHttpClient(httpClient: httpClient),
+        revAuth = RevAuth(),
+        revData = RevData() {
+    _init();
+  }
+
+  _init() {
+    listenOnAuthEvents();
+  }
+
+  listenOnAuthEvents() {
+    revAuth.authEvents.listen((authEvent) {
+      if (authEvent == AuthStatus.authsucess) {
+        httpClient.setToken = revAuth.session!.sessionToken;
+      } else {
+        httpClient.setToken = null;
+      }
+    });
+  }
 
   login(
           {required String email,
@@ -16,7 +36,7 @@ class RevoltClient {
           String? challenge,
           String? friendlyName,
           String? captcha}) async =>
-      revAuth.login(clientConfig,
+      revAuth.login(httpClient,
           email: email,
           password: password,
           challenge: challenge,
@@ -24,7 +44,7 @@ class RevoltClient {
           captcha: captcha);
 
   verifyAccount({required String verificationCode}) async =>
-      revAuth.verifyAccount(clientConfig, verificationCode);
+      revAuth.verifyAccount(httpClient, verificationCode);
 
   signUp(
           {required String email,
@@ -32,12 +52,14 @@ class RevoltClient {
           String? invite,
           String? captcha}) async =>
       revAuth.signUp(
-        clientConfig,
+        httpClient,
         email: email,
         password: password,
         captcha: captcha,
         invite: invite,
       );
+  Future<CurrentUser> fetchSelf() async => revData.fetchSelf(httpClient);
+  Future<CurrentUser> completeOnboarding({required String username}) async => revData.completeOnboarding(httpClient,username);
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
 }

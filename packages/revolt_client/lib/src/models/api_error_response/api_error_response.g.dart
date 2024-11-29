@@ -6,15 +6,13 @@ part of 'api_error_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ApiErrorResponseImpl _$$ApiErrorResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ApiErrorResponseImpl(
+ApiErrorResponse _$ApiErrorResponseFromJson(Map<String, dynamic> json) =>
+    ApiErrorResponse(
       errortype: $enumDecode(_$ErrorTypeEnumMap, json['type'],
           unknownValue: ErrorType.unknown),
     );
 
-Map<String, dynamic> _$$ApiErrorResponseImplToJson(
-        _$ApiErrorResponseImpl instance) =>
+Map<String, dynamic> _$ApiErrorResponseToJson(ApiErrorResponse instance) =>
     <String, dynamic>{
       'type': _$ErrorTypeEnumMap[instance.errortype]!,
     };
@@ -23,5 +21,6 @@ const _$ErrorTypeEnumMap = {
   ErrorType.unverifiedAccount: 'UnverifiedAccount',
   ErrorType.invalidToken: 'InvalidToken',
   ErrorType.shortPassword: 'ShortPassword',
+  ErrorType.alreadyOnboarded: 'AlreadyOnboarded',
   ErrorType.unknown: 'unknown',
 };

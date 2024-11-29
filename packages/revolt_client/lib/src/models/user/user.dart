@@ -42,7 +42,8 @@ class Relation extends BaseUser {
 
 @JsonSerializable()
 class CurrentUser extends User {
-  final List<Relation> relations;
+  @JsonKey(defaultValue: [])
+  final List<Relation>? relations;
   CurrentUser(
       {required String id,
       required String username,

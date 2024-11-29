@@ -19,7 +19,7 @@ void main() {
         "password": "securePassword@123",
       };
       when(mockClient.post(
-        Uri.parse('${revoltClient.clientConfig.apiUrl}auth/session/login'),
+        Uri.parse('${revoltClient.httpClient.apiUrl}auth/session/login'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response(
           """{"result":"Success","_id":"01FNEVYZQGP2KT62SKVVF7WHW8","user_id":"01FN6NZ4PJRE55128RHC7FTVSC","token":"YOgo7yqjO8zGKs5l-iZimvrLib25Dd7WNxQetuMbXTN9lhp1eA609T_C5Q_butM6","name":"Unknown"}""",

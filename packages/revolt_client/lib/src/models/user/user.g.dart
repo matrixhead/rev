@@ -25,9 +25,10 @@ CurrentUser _$CurrentUserFromJson(Map<String, dynamic> json) => CurrentUser(
       username: json['username'] as String,
       discriminator: json['discriminator'] as String,
       online: json['online'] as bool,
-      relations: (json['relations'] as List<dynamic>)
-          .map((e) => Relation.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      relations: (json['relations'] as List<dynamic>?)
+              ?.map((e) => Relation.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$CurrentUserToJson(CurrentUser instance) =>

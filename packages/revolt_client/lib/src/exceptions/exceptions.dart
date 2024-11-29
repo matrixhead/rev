@@ -15,7 +15,7 @@ class RevError implements Exception {
 
 class NetworkRevError extends RevError {
   //
-  NetworkRevError(String message, this.response) : super(message);
+  NetworkRevError(super.message, this.response);
 
   final Response response;
 
@@ -25,35 +25,55 @@ class NetworkRevError extends RevError {
 }
 
 class RevApiError extends RevError {
-  RevApiError(String message, {required this.errorResponse}) : super(message);
-  final ApiErrorResponse errorResponse;
-
+  final int statuscode;
+  RevApiError(super.message, this.statuscode);
   factory RevApiError.fromNetworkError(NetworkRevError error) {
-    return RevApiError(error.message,
+    try{
+    return RevApiErrorWithResponse(error.message,
         errorResponse:
-            ApiErrorResponse.fromJson(jsonDecode(error.response.body)));
+            ApiErrorResponse.fromJson(jsonDecode(error.response.body)),statuscode: error.response.statusCode);
+    }on Exception {
+     return RevApiError(error.response.body,error.response.statusCode);
+    }
   }
 }
 
-class RevAuthError extends RevError{
-  RevAuthError(String message) : super(message);
+class RevApiErrorWithResponse extends RevApiError {
+  RevApiErrorWithResponse(String message,
+      {required this.errorResponse, required statuscode})
+      : super(message, statuscode);
+  final ApiErrorResponse errorResponse;
+
+  factory RevApiErrorWithResponse.fromNetworkError(NetworkRevError error) {
+    return RevApiErrorWithResponse(error.message,
+        errorResponse:
+            ApiErrorResponse.fromJson(jsonDecode(error.response.body)),statuscode: error.response.statusCode);
+  }
 }
 
-class AccountNotVeifiedError extends RevAuthError{
+class RevAuthError extends RevError {
+  RevAuthError(super.message);
+}
+
+class AccountNotVeifiedError extends RevAuthError {
   AccountNotVeifiedError() : super("account not verified");
-
 }
-
-// login Exceptions
-class LoginException implements Exception {}
-
-class InvalidCredentialsException implements LoginException {}
 
 //signUp Exception
 class SignUpException extends RevAuthError {
-  SignUpException(String message):super(message);
+  SignUpException(super.message);
 }
 
 class VerificationException extends RevAuthError {
-  VerificationException(String message):super(message);
+  VerificationException(super.message);
+}
+
+class DataError extends RevError {
+  final RevApiError apiError;
+
+  factory DataError.fromApiError(RevApiError error) {
+    return DataError(apiError: error);
+  }
+
+  DataError({required this.apiError}) : super(apiError.message);
 }

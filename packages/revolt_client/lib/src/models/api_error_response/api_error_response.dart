@@ -1,22 +1,29 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-part 'api_error_response.freezed.dart';
 part 'api_error_response.g.dart';
 
+@JsonEnum()
 enum ErrorType {
-  @JsonValue("UnverifiedAccount")
+  // @JsonValue("UnverifiedAccount")
   unverifiedAccount,
-  @JsonValue("InvalidToken")
+  // @JsonValue("InvalidToken")
   invalidToken,
-  @JsonValue("ShortPassword")
+  // @JsonValue("ShortPassword")
   shortPassword,
+  // @JsonValue("AlreadyOnboarded")
+  alreadyOnboarded,
   unknown,
 }
+@JsonSerializable()
+class ApiErrorResponse {
+  @JsonKey(name: "type", unknownEnumValue: ErrorType.unknown)
+  final ErrorType errortype;
 
-@freezed
-class ApiErrorResponse with _$ApiErrorResponse {
-  const factory ApiErrorResponse({
-    @JsonKey(name: "type",unknownEnumValue: ErrorType.unknown) required ErrorType errortype,
-  }) = _ApiErrorResponse;
-  factory ApiErrorResponse.fromJson(Map<String, Object?> json) =>
+  const ApiErrorResponse({
+    required this.errortype,
+  });
+
+  factory ApiErrorResponse.fromJson(Map<String, dynamic> json) =>
       _$ApiErrorResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ApiErrorResponseToJson(this);
 }

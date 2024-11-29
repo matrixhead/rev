@@ -1,12 +1,11 @@
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/exceptions/exceptions.dart';
-import 'package:revolt_client/src/http_client.dart';
 import 'package:revolt_client/src/models/api_error_response/api_error_response.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:revolt_client/src/models/models.dart';
 
 class RevAuth {
-  BehaviorSubject<AuthStatus> authEvents = BehaviorSubject<AuthStatus>()
+  BehaviorSubject<AuthStatus> authEvents = BehaviorSubject<AuthStatus>(sync: true)
     ..add(AuthStatus.unknown);
 
   SessionDetails? session;
@@ -28,11 +27,11 @@ class RevAuth {
       authEvents.add(AuthStatus.authsucess);
     } on RevApiError catch (e) {
       authEvents.add(AuthStatus.authFailed);
-      switch (e.errorResponse.errortype) {
-        case ErrorType.unverifiedAccount:
+      switch (e) {
+        case RevApiErrorWithResponse(errorResponse: ApiErrorResponse error) when error.errortype == ErrorType.unverifiedAccount:
           throw AccountNotVeifiedError();
         default:
-          throw RevAuthError(e.errorResponse.errortype.toString());
+          throw RevAuthError(e.toString());
       }
     }
   }
@@ -41,7 +40,7 @@ class RevAuth {
   try{
     return await api.verifyAccount(clientConfig, verificationCode);
   } on RevApiError catch (e){
-    throw VerificationException(e.errorResponse.errortype.toString());
+    throw VerificationException(e.toString());
   }
   }
 
@@ -59,7 +58,7 @@ class RevAuth {
       captcha: captcha,
     );
     } on RevApiError catch (e){
-          throw SignUpException(e.errorResponse.errortype.toString()); 
+          throw SignUpException(e.toString()); 
     }
   }
 }
