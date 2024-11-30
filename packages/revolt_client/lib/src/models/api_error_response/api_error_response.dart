@@ -3,16 +3,19 @@ part 'api_error_response.g.dart';
 
 @JsonEnum()
 enum ErrorType {
-  // @JsonValue("UnverifiedAccount")
+  @JsonValue("UnverifiedAccount")
   unverifiedAccount,
-  // @JsonValue("InvalidToken")
+  @JsonValue("InvalidToken")
   invalidToken,
-  // @JsonValue("ShortPassword")
+  @JsonValue("ShortPassword")
   shortPassword,
-  // @JsonValue("AlreadyOnboarded")
+  @JsonValue("AlreadyOnboarded")
   alreadyOnboarded,
+  @JsonValue("MissingPermission")
+  missingPermission,
   unknown,
 }
+
 @JsonSerializable()
 class ApiErrorResponse {
   @JsonKey(name: "type", unknownEnumValue: ErrorType.unknown)

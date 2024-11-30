@@ -58,8 +58,14 @@ class RevoltClient {
         captcha: captcha,
         invite: invite,
       );
+      
   Future<CurrentUser> fetchSelf() async => revData.fetchSelf(httpClient);
+
   Future<CurrentUser> completeOnboarding({required String username}) async => revData.completeOnboarding(httpClient,username);
+  
+  Future<RelationUser> fetchUser({required String id}) async => revData.fetchUser(httpClient,id:id);
+
+  Future<RelationUser> sendFriendRequest({required String username,required String discriminator}) async => revData.sendFriendRequest(httpClient,username:"$username#$discriminator");
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
 }

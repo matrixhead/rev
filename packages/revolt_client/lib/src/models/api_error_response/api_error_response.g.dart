@@ -22,5 +22,6 @@ const _$ErrorTypeEnumMap = {
   ErrorType.invalidToken: 'InvalidToken',
   ErrorType.shortPassword: 'ShortPassword',
   ErrorType.alreadyOnboarded: 'AlreadyOnboarded',
+  ErrorType.missingPermission: 'MissingPermission',
   ErrorType.unknown: 'unknown',
 };

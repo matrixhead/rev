@@ -17,8 +17,27 @@ Map<String, dynamic> _$RelationToJson(Relation instance) => <String, dynamic>{
     };
 
 const _$RelationStatusEnumMap = {
-  RelationStatus.friend: 'friend',
+  RelationStatus.friend: 'Friend',
+  RelationStatus.outgoing: 'Outgoing',
 };
+
+RelationUser _$RelationUserFromJson(Map<String, dynamic> json) => RelationUser(
+      id: json['_id'] as String,
+      username: json['username'] as String,
+      discriminator: json['discriminator'] as String,
+      online: json['online'] as bool,
+      relationStatus:
+          $enumDecode(_$RelationStatusEnumMap, json['relationship']),
+    );
+
+Map<String, dynamic> _$RelationUserToJson(RelationUser instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'username': instance.username,
+      'discriminator': instance.discriminator,
+      'online': instance.online,
+      'relationship': _$RelationStatusEnumMap[instance.relationStatus]!,
+    };
 
 CurrentUser _$CurrentUserFromJson(Map<String, dynamic> json) => CurrentUser(
       id: json['_id'] as String,

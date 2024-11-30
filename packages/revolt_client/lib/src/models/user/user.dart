@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user.g.dart';
@@ -24,7 +26,10 @@ abstract class User extends BaseUser {
 
 @JsonEnum()
 enum RelationStatus {
+  @JsonValue("Friend")
   friend,
+  @JsonValue("Outgoing")
+  outgoing
 }
 
 @JsonSerializable()
@@ -41,20 +46,32 @@ class Relation extends BaseUser {
 }
 
 @JsonSerializable()
+class RelationUser extends User {
+  @JsonKey(name: "relationship")
+  final RelationStatus relationStatus;
+  RelationUser(
+      {required String super.id,
+      required super.username,
+      required super.discriminator,
+      required super.online,
+      required this.relationStatus
+      });
+  factory RelationUser.fromJson(Map<String, dynamic> json) =>
+      _$RelationUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RelationUserToJson(this);
+}
+
+@JsonSerializable()
 class CurrentUser extends User {
   @JsonKey(defaultValue: [])
   final List<Relation>? relations;
   CurrentUser(
-      {required String id,
-      required String username,
-      required String discriminator,
-      required bool online,
-      required this.relations})
-      : super(
-            id: id,
-            username: username,
-            discriminator: discriminator,
-            online: online);
+      {required String super.id,
+      required super.username,
+      required super.discriminator,
+      required super.online,
+      required this.relations});
   factory CurrentUser.fromJson(Map<String, dynamic> json) =>
       _$CurrentUserFromJson(json);
 

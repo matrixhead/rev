@@ -21,4 +21,20 @@ class RevData {
       throw DataError.fromApiError(e);
     }
   }
+
+  Future<RelationUser> fetchUser(RevHttpClient httpClient, {required String id}) {
+    try {
+      return api.fetchUser(httpClient,id: id);
+    } on RevApiError catch (e) {
+      throw DataError.fromApiError(e);
+    }
+  }
+
+  Future<RelationUser> sendFriendRequest(RevHttpClient httpClient, {required String username}) {
+    try {
+      return api.sendFriendRequest(httpClient,username: username);
+    } on RevApiError catch (e) {
+      throw DataError.fromApiError(e);
+    }
+  }
 }
