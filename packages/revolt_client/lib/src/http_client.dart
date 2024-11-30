@@ -48,6 +48,29 @@ class RevHttpClient {
       throw NetworkRevError.fromRespone(response: res);
     }
   }
+
+  Future<RevResponse> put({
+    required String path,
+    String? body,
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final baseHeaders = _getBaseHeader();
+    if (headers != null) {
+      baseHeaders.addAll(headers);
+    }
+    final res = await httpClient.put(
+      Uri.http(apiUrl, path, queryParameters),
+      body: body,
+      headers: baseHeaders,
+    );
+    if (res.statusCode >= 200 && res.statusCode <300 ) {
+      return res;
+    } else {
+      throw NetworkRevError.fromRespone(response: res);
+    }
+  }
+
   Future<RevResponse> get({
     required String path,
     Map<String, String>? headers,
