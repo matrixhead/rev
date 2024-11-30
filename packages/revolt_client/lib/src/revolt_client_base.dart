@@ -67,5 +67,7 @@ class RevoltClient {
 
   Future<RelationUser> sendFriendRequest({required String username,required String discriminator}) async => revData.sendFriendRequest(httpClient,username:"$username#$discriminator");
 
+  Future<RelationUser> acceptFriendRequest({required String id}) async => revData.acceptFriendRequest(httpClient,id:id);
+
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
 }

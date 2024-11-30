@@ -37,4 +37,12 @@ class RevData {
       throw DataError.fromApiError(e);
     }
   }
+
+  Future<RelationUser> acceptFriendRequest(RevHttpClient httpClient, {required String id}) {
+    try {
+      return api.acceptFriendRequest(httpClient,id: id);
+    } on RevApiError catch (e) {
+      throw DataError.fromApiError(e);
+    }
+  }
 }

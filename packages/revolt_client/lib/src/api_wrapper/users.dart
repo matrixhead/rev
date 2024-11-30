@@ -51,3 +51,15 @@ Future<RelationUser> sendFriendRequest(RevHttpClient httpClient,
     throw RevApiError.fromNetworkError(e);
   }
 }
+
+Future<RelationUser> acceptFriendRequest(
+  RevHttpClient httpClient, {
+  required String id,
+}) async {
+  try {
+    final response = await httpClient.put(path: "/users/$id/friend",);
+    return RelationUser.fromJson(jsonDecode(response.body));
+  } on NetworkRevError catch (e) {
+    throw RevApiError.fromNetworkError(e);
+  }
+}
