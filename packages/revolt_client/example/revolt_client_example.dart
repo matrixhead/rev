@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:revolt_client/src/models/user/user.dart';
 import 'package:revolt_client/src/revolt_client_base.dart';
@@ -65,7 +64,7 @@ Future<void> client2() async {
   // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
 
   // final res = await revoltClient.sendFriendRequest(
-  // username: "hi", discriminator: "7837");
+    // username: "hi", discriminator: "7837");
 
   print("hi");
-}
+  }

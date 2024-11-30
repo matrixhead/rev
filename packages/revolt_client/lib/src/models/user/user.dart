@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user.g.dart';
 
+@immutable
 abstract class BaseUser {
   @JsonKey(name: "_id")
   final String id;
@@ -51,15 +52,17 @@ class Relation extends BaseUser {
 @JsonSerializable()
 @CopyWith()
 class RelationUser extends User {
+  //
   @JsonKey(name: "relationship")
   final RelationStatus relationStatus;
+
   RelationUser(
       {required String super.id,
       required super.username,
       required super.discriminator,
       required super.online,
-      required this.relationStatus
-      });
+      required this.relationStatus});
+
   factory RelationUser.fromJson(Map<String, dynamic> json) =>
       _$RelationUserFromJson(json);
 
@@ -67,6 +70,7 @@ class RelationUser extends User {
 }
 
 @JsonSerializable()
+@CopyWith()
 class CurrentUser extends User {
   @JsonKey(defaultValue: [])
   final List<Relation>? relations;

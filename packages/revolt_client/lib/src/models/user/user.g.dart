@@ -7,15 +7,15 @@ part of 'user.dart';
 // **************************************************************************
 
 abstract class _$RelationUserCWProxy {
-  RelationUser discriminator(String discriminator);
-
   RelationUser id(String id);
+
+  RelationUser username(String username);
+
+  RelationUser discriminator(String discriminator);
 
   RelationUser online(bool online);
 
   RelationUser relationStatus(RelationStatus relationStatus);
-
-  RelationUser username(String username);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelationUser(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -24,26 +24,29 @@ abstract class _$RelationUserCWProxy {
   /// RelationUser(...).copyWith(id: 12, name: "My name")
   /// ````
   RelationUser call({
-    String? discriminator,
     String? id,
+    String? username,
+    String? discriminator,
     bool? online,
     RelationStatus? relationStatus,
-    String? username,
   });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRelationUser.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRelationUser.copyWith.fieldName(...)`
 class _$RelationUserCWProxyImpl implements _$RelationUserCWProxy {
+  const _$RelationUserCWProxyImpl(this._value);
+
   final RelationUser _value;
 
-  const _$RelationUserCWProxyImpl(this._value);
+  @override
+  RelationUser id(String id) => this(id: id);
+
+  @override
+  RelationUser username(String username) => this(username: username);
 
   @override
   RelationUser discriminator(String discriminator) =>
       this(discriminator: discriminator);
-
-  @override
-  RelationUser id(String id) => this(id: id);
 
   @override
   RelationUser online(bool online) => this(online: online);
@@ -53,9 +56,6 @@ class _$RelationUserCWProxyImpl implements _$RelationUserCWProxy {
       this(relationStatus: relationStatus);
 
   @override
-  RelationUser username(String username) => this(username: username);
-
-  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelationUser(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -64,22 +64,26 @@ class _$RelationUserCWProxyImpl implements _$RelationUserCWProxy {
   /// RelationUser(...).copyWith(id: 12, name: "My name")
   /// ````
   RelationUser call({
-    Object? discriminator = const $CopyWithPlaceholder(),
     Object? id = const $CopyWithPlaceholder(),
+    Object? username = const $CopyWithPlaceholder(),
+    Object? discriminator = const $CopyWithPlaceholder(),
     Object? online = const $CopyWithPlaceholder(),
     Object? relationStatus = const $CopyWithPlaceholder(),
-    Object? username = const $CopyWithPlaceholder(),
   }) {
     return RelationUser(
+      id: id == const $CopyWithPlaceholder() || id == null
+          ? _value.id
+          // ignore: cast_nullable_to_non_nullable
+          : id as String,
+      username: username == const $CopyWithPlaceholder() || username == null
+          ? _value.username
+          // ignore: cast_nullable_to_non_nullable
+          : username as String,
       discriminator:
           discriminator == const $CopyWithPlaceholder() || discriminator == null
               ? _value.discriminator
               // ignore: cast_nullable_to_non_nullable
               : discriminator as String,
-      id: id == const $CopyWithPlaceholder() || id == null
-          ? _value.id
-          // ignore: cast_nullable_to_non_nullable
-          : id as String,
       online: online == const $CopyWithPlaceholder() || online == null
           ? _value.online
           // ignore: cast_nullable_to_non_nullable
@@ -89,10 +93,6 @@ class _$RelationUserCWProxyImpl implements _$RelationUserCWProxy {
           ? _value.relationStatus
           // ignore: cast_nullable_to_non_nullable
           : relationStatus as RelationStatus,
-      username: username == const $CopyWithPlaceholder() || username == null
-          ? _value.username
-          // ignore: cast_nullable_to_non_nullable
-          : username as String,
     );
   }
 }
@@ -101,6 +101,102 @@ extension $RelationUserCopyWith on RelationUser {
   /// Returns a callable class that can be used as follows: `instanceOfRelationUser.copyWith(...)` or like so:`instanceOfRelationUser.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$RelationUserCWProxy get copyWith => _$RelationUserCWProxyImpl(this);
+}
+
+abstract class _$CurrentUserCWProxy {
+  CurrentUser id(String id);
+
+  CurrentUser username(String username);
+
+  CurrentUser discriminator(String discriminator);
+
+  CurrentUser online(bool online);
+
+  CurrentUser relations(List<Relation>? relations);
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CurrentUser(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// CurrentUser(...).copyWith(id: 12, name: "My name")
+  /// ````
+  CurrentUser call({
+    String? id,
+    String? username,
+    String? discriminator,
+    bool? online,
+    List<Relation>? relations,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCurrentUser.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCurrentUser.copyWith.fieldName(...)`
+class _$CurrentUserCWProxyImpl implements _$CurrentUserCWProxy {
+  const _$CurrentUserCWProxyImpl(this._value);
+
+  final CurrentUser _value;
+
+  @override
+  CurrentUser id(String id) => this(id: id);
+
+  @override
+  CurrentUser username(String username) => this(username: username);
+
+  @override
+  CurrentUser discriminator(String discriminator) =>
+      this(discriminator: discriminator);
+
+  @override
+  CurrentUser online(bool online) => this(online: online);
+
+  @override
+  CurrentUser relations(List<Relation>? relations) =>
+      this(relations: relations);
+
+  @override
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CurrentUser(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// CurrentUser(...).copyWith(id: 12, name: "My name")
+  /// ````
+  CurrentUser call({
+    Object? id = const $CopyWithPlaceholder(),
+    Object? username = const $CopyWithPlaceholder(),
+    Object? discriminator = const $CopyWithPlaceholder(),
+    Object? online = const $CopyWithPlaceholder(),
+    Object? relations = const $CopyWithPlaceholder(),
+  }) {
+    return CurrentUser(
+      id: id == const $CopyWithPlaceholder() || id == null
+          ? _value.id
+          // ignore: cast_nullable_to_non_nullable
+          : id as String,
+      username: username == const $CopyWithPlaceholder() || username == null
+          ? _value.username
+          // ignore: cast_nullable_to_non_nullable
+          : username as String,
+      discriminator:
+          discriminator == const $CopyWithPlaceholder() || discriminator == null
+              ? _value.discriminator
+              // ignore: cast_nullable_to_non_nullable
+              : discriminator as String,
+      online: online == const $CopyWithPlaceholder() || online == null
+          ? _value.online
+          // ignore: cast_nullable_to_non_nullable
+          : online as bool,
+      relations: relations == const $CopyWithPlaceholder()
+          ? _value.relations
+          // ignore: cast_nullable_to_non_nullable
+          : relations as List<Relation>?,
+    );
+  }
+}
+
+extension $CurrentUserCopyWith on CurrentUser {
+  /// Returns a callable class that can be used as follows: `instanceOfCurrentUser.copyWith(...)` or like so:`instanceOfCurrentUser.copyWith.fieldName(...)`.
+  // ignore: library_private_types_in_public_api
+  _$CurrentUserCWProxy get copyWith => _$CurrentUserCWProxyImpl(this);
 }
 
 // **************************************************************************

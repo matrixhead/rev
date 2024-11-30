@@ -6,8 +6,8 @@ part of 'session_details.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SessionDetailsImpl _$$SessionDetailsImplFromJson(Map<String, dynamic> json) =>
-    _$SessionDetailsImpl(
+SessionDetails _$SessionDetailsFromJson(Map<String, dynamic> json) =>
+    SessionDetails(
       id: json['_id'] as String,
       userId: json['user_id'] as String,
       sessionToken: json['token'] as String,
@@ -15,8 +15,7 @@ _$SessionDetailsImpl _$$SessionDetailsImplFromJson(Map<String, dynamic> json) =>
       webPushSubscription: json['subscription'] as String?,
     );
 
-Map<String, dynamic> _$$SessionDetailsImplToJson(
-        _$SessionDetailsImpl instance) =>
+Map<String, dynamic> _$SessionDetailsToJson(SessionDetails instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'user_id': instance.userId,
