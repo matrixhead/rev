@@ -8,8 +8,8 @@ Completer<CurrentUser> client1UserCompleter = Completer();
 Completer<CurrentUser> client2UserCompleter = Completer();
 
 void main() {
-  client1();
-  // client2();
+  // client1();
+  client2();
 }
 
 Future<void> client1() async {
@@ -51,16 +51,16 @@ Future<void> client2() async {
   final email = "example14@gmail.com";
   final password = "22jUhEtnRS3vJBf";
 
-  await revoltClient.signUp(email: email, password: password);
-  print("enter $email verification code: ");
-  String verificationCode = stdin.readLineSync()!;
-  await revoltClient.verifyAccount(verificationCode: verificationCode);
+  // await revoltClient.signUp(email: email, password: password);
+  // print("enter $email verification code: ");
+  // String verificationCode = stdin.readLineSync()!;
+  // await revoltClient.verifyAccount(verificationCode: verificationCode);
 
   await revoltClient.login(email: email, password: password);
 
-  await revoltClient.completeOnboarding(username: "hi");
-
-  client2UserCompleter.complete( await revoltClient.fetchSelf());
+  // await revoltClient.completeOnboarding(username: "hi");
+  final currentUser =  await revoltClient.fetchSelf();
+  client2UserCompleter.complete(currentUser);
 
   // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
 

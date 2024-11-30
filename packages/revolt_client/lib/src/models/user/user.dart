@@ -1,5 +1,6 @@
 // ignore_for_file: use_super_parameters
 
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user.g.dart';
@@ -29,7 +30,9 @@ enum RelationStatus {
   @JsonValue("Friend")
   friend,
   @JsonValue("Outgoing")
-  outgoing
+  outgoing,
+  @JsonValue("Incoming")
+  incoming
 }
 
 @JsonSerializable()
@@ -46,6 +49,7 @@ class Relation extends BaseUser {
 }
 
 @JsonSerializable()
+@CopyWith()
 class RelationUser extends User {
   @JsonKey(name: "relationship")
   final RelationStatus relationStatus;
