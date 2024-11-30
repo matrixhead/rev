@@ -1,5 +1,6 @@
 import 'package:revolt_client/src/auth/auth.dart';
 import 'package:revolt_client/src/data/data.dart';
+import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 import 'package:rxdart/rxdart.dart';
 import 'models/models.dart';
@@ -68,6 +69,10 @@ class RevoltClient {
   Future<RelationUser> sendFriendRequest({required String username,required String discriminator}) async => revData.sendFriendRequest(httpClient,username:"$username#$discriminator");
 
   Future<RelationUser> acceptFriendRequest({required String id}) async => revData.acceptFriendRequest(httpClient,id:id);
+
+  Future<Channel> openDirectMessage({required String id}) async => revData.openDirectMessage(httpClient,id:id);
+
+  Future<List<Channel>> fetchDirectMessageChannels() async => revData.fetchDirectMessageChannels(httpClient);
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
 }

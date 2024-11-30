@@ -13,6 +13,8 @@ enum ErrorType {
   alreadyOnboarded,
   @JsonValue("MissingPermission")
   missingPermission,
+  @JsonValue("AlreadyFriends")
+  alreadyFriends,
   unknown,
 }
 

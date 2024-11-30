@@ -23,5 +23,6 @@ const _$ErrorTypeEnumMap = {
   ErrorType.shortPassword: 'ShortPassword',
   ErrorType.alreadyOnboarded: 'AlreadyOnboarded',
   ErrorType.missingPermission: 'MissingPermission',
+  ErrorType.alreadyFriends: 'AlreadyFriends',
   ErrorType.unknown: 'unknown',
 };

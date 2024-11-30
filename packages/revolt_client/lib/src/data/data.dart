@@ -1,6 +1,7 @@
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/exceptions/exceptions.dart';
+import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 
 class RevData {
@@ -41,6 +42,22 @@ class RevData {
   Future<RelationUser> acceptFriendRequest(RevHttpClient httpClient, {required String id}) {
     try {
       return api.acceptFriendRequest(httpClient,id: id);
+    } on RevApiError catch (e) {
+      throw DataError.fromApiError(e);
+    }
+  }
+
+  Future<Channel> openDirectMessage(RevHttpClient httpClient, {required String id}) {
+    try {
+      return api.openDirectMessage(httpClient,id: id);
+    } on RevApiError catch (e) {
+      throw DataError.fromApiError(e);
+    }
+  }
+
+  Future<List<Channel>> fetchDirectMessageChannels(RevHttpClient httpClient) {
+    try {
+      return api.fetchDirectMessageChannels(httpClient);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }

@@ -64,7 +64,8 @@ Future<void> client2() async {
   // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
 
   // final res = await revoltClient.sendFriendRequest(
-    // username: "hi", discriminator: "7837");
-
+  //   username: "738", discriminator: "7246");
+  final friend = await revoltClient.fetchUser(id: "01JDXPP9WC5BK77CA1TNYEAW69");
+  final channels = await revoltClient.fetchDirectMessageChannels(); 
   print("hi");
   }
