@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/http_client.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
+import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 
 Future<CurrentUser> fetchSelf(
@@ -77,13 +78,79 @@ Future<Channel> openDirectMessage(RevHttpClient httpClient,
   }
 }
 
-Future<List<Channel>> fetchDirectMessageChannels(RevHttpClient httpClient,
-    ) async {
+Future<List<Channel>> fetchDirectMessageChannels(
+  RevHttpClient httpClient,
+) async {
   try {
     final response = await httpClient.get(path: "/users/dms");
     return List<Channel>.from(jsonDecode(response.body).map((v) {
       return Channel.fromJson(v);
     }));
+  } on NetworkRevError catch (e) {
+    throw RevApiError.fromNetworkError(e);
+  }
+}
+
+//todo: move this to a seperate module of channels
+Future<(List<Message>, List<RelationUser>)> fetchMessages(
+    {required RevHttpClient httpClient,
+    required String id,
+    int? limit,
+    String? before,
+    String? after,
+    String? sort,
+    String? nearby,
+    bool? includeUsers}) async {
+  final queries = {
+    "limit": limit,
+    "after": after,
+    "sort": sort,
+    "nearby": nearby,
+    "include_users": includeUsers?.toString()
+  }..removeWhere((key, value) => value == null);
+  try {
+    final response = await httpClient.get(
+        path: "/channels/$id/messages", queryParameters: queries);
+
+    if (includeUsers != null && includeUsers) {
+      final messages =
+          List<Message>.from(jsonDecode(response.body)["messages"].map((v) {
+        return Message.fromJson(v);
+      }));
+      final users = List<RelationUser>.from(jsonDecode(response.body)["users"].map((v) {
+        return RelationUser.fromJson(v);
+      }));
+      return (messages,users);
+    }else{
+       final messages =
+          List<Message>.from(jsonDecode(response.body).map((v) {
+        return Message.fromJson(v);
+      }));
+     
+      return (messages,<RelationUser>[]);
+    }
+
+  } on NetworkRevError catch (e) {
+    throw RevApiError.fromNetworkError(e);
+  }
+}
+
+Future<Message> sendMessage(
+    {required RevHttpClient httpClient,
+    required String channelId,
+    required String content,
+    required String idempotencyKey}) async {
+  final body = json.encode({
+    "content": content,
+  });
+  final headers = {
+    "Idempotency-Key": idempotencyKey,
+  };
+
+  try {
+    final response = await httpClient.post(
+        path: "/channels/$channelId/messages", headers: headers, body: body);
+    return Message.fromJson(jsonDecode(response.body));
   } on NetworkRevError catch (e) {
     throw RevApiError.fromNetworkError(e);
   }

@@ -33,7 +33,11 @@ enum RelationStatus {
   @JsonValue("Outgoing")
   outgoing,
   @JsonValue("Incoming")
-  incoming
+  incoming,
+  @JsonValue("User")
+  user,
+  @JsonValue("None")
+  none
 }
 
 @JsonSerializable()

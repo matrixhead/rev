@@ -217,6 +217,8 @@ const _$RelationStatusEnumMap = {
   RelationStatus.friend: 'Friend',
   RelationStatus.outgoing: 'Outgoing',
   RelationStatus.incoming: 'Incoming',
+  RelationStatus.user: 'User',
+  RelationStatus.none: 'None',
 };
 
 RelationUser _$RelationUserFromJson(Map<String, dynamic> json) => RelationUser(

@@ -1,23 +1,22 @@
 import 'package:http/http.dart' as http;
+import 'package:revolt_client/src/config.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 
-const String baseurl = '0.0.0.0:14702';
 
 typedef RevResponse = http.Response;
 
 class RevHttpClient {
   final String apiUrl;
-  final bool debug;
   final http.Client httpClient;
   String? _token;
 
   RevHttpClient({
-    this.apiUrl = baseurl,
-    this.debug = false,
     httpClient,
-  }) : httpClient = httpClient ?? http.Client();
+    required RevConfig config,
+  })  : httpClient = httpClient ?? http.Client(),
+        apiUrl = "${config.baseUrl}:${config.httpPort}";
 
-  set setToken(String? token)=> _token = token;
+  set setToken(String? token) => _token = token;
 
   Map<String, String> _getBaseHeader() {
     final headers = <String, String>{};
@@ -42,7 +41,7 @@ class RevHttpClient {
       body: body,
       headers: baseHeaders,
     );
-    if (res.statusCode >= 200 && res.statusCode <300 ) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       return res;
     } else {
       throw NetworkRevError.fromRespone(response: res);
@@ -64,7 +63,7 @@ class RevHttpClient {
       body: body,
       headers: baseHeaders,
     );
-    if (res.statusCode >= 200 && res.statusCode <300 ) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       return res;
     } else {
       throw NetworkRevError.fromRespone(response: res);
@@ -82,10 +81,9 @@ class RevHttpClient {
     }
     final res = await httpClient.get(
       Uri.http(apiUrl, path, queryParameters),
-      
       headers: baseHeaders,
     );
-    if (res.statusCode >= 200 && res.statusCode <300 ) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
       return res;
     } else {
       throw NetworkRevError.fromRespone(response: res);

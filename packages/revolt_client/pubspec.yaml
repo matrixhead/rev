@@ -13,6 +13,7 @@ dependencies:
   json_annotation: ^4.9.0
   rxdart: ^0.28.0
   copy_with_extension: ^5.0.4
+  web_socket_channel: ^3.0.1
   
 
 
