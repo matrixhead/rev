@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:revolt_client/src/config.dart';
+import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

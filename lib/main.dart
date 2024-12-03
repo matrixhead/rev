@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:rebar/src/app.dart';
 import 'package:revolt_client/revolt_client.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  final revoltClient = RevoltClient();
+  final config = RevConfig.debug().copyWith(baseUrl:"192.168.0.114"); 
+  final revoltClient = RevoltClient(clientConfig: config);
   runApp(
     EasyLocalization(
       supportedLocales: const [

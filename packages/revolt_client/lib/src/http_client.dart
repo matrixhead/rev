@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:revolt_client/src/config.dart';
+import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 
 

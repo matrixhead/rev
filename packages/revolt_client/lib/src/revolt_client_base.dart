@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:http/http.dart';
 import 'package:revolt_client/src/auth/auth.dart';
-import 'package:revolt_client/src/config.dart';
+import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/data/data.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
