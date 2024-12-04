@@ -10,6 +10,7 @@ import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 import 'package:revolt_client/src/ws_channel.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'models/models.dart';
 
@@ -18,6 +19,7 @@ class RevoltClient {
   final RevAuth revAuth;
   final RevData revData;
   final WsChannel wsChannel;
+  late final SharedPreferencesAsync prefs;
 
   RevoltClient({
     Client? httpClient,
@@ -36,11 +38,12 @@ class RevoltClient {
     _init();
   }
 
-  _init() {
-    listenOnAuthEvents();
+  _init() async {
+    prefs = SharedPreferencesAsync();
+    setUpAuth();
   }
 
-  listenOnAuthEvents() {
+  setUpAuth()async {
     revAuth.authEvents.listen((authEvent) {
       if (authEvent == AuthStatus.authsucess) {
         httpClient.setToken = revAuth.session!.sessionToken;
@@ -48,20 +51,26 @@ class RevoltClient {
         httpClient.setToken = null;
       }
     });
+
+    if ( await prefs.getString("session") case String json){
+    revAuth.setSession = SessionDetails.fromJson(jsonDecode(json));
+    }
   }
 
   login(
-          {required String email,
-          String? password,
-          String? challenge,
-          String? friendlyName,
-          String? captcha}) async =>
-      revAuth.login(httpClient,
-          email: email,
-          password: password,
-          challenge: challenge,
-          friendlyName: friendlyName,
-          captcha: captcha);
+      {required String email,
+      String? password,
+      String? challenge,
+      String? friendlyName,
+      String? captcha}) async {
+    await revAuth.login(httpClient,
+        email: email,
+        password: password,
+        challenge: challenge,
+        friendlyName: friendlyName,
+        captcha: captcha);
+    prefs.setString("session", jsonEncode(revAuth.session!.toJson()));
+  }
 
   verifyAccount({required String verificationCode}) async =>
       revAuth.verifyAccount(httpClient, verificationCode);

@@ -36,6 +36,11 @@ class RevAuth {
     }
   }
 
+  set setSession(SessionDetails session){
+    this.session = session;
+    authEvents.add(AuthStatus.authsucess);
+  }
+
  Future<void> verifyAccount(RevHttpClient clientConfig, String verificationCode) async {
   try{
     return await api.verifyAccount(clientConfig, verificationCode);

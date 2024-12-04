@@ -1,26 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rebar/src/pages/login_page/cubit/login_cubit.dart';
+import 'package:revolt_client/revolt_client.dart';
 
 import 'widgets/widgets.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const LoginPageView();
+    return BlocProvider(
+      create: (context) => LoginCubit(client:context.read<RevoltClient>()),
+      child: const LoginPageView(),
+    );
   }
 }
 
 class LoginPageView extends StatelessWidget {
-  const LoginPageView({Key? key}) : super(key: key);
+  const LoginPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: SafeArea(
-        child: Column(
-          children: const [Header(), Content()],
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Header(),
+              Content(),
+              Container(),
+            ],
+          ),
         ),
       ),
     );

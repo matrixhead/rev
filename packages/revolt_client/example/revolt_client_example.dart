@@ -8,7 +8,7 @@ Completer<CurrentUser> client2UserCompleter = Completer();
 
 void main() {
   client1();
-  client2();
+  // client2();
 }
 
 Future<void> client1() async {
@@ -17,8 +17,8 @@ Future<void> client1() async {
     print(value);
   });
 
-  final email = "example13@gmail.com";
-  final password = "22jUhEtnRS3vJBf";
+  final email = "example15@gmail.com";
+  final password = "supersecurePassword";
 
   // await revoltClient.signUp(email: email, password: password);
   // print("enter $email verification code: ");
@@ -28,19 +28,19 @@ Future<void> client1() async {
   await revoltClient.login(email: email, password: password);
 
   // await revoltClient.completeOnboarding(username: "hi");
-  final currentUser = await revoltClient.fetchSelf();
-  client1UserCompleter.complete(currentUser);
+  // final currentUser = await revoltClient.fetchSelf();
+  // client1UserCompleter.complete(currentUser);
 
-  final client2User  = await client2UserCompleter.future;
+  // final client2User  = await client2UserCompleter.future;
 
-  // final res = await revoltClient.sendFriendRequest(
-  //     username: client2User.username,
-  //     discriminator: client2User.discriminator);
+  // // final res = await revoltClient.sendFriendRequest(
+  // //     username: client2User.username,
+  // //     discriminator: client2User.discriminator);
 
-  // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
-  final channels = await revoltClient.fetchDirectMessageChannels(); 
+  // // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
+  // final channels = await revoltClient.fetchDirectMessageChannels(); 
 
-  final message  = await revoltClient.sendMessage(channelId: channels[0].id,content: "hello this is hari",);
+  // final message  = await revoltClient.sendMessage(channelId: channels[0].id,content: "hello this is hari",);
   print("hi");
 }
 

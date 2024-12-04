@@ -1,29 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:rebar/src/pages/login_page/widgets/content/login_form.dart';
-import 'package:rebar/src/pages/login_page/widgets/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rebar/src/pages/login_page/cubit/login_cubit.dart';
 
 class Content extends StatelessWidget {
-  const Content({Key? key}) : super(key: key);
+  const Content({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return AspectRatio(
+      aspectRatio: 1.1,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // CustomScrollView(
-          //   slivers: [
-          //     // Header()
-          //   ],
-          // ),
-          Text(
-            "Logo",
-            // style: Theme.of(context).textTheme.headline1,
+          LoginTextField(
+            label: "Email",
+            onChanged: context.read<LoginCubit>().emailChanged,
           ),
-          const LoginForm(),
-          ElevatedButton(onPressed: () {}, child: const Text("Login"))
+          LoginTextField(
+            label: "Password",
+            onChanged: context.read<LoginCubit>().passwordChanged,
+          ),
+          ElevatedButton(
+            onPressed: context.read<LoginCubit>().onSubmit,
+            child: AspectRatio(
+              aspectRatio: 5,
+              child: Center(child: const Text("Login")),
+            ),
+          )
         ],
       ),
+    );
+  }
+}
+
+class LoginTextField extends StatelessWidget {
+  final String label;
+  final void Function(String)? onChanged;
+
+  const LoginTextField({super.key, required this.label, this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        TextField(
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 }
