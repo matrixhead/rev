@@ -32,6 +32,21 @@ Map<String, dynamic> _$MessageEventToJson(MessageEvent instance) =>
       'message': instance.message,
     };
 
+ReadyEvent _$ReadyEventFromJson(Map<String, dynamic> json) => ReadyEvent(
+      (json['users'] as List<dynamic>)
+          .map((e) => User.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['channels'] as List<dynamic>)
+          .map((e) => Channel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$ReadyEventToJson(ReadyEvent instance) =>
+    <String, dynamic>{
+      'users': instance.users,
+      'channels': instance.channels,
+    };
+
 UnknownEvent _$UnknownEventFromJson(Map<String, dynamic> json) => UnknownEvent(
       type: json['type'] as String,
     );

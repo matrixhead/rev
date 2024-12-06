@@ -12,14 +12,14 @@ class WsChannel {
             WebSocketChannel.connect(
                 Uri.parse("ws://${config.baseUrl}:${config.wsPort}"));
 
-  get isReady=> channel.ready;
-  
-  Stream<ServerToClientEvents> get stream => channel.stream.map<ServerToClientEvents>(( event ) => ServerToClientEvents.fromJson(jsonDecode(event)) );
+  get isReady => channel.ready;
+
+  Stream<ServerToClientEvents> get stream =>
+      channel.stream.map<ServerToClientEvents>(
+          (event) => ServerToClientEvents.fromJson(jsonDecode(event)));
 
   authenticateWsChannel(String sessionToken) {
-    
-final json = jsonEncode( AuthenticateEvent(token: sessionToken).toJson());
+    final json = jsonEncode(AuthenticateEvent(token: sessionToken).toJson());
     channel.sink.add(json);
-    
   }
 }

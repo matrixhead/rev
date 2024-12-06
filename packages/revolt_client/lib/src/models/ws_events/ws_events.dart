@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
+import 'package:revolt_client/src/models/user/user.dart';
 part "ws_events.g.dart";
 
 abstract class WsEvents {
@@ -15,6 +17,8 @@ abstract class ServerToClientEvents extends WsEvents {
         return AuthenticatedEvent.fromJson(json);
       case MessageEvent.type:
         return MessageEvent.fromJson(json);
+      case ReadyEvent.type:
+        return ReadyEvent.fromJson(json);
       default:
         return UnknownEvent.fromJson(json);
     }
@@ -81,6 +85,23 @@ class MessageEvent extends ServerToClientEvents {
   static _passDownToParseMessage(Map map, String str) {
     return map;
   }
+}
+
+@JsonSerializable()
+class ReadyEvent extends ServerToClientEvents {
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  static const type = "Ready";
+
+  final List<User> users;
+  final List<Channel> channels;
+
+  ReadyEvent(this.users, this.channels);
+
+  factory ReadyEvent.fromJson(Map<String, dynamic> json) {
+    return  _$ReadyEventFromJson(json);
+    }
+
+  Map<String, dynamic> toJson() => _$ReadyEventToJson(this);
 }
 
 @JsonSerializable()

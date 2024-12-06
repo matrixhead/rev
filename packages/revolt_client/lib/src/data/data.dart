@@ -3,9 +3,17 @@ import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
-import 'package:revolt_client/src/models/user/user.dart';
+import 'package:revolt_client/src/models/ws_events/ws_events.dart';
+import 'package:revolt_client/src/rev_state.dart';
+import 'package:rxdart/rxdart.dart';
 
 class RevData {
+  final BehaviorSubject<Map<String, RelationUser>> relationUsersStream =
+      BehaviorSubject();
+
+  final RevState revState;
+  RevData(this.revState);
+
   Future<CurrentUser> fetchSelf(
     RevHttpClient httpClient,
   ) async {
@@ -69,7 +77,7 @@ class RevData {
     }
   }
 
-  Future<(List<Message>,List<RelationUser>)> fetchMessages(
+  Future<(List<Message>, List<RelationUser>)> fetchMessages(
       {required RevHttpClient httpClient,
       required String id,
       int? limit,
@@ -94,11 +102,32 @@ class RevData {
     }
   }
 
-  Future<Message> sendMessage({required RevHttpClient httpClient, required String channelId, required String content,required String idempotencykey}) {
+  Future<Message> sendMessage(
+      {required RevHttpClient httpClient,
+      required String channelId,
+      required String content,
+      required String idempotencykey}) {
     try {
-      return api.sendMessage(httpClient: httpClient, channelId:channelId,content:content,idempotencyKey:idempotencykey);
+      return api.sendMessage(
+          httpClient: httpClient,
+          channelId: channelId,
+          content: content,
+          idempotencyKey: idempotencykey);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
+  }
+
+  void onReadyEvent(ReadyEvent readyEvent) {
+    for (final user in readyEvent.users) {
+      switch (user) {
+        case RelationUser relationUser:
+          revState.relationUsers[relationUser.id] = relationUser;
+          break;
+        case CurrentUser currentUser:
+          revState.currentUser = currentUser;
+      }
+    }
+    relationUsersStream.add(revState.relationUsers);
   }
 }

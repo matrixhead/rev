@@ -8,6 +8,8 @@ import 'package:revolt_client/src/data/data.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
+import 'package:revolt_client/src/models/ws_events/ws_events.dart';
+import 'package:revolt_client/src/rev_state.dart';
 import 'package:revolt_client/src/ws_channel.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +19,8 @@ import 'models/models.dart';
 class RevoltClient {
   final RevHttpClient httpClient;
   final RevAuth revAuth;
-  final RevData revData;
+  late final RevData revData;
+  final RevState revState;
   final WsChannel wsChannel;
   late final SharedPreferencesAsync prefs;
 
@@ -29,31 +32,45 @@ class RevoltClient {
           httpClient: httpClient,
           config: clientConfig ?? RevConfig.debug(),
         ),
+        revState = RevState(),
         wsChannel = WsChannel(
           config: clientConfig ?? RevConfig.debug(),
           channel: wsChannel,
         ),
-        revAuth = RevAuth(),
-        revData = RevData() {
+        revAuth = RevAuth() {
+    revData = RevData(revState);
     _init();
   }
 
   _init() async {
     prefs = SharedPreferencesAsync();
     setUpAuth();
+    listenOnWsEvent();
   }
 
-  setUpAuth()async {
+  listenOnWsEvent() {
+    wsChannel.stream.listen((event) {
+      switch (event) {
+        case ReadyEvent readyEvent:
+          revData.onReadyEvent(readyEvent);
+          break;
+        default:
+      }
+    });
+  }
+
+  setUpAuth() async {
     revAuth.authEvents.listen((authEvent) {
       if (authEvent == AuthStatus.authsucess) {
         httpClient.setToken = revAuth.session!.sessionToken;
+        wsChannel.authenticateWsChannel(revAuth.session!.sessionToken);
       } else {
         httpClient.setToken = null;
       }
     });
 
-    if ( await prefs.getString("session") case String json){
-    revAuth.setSession = SessionDetails.fromJson(jsonDecode(json));
+    if (await prefs.getString("session") case String json) {
+      revAuth.setSession = SessionDetails.fromJson(jsonDecode(json));
     }
   }
 
@@ -97,9 +114,9 @@ class RevoltClient {
       revData.fetchUser(httpClient, id: id);
 
   Future<RelationUser> sendFriendRequest(
-          {required String username, required String discriminator}) async =>
+          {required String username }) async =>
       revData.sendFriendRequest(httpClient,
-          username: "$username#$discriminator");
+          username: username);
 
   Future<RelationUser> acceptFriendRequest({required String id}) async =>
       revData.acceptFriendRequest(httpClient, id: id);
@@ -143,6 +160,7 @@ class RevoltClient {
   }
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
+  BehaviorSubject<Map<String,RelationUser>> get relationUsersStream => revData.relationUsersStream;
 }
 
 String getRandString(int len) {

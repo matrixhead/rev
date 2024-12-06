@@ -24,6 +24,15 @@ abstract class User extends BaseUser {
     required this.discriminator,
     required this.online,
   }) : super(id: id);
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    if (json case {'relationship': "User"}) {
+      return CurrentUser.fromJson(json);
+    }
+    return RelationUser.fromJson(json);
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 @JsonEnum()
