@@ -68,7 +68,7 @@ Future<RelationUser> acceptFriendRequest(
   }
 }
 
-Future<Channel> openDirectMessage(RevHttpClient httpClient,
+Future<Channel> openDirectMessageChannel(RevHttpClient httpClient,
     {required String id}) async {
   try {
     final response = await httpClient.get(path: "/users/$id/dm");

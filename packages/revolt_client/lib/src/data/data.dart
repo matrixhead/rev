@@ -4,13 +4,10 @@ import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
+import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
-import 'package:rxdart/rxdart.dart';
 
 class RevData {
-  final BehaviorSubject<Map<String, RelationUser>> relationUsersStream =
-      BehaviorSubject();
-
   final RevState revState;
   RevData(this.revState);
 
@@ -60,10 +57,20 @@ class RevData {
     }
   }
 
-  Future<Channel> openDirectMessage(RevHttpClient httpClient,
-      {required String id}) {
+  Future<EnrichedChannel> getDmChannelForUser(RevHttpClient httpClient,
+      {required String userid}) async {
+    if (revState.channelRepo.getDmChannelForUser(userid)
+        case EnrichedChannel channel) {
+      return channel;
+    }
+   return openDirectMessageChannel(httpClient, id: userid);
+  }
+
+  Future<EnrichedChannel> openDirectMessageChannel(RevHttpClient httpClient,
+      {required String id}) async {
     try {
-      return api.openDirectMessage(httpClient, id: id);
+      final channel = await api.openDirectMessageChannel(httpClient, id: id);
+     return revState.channelRepo.addOrUpdateChannel(channel,revState.currentUser!);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -119,15 +126,19 @@ class RevData {
   }
 
   void onReadyEvent(ReadyEvent readyEvent) {
+    final currentRU = revState.relationUsers.value;
     for (final user in readyEvent.users) {
       switch (user) {
         case RelationUser relationUser:
-          revState.relationUsers[relationUser.id] = relationUser;
+          currentRU[relationUser.id] = relationUser;
           break;
         case CurrentUser currentUser:
           revState.currentUser = currentUser;
       }
     }
-    relationUsersStream.add(revState.relationUsers);
+    revState.relationUsers.add(currentRU);
+    for (final channel in readyEvent.channels) {
+      revState.channelRepo.addOrUpdateChannel(channel,revState.currentUser!);
+    }
   }
 }

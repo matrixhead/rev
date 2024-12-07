@@ -9,6 +9,7 @@ import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
+import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
 import 'package:revolt_client/src/ws_channel.dart';
 import 'package:rxdart/rxdart.dart';
@@ -121,8 +122,8 @@ class RevoltClient {
   Future<RelationUser> acceptFriendRequest({required String id}) async =>
       revData.acceptFriendRequest(httpClient, id: id);
 
-  Future<Channel> openDirectMessage({required String id}) async =>
-      revData.openDirectMessage(httpClient, id: id);
+  Future<EnrichedChannel> getDmChannelForUser({required String userId}) async =>
+      revData.getDmChannelForUser(httpClient, userid: userId);
 
   Future<List<Channel>> fetchDirectMessageChannels() async =>
       revData.fetchDirectMessageChannels(httpClient);
@@ -160,7 +161,8 @@ class RevoltClient {
   }
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
-  BehaviorSubject<Map<String,RelationUser>> get relationUsersStream => revData.relationUsersStream;
+  
+  BehaviorSubject<Map<String,RelationUser>> get relationUsersStream => revState.relationUsers;
 }
 
 String getRandString(int len) {

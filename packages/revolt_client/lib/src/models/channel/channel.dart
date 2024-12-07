@@ -2,16 +2,21 @@
 //
 //     final channel = channelFromJson(jsonString);
 
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:revolt_client/src/models/message/message.dart';
-import 'package:rxdart/rxdart.dart';
 
 part 'channel.g.dart';
 
+enum ChannelType {
+  @JsonValue("DirectMessage")
+  directMessage,
+  unknown
+}
+@CopyWith()
 @JsonSerializable()
 class Channel {
-  @JsonKey(name: "channel_type")
-  String channelType;
+  @JsonKey(name: "channel_type",unknownEnumValue: ChannelType.unknown)
+  ChannelType channelType;
   @JsonKey(name: "_id")
   String id;
   @JsonKey(name: "active")
@@ -35,10 +40,3 @@ class Channel {
   Map<String, dynamic> toJson() => _$ChannelToJson(this);
 }
 
-class EnrichedChannel {
-  final Channel channel;
-  final BehaviorSubject<Map<String, Message>> messages = BehaviorSubject.seeded({});
-  EnrichedChannel({
-    required this.channel,
-  });
-}
