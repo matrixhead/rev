@@ -28,37 +28,79 @@ class HomePageView extends StatelessWidget {
           title: Text("Friends"),
           actions: [
             IconButton(onPressed: () {}, icon: Icon(Icons.add_comment)),
-            Builder(builder: (context) {
-              return IconButton(
-                  onPressed: () => _dialogBuilder(context,
-                      onSubmit: context.read<HomeCubit>().submitFriendRequest),
-                  icon: Icon(Icons.person_add));
-            })
+            IconButton(
+                onPressed: () => _addFriendDialog(
+                      context,
+                      onSubmit: context.read<HomeCubit>().submitFriendRequest,
+                    ),
+                icon: Icon(Icons.person_add))
           ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
-              return ListView.builder(
-                itemBuilder: (context, index) {
-                  return Listitem(
-                      user: state.friendsList.values.elementAt(index));
-                },
-                itemCount: state.friendsList.length,
+              return Column(
+                children: [
+                  InkWell(
+                    child: IncomingFriendsBanner(),
+                    onTap: () => _pendingRequestDialog(context),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return Listitem(user: state.friends.elementAt(index));
+                      },
+                      itemCount: state.friends.length,
+                    ),
+                  ),
+                ],
               );
             },
           ),
         ));
   }
 
-  Future<void> _dialogBuilder(BuildContext context,
+  Future<void> _addFriendDialog(BuildContext context,
       {required Function(String) onSubmit}) {
     return showDialog<void>(
       context: context,
       useRootNavigator: true,
       builder: (BuildContext context) {
         return AddFriendDialog(onSubmit: onSubmit);
+      },
+    );
+  }
+
+  Future<void> _pendingRequestDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      useRootNavigator: true,
+      builder: (_) {
+        return PendingRequestDialog(homeCubit: context.read<HomeCubit>());
+      },
+    );
+  }
+}
+
+class IncomingFriendsBanner extends StatelessWidget {
+  const IncomingFriendsBanner({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return state.incomingFriends.isEmpty
+            ? SizedBox.shrink()
+            : SizedBox(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [Text("Pending requests"), Icon(Icons.arrow_right)],
+                ),
+              );
       },
     );
   }
@@ -143,6 +185,63 @@ class Listitem extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+}
+
+class PendingRequestDialog extends StatelessWidget {
+  final HomeCubit homeCubit;
+  const PendingRequestDialog({super.key, required this.homeCubit});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: homeCubit,
+      child: Dialog(
+          child: AspectRatio(
+        aspectRatio: 1.5,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Pending requests"),
+              Expanded(
+                child: BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    return ListView.builder(
+                      itemBuilder: (context, index) {
+                        final user = state.incomingFriends.elementAt(index);
+                        return ListTile(
+                          dense: true,
+                          title: Text(user.username),
+                          subtitle: Text("Incoming friend request"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                     homeCubit.acceptFriendRequest(user.id);
+                                     Navigator.of(context).pop();
+                                     },
+                                  icon: Icon(Icons.add)),
+                              IconButton(
+                                  onPressed: () {}, icon: Icon(Icons.close)),
+                            ],
+                          ),
+                        );
+                      },
+                      itemCount: state.incomingFriends.length,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      )),
     );
   }
 }

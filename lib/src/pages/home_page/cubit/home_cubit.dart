@@ -23,6 +23,9 @@ class HomeCubit extends Cubit<HomeState> {
   submitFriendRequest(String username)async{
     client.sendFriendRequest(username: username);
   }
+  acceptFriendRequest(String id )async{
+    await client.acceptFriendRequest(id: id);
+  }
 
   @override
   Future<void> close() {

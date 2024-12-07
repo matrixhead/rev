@@ -97,10 +97,11 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$HomeStateImpl implements _HomeState {
+class _$HomeStateImpl extends _HomeState {
   const _$HomeStateImpl(
       [final Map<String, RelationUser> friendsList = const {}])
-      : _friendsList = friendsList;
+      : _friendsList = friendsList,
+        super._();
 
   final Map<String, RelationUser> _friendsList;
   @override
@@ -138,9 +139,10 @@ class _$HomeStateImpl implements _HomeState {
       __$$HomeStateImplCopyWithImpl<_$HomeStateImpl>(this, _$identity);
 }
 
-abstract class _HomeState implements HomeState {
+abstract class _HomeState extends HomeState {
   const factory _HomeState([final Map<String, RelationUser> friendsList]) =
       _$HomeStateImpl;
+  const _HomeState._() : super._();
 
   @override
   Map<String, RelationUser> get friendsList;

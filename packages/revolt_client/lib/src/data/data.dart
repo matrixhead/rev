@@ -4,7 +4,7 @@ import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
-import 'package:revolt_client/src/rev_state.dart';
+import 'package:revolt_client/src/state/rev_state.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RevData {

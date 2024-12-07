@@ -9,7 +9,7 @@ import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
-import 'package:revolt_client/src/rev_state.dart';
+import 'package:revolt_client/src/state/rev_state.dart';
 import 'package:revolt_client/src/ws_channel.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
