@@ -57,16 +57,16 @@ class RevData {
     }
   }
 
-  Future<EnrichedChannel> getDmChannelForUser(RevHttpClient httpClient,
+  Future<RevChannel> getDmChannelForUser(RevHttpClient httpClient,
       {required String userid}) async {
     if (revState.channelRepo.getDmChannelForUser(userid)
-        case EnrichedChannel channel) {
+        case RevChannel channel) {
       return channel;
     }
     return openDirectMessageChannel(httpClient, id: userid);
   }
 
-  Future<EnrichedChannel> openDirectMessageChannel(RevHttpClient httpClient,
+  Future<RevChannel> openDirectMessageChannel(RevHttpClient httpClient,
       {required String id}) async {
     try {
       final channel = await api.openDirectMessageChannel(httpClient, id: id);
@@ -77,10 +77,10 @@ class RevData {
     }
   }
 
-  Future<EnrichedChannel> fetchChannel(RevHttpClient httpClient,
+  Future<RevChannel> fetchChannel(RevHttpClient httpClient,
       {required String channelId}) async {
     if (revState.channelRepo.getChannelforId(channelId)
-        case EnrichedChannel channel) {
+        case RevChannel channel) {
       return channel;
     }
     try {

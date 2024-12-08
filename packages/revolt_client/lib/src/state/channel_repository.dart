@@ -4,16 +4,16 @@ import 'package:revolt_client/src/models/user/user.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ChannelRepository {
-  final Map<String, EnrichedChannel> _channels = {};
+  final Map<String, RevChannel> _channels = {};
   final Map<String, String> _dmchannelUserMappings = {};
 
-  EnrichedChannel addOrUpdateChannel(Channel channel, CurrentUser currentUser) {
-    if (_channels[channel.id] case EnrichedChannel enrichedChannel) {
+  RevChannel addOrUpdateChannel(Channel channel, CurrentUser currentUser) {
+    if (_channels[channel.id] case RevChannel enrichedChannel) {
       enrichedChannel._updateChannel(channel, currentUser);
       return enrichedChannel;
     }
     final enrichedChannel =
-        EnrichedChannel._fromChannel(channel: channel, currentUser: currentUser);
+        RevChannel._fromChannel(channel: channel, currentUser: currentUser);
     if (channel.channelType == ChannelType.directMessage) {
       _dmchannelUserMappings[enrichedChannel.otherIds[0]] = channel.id;
     }
@@ -21,27 +21,27 @@ class ChannelRepository {
     return enrichedChannel;
   }
 
-  EnrichedChannel? getDmChannelForUser(String userid) {
+  RevChannel? getDmChannelForUser(String userid) {
     final channelId = _dmchannelUserMappings[userid];
     return _channels[channelId];
   }
 
-  EnrichedChannel? getChannelforId(String channelId){
+  RevChannel? getChannelforId(String channelId){
     return _channels[channelId];
   }
 
 }
 
-class EnrichedChannel {
+class RevChannel {
   Channel channel;
   final BehaviorSubject<Map<String, Message>> messages =
       BehaviorSubject.seeded({});
 
-  EnrichedChannel._internal({required this.channel});
+  RevChannel._internal({required this.channel});
 
-  factory EnrichedChannel._fromChannel(
+  factory RevChannel._fromChannel(
       {required Channel channel, required CurrentUser currentUser}) {
-    return EnrichedChannel._internal(
+    return RevChannel._internal(
         channel:
             _removerCurrentUser(channel: channel, currentUser: currentUser));
   }

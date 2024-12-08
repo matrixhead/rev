@@ -19,19 +19,19 @@ mixin _$ChatState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function(EnrichedChannel channel) channelLoaded,
+    required TResult Function(RevChannel channel) channelLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function(EnrichedChannel channel)? channelLoaded,
+    TResult? Function(RevChannel channel)? channelLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function(EnrichedChannel channel)? channelLoaded,
+    TResult Function(RevChannel channel)? channelLoaded,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -118,7 +118,7 @@ class _$ChatStateInitialImpl implements ChatStateInitial {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function(EnrichedChannel channel) channelLoaded,
+    required TResult Function(RevChannel channel) channelLoaded,
   }) {
     return initial();
   }
@@ -127,7 +127,7 @@ class _$ChatStateInitialImpl implements ChatStateInitial {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function(EnrichedChannel channel)? channelLoaded,
+    TResult? Function(RevChannel channel)? channelLoaded,
   }) {
     return initial?.call();
   }
@@ -136,7 +136,7 @@ class _$ChatStateInitialImpl implements ChatStateInitial {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function(EnrichedChannel channel)? channelLoaded,
+    TResult Function(RevChannel channel)? channelLoaded,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -188,7 +188,7 @@ abstract class _$$ChatStateChannelLoadedImplCopyWith<$Res> {
           $Res Function(_$ChatStateChannelLoadedImpl) then) =
       __$$ChatStateChannelLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({EnrichedChannel channel});
+  $Res call({RevChannel channel});
 }
 
 /// @nodoc
@@ -211,7 +211,7 @@ class __$$ChatStateChannelLoadedImplCopyWithImpl<$Res>
       null == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
-              as EnrichedChannel,
+              as RevChannel,
     ));
   }
 }
@@ -222,7 +222,7 @@ class _$ChatStateChannelLoadedImpl implements ChatStateChannelLoaded {
   const _$ChatStateChannelLoadedImpl(this.channel);
 
   @override
-  final EnrichedChannel channel;
+  final RevChannel channel;
 
   @override
   String toString() {
@@ -253,7 +253,7 @@ class _$ChatStateChannelLoadedImpl implements ChatStateChannelLoaded {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function(EnrichedChannel channel) channelLoaded,
+    required TResult Function(RevChannel channel) channelLoaded,
   }) {
     return channelLoaded(channel);
   }
@@ -262,7 +262,7 @@ class _$ChatStateChannelLoadedImpl implements ChatStateChannelLoaded {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function(EnrichedChannel channel)? channelLoaded,
+    TResult? Function(RevChannel channel)? channelLoaded,
   }) {
     return channelLoaded?.call(channel);
   }
@@ -271,7 +271,7 @@ class _$ChatStateChannelLoadedImpl implements ChatStateChannelLoaded {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function(EnrichedChannel channel)? channelLoaded,
+    TResult Function(RevChannel channel)? channelLoaded,
     required TResult orElse(),
   }) {
     if (channelLoaded != null) {
@@ -313,10 +313,10 @@ class _$ChatStateChannelLoadedImpl implements ChatStateChannelLoaded {
 }
 
 abstract class ChatStateChannelLoaded implements ChatState {
-  const factory ChatStateChannelLoaded(final EnrichedChannel channel) =
+  const factory ChatStateChannelLoaded(final RevChannel channel) =
       _$ChatStateChannelLoadedImpl;
 
-  EnrichedChannel get channel;
+  RevChannel get channel;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

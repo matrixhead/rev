@@ -121,10 +121,10 @@ class RevoltClient {
   Future<RelationUser> acceptFriendRequest({required String id}) async =>
       revData.acceptFriendRequest(httpClient, id: id);
 
-  Future<EnrichedChannel> getDmChannelForUser({required String userId}) async =>
+  Future<RevChannel> getDmChannelForUser({required String userId}) async =>
       revData.getDmChannelForUser(httpClient, userid: userId);
 
-  Future<EnrichedChannel> getChannelforId({required String channelId}) async =>
+  Future<RevChannel> getChannelforId({required String channelId}) async =>
       revData.fetchChannel(httpClient, channelId: channelId);
 
   Future<List<Channel>> fetchDirectMessageChannels() async =>

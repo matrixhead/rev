@@ -1,1 +1,1 @@
-export 'channel_repository.dart' show EnrichedChannel;
+export 'channel_repository.dart' show RevChannel;
