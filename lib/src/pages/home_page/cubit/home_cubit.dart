@@ -20,11 +20,26 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(friendsList: friendsList));
   }
 
-  submitFriendRequest(String username)async{
+  submitFriendRequest(String username) async {
     client.sendFriendRequest(username: username);
   }
-  acceptFriendRequest(String id )async{
+
+  acceptFriendRequest(String id) async {
     await client.acceptFriendRequest(id: id);
+  }
+
+  onSelectUser(String userId) async {
+    final channel = await client.getDmChannelForUser(userId: userId);
+    emit(state.copyWith(currentSelectedChannel: channel.id));
+    setPage(page: 1,withAnimation: true);
+  }
+
+  setPage({required int page, required bool withAnimation}) {
+    if (withAnimation) {
+      emit(state.copyWith(page: PageState.withAnimation(page)));
+    } else {
+      emit(state.copyWith(page: PageState.withOutAnimation(page)));
+    }
   }
 
   @override

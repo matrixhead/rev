@@ -63,14 +63,30 @@ class RevData {
         case EnrichedChannel channel) {
       return channel;
     }
-   return openDirectMessageChannel(httpClient, id: userid);
+    return openDirectMessageChannel(httpClient, id: userid);
   }
 
   Future<EnrichedChannel> openDirectMessageChannel(RevHttpClient httpClient,
       {required String id}) async {
     try {
       final channel = await api.openDirectMessageChannel(httpClient, id: id);
-     return revState.channelRepo.addOrUpdateChannel(channel,revState.currentUser!);
+      return revState.channelRepo
+          .addOrUpdateChannel(channel, revState.currentUser!);
+    } on RevApiError catch (e) {
+      throw DataError.fromApiError(e);
+    }
+  }
+
+  Future<EnrichedChannel> fetchChannel(RevHttpClient httpClient,
+      {required String channelId}) async {
+    if (revState.channelRepo.getChannelforId(channelId)
+        case EnrichedChannel channel) {
+      return channel;
+    }
+    try {
+      final channel = await api.fetchChannel(httpClient, channelId: channelId);
+      return revState.channelRepo
+          .addOrUpdateChannel(channel, revState.currentUser!);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -138,7 +154,7 @@ class RevData {
     }
     revState.relationUsers.add(currentRU);
     for (final channel in readyEvent.channels) {
-      revState.channelRepo.addOrUpdateChannel(channel,revState.currentUser!);
+      revState.channelRepo.addOrUpdateChannel(channel, revState.currentUser!);
     }
   }
 }

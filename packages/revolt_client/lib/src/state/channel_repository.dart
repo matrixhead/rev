@@ -25,6 +25,11 @@ class ChannelRepository {
     final channelId = _dmchannelUserMappings[userid];
     return _channels[channelId];
   }
+
+  EnrichedChannel? getChannelforId(String channelId){
+    return _channels[channelId];
+  }
+
 }
 
 class EnrichedChannel {
@@ -33,7 +38,7 @@ class EnrichedChannel {
       BehaviorSubject.seeded({});
 
   EnrichedChannel._internal({required this.channel});
-  
+
   factory EnrichedChannel._fromChannel(
       {required Channel channel, required CurrentUser currentUser}) {
     return EnrichedChannel._internal(

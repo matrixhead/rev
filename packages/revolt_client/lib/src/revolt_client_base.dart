@@ -7,7 +7,6 @@ import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/data/data.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
-import 'package:revolt_client/src/models/user/user.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
@@ -125,6 +124,9 @@ class RevoltClient {
   Future<EnrichedChannel> getDmChannelForUser({required String userId}) async =>
       revData.getDmChannelForUser(httpClient, userid: userId);
 
+  Future<EnrichedChannel> getChannelforId({required String channelId}) async =>
+      revData.fetchChannel(httpClient, channelId: channelId);
+
   Future<List<Channel>> fetchDirectMessageChannels() async =>
       revData.fetchDirectMessageChannels(httpClient);
 
@@ -161,7 +163,7 @@ class RevoltClient {
   }
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
-  
+
   BehaviorSubject<Map<String,RelationUser>> get relationUsersStream => revState.relationUsers;
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rebar/src/pages/chat_page/chat.dart';
 import 'package:rebar/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
@@ -17,6 +18,94 @@ class HomePage extends StatelessWidget {
 
 class HomePageView extends StatelessWidget {
   const HomePageView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              return;
+            }
+            if (state.page.pageNumber == 0) {
+              Navigator.of(context).pop();
+            } else {
+              context.read<HomeCubit>().setPage(page: 0, withAnimation: true);
+            }
+          },
+          child: Stack(
+            children: [Stage(), ChatOverlay()],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ChatOverlay extends StatefulWidget {
+  const ChatOverlay({
+    super.key,
+  });
+
+  @override
+  State<ChatOverlay> createState() => _ChatOverlayState();
+}
+
+class _ChatOverlayState extends State<ChatOverlay> {
+  late final PageController _pageController;
+  @override
+  void initState() {
+    _pageController = PageController(initialPage: 0);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return BlocListener<HomeCubit, HomeState>(
+          listener: (context, state) {
+            if (state.page
+                case PageStateWithAnimation(pageNumber: int pageNumber)) {
+              _pageController.animateToPage(pageNumber,
+                  duration: const Duration(milliseconds: 450),
+                  curve: Curves.easeOut);
+            }
+          },
+          child: PageView(
+            onPageChanged: (int page) {
+              context
+                  .read<HomeCubit>()
+                  .setPage(page: page, withAnimation: false);
+            },
+            controller: _pageController,
+            hitTestBehavior: state.page.pageNumber == 0
+                ? HitTestBehavior.translucent
+                : HitTestBehavior.opaque,
+            children: [
+              SizedBox.expand(),
+              if (state.currentSelectedChannel case String currentSelectedChannel)
+               ChatPage(channelId: currentSelectedChannel) 
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class Stage extends StatelessWidget {
+  const Stage({
     super.key,
   });
 
@@ -60,27 +149,27 @@ class HomePageView extends StatelessWidget {
           ),
         ));
   }
+}
 
-  Future<void> _addFriendDialog(BuildContext context,
-      {required Function(String) onSubmit}) {
-    return showDialog<void>(
-      context: context,
-      useRootNavigator: true,
-      builder: (BuildContext context) {
-        return AddFriendDialog(onSubmit: onSubmit);
-      },
-    );
-  }
+Future<void> _addFriendDialog(BuildContext context,
+    {required Function(String) onSubmit}) {
+  return showDialog<void>(
+    context: context,
+    useRootNavigator: true,
+    builder: (BuildContext context) {
+      return AddFriendDialog(onSubmit: onSubmit);
+    },
+  );
+}
 
-  Future<void> _pendingRequestDialog(BuildContext context) {
-    return showDialog<void>(
-      context: context,
-      useRootNavigator: true,
-      builder: (_) {
-        return PendingRequestDialog(homeCubit: context.read<HomeCubit>());
-      },
-    );
-  }
+Future<void> _pendingRequestDialog(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    useRootNavigator: true,
+    builder: (_) {
+      return PendingRequestDialog(homeCubit: context.read<HomeCubit>());
+    },
+  );
 }
 
 class IncomingFriendsBanner extends StatelessWidget {
@@ -171,20 +260,23 @@ class Listitem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(Icons.person),
-        SizedBox(
-          width: 16,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(user.username),
-            Text(user.online ? "Online" : "Offline")
-          ],
-        )
-      ],
+    return InkWell(
+      onTap: () => context.read<HomeCubit>().onSelectUser(user.id),
+      child: Row(
+        children: [
+          Icon(Icons.person),
+          SizedBox(
+            width: 16,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(user.username),
+              Text(user.online ? "Online" : "Offline")
+            ],
+          )
+        ],
+      ),
     );
   }
 }
@@ -223,9 +315,9 @@ class PendingRequestDialog extends StatelessWidget {
                             children: [
                               IconButton(
                                   onPressed: () {
-                                     homeCubit.acceptFriendRequest(user.id);
-                                     Navigator.of(context).pop();
-                                     },
+                                    homeCubit.acceptFriendRequest(user.id);
+                                    Navigator.of(context).pop();
+                                  },
                                   icon: Icon(Icons.add)),
                               IconButton(
                                   onPressed: () {}, icon: Icon(Icons.close)),

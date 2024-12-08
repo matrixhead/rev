@@ -78,6 +78,16 @@ Future<Channel> openDirectMessageChannel(RevHttpClient httpClient,
   }
 }
 
+Future<Channel> fetchChannel(RevHttpClient httpClient,
+    {required String channelId}) async {
+  try {
+    final response = await httpClient.get(path: "/channels/$channelId");
+    return Channel.fromJson(jsonDecode(response.body));
+  } on NetworkRevError catch (e) {
+    throw RevApiError.fromNetworkError(e);
+  }
+}
+
 Future<List<Channel>> fetchDirectMessageChannels(
   RevHttpClient httpClient,
 ) async {
