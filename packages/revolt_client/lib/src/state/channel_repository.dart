@@ -32,36 +32,42 @@ class ChannelRepository {
   }
 }
 
+/// A class representing a channel in the Revolt client.
 class RevChannel {
-  Channel channel;
+  RevChannel._internal({required Channel channel}) : _channel = channel;
+
+  factory RevChannel._fromChannel({
+    required Channel channel,
+    required CurrentUser currentUser,
+  }) {
+    return RevChannel._internal(
+      channel: _removeCurrentUser(channel: channel, currentUser: currentUser),
+    );
+  }
+  Channel _channel;
+
+  /// A BehaviorSubject that holds a seeded LinkedHashMap of messages.
   final BehaviorSubject<LinkedHashMap<String, Message>> messages =
       BehaviorSubject.seeded(LinkedHashMap());
 
-  RevChannel._internal({required this.channel});
-
-  factory RevChannel._fromChannel(
-      {required Channel channel, required CurrentUser currentUser}) {
-    return RevChannel._internal(
-        channel:
-            _removeCurrentUser(channel: channel, currentUser: currentUser));
+  void _updateChannel(Channel channel, CurrentUser currentUser) {
+    _channel = _removeCurrentUser(channel: channel, currentUser: currentUser);
   }
 
-  _updateChannel(Channel channel, CurrentUser currentUser) {
-    this.channel =
-        _removeCurrentUser(channel: channel, currentUser: currentUser);
-  }
-
-  static Channel _removeCurrentUser(
-      {required Channel channel, required CurrentUser currentUser}) {
-    final recipientsWOcurrentUser = channel.recipients;
-    recipientsWOcurrentUser.remove(currentUser.id);
+  static Channel _removeCurrentUser({
+    required Channel channel,
+    required CurrentUser currentUser,
+  }) {
+    final recipientsWOcurrentUser = channel.recipients..remove(currentUser.id);
     return channel.copyWith(recipients: recipientsWOcurrentUser);
   }
 
-  String get id => channel.id;
+  /// Returns the unique identifier of the channel.
+  String get id => _channel.id;
 
-  List<String> get otherIds => channel.recipients;
+  /// Returns a list of recipient IDs associated with the channel.
+  List<String> get otherIds => _channel.recipients;
 
-  ChannelType get channelType => channel.channelType;
+  /// Returns the type of the channel.
+  ChannelType get channelType => _channel.channelType;
 }
-
