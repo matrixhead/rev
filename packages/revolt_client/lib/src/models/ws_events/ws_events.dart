@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
-part "ws_events.g.dart";
+part 'ws_events.g.dart';
 
 abstract class WsEvents {
   WsEvents();
@@ -12,7 +12,7 @@ abstract class WsEvents {
 abstract class ServerToClientEvents extends WsEvents {
   ServerToClientEvents();
   factory ServerToClientEvents.fromJson(Map<String, dynamic> json) {
-    switch (json["type"]) {
+    switch (json['type']) {
       case AuthenticatedEvent.type:
         return AuthenticatedEvent.fromJson(json);
       case MessageEvent.type:
@@ -28,21 +28,23 @@ abstract class ServerToClientEvents extends WsEvents {
 abstract class ClientToServerEvents extends WsEvents {
   ClientToServerEvents();
   Map<String, dynamic> _addtypetoJson(Map<String, dynamic> json, String type) {
-    json["type"] = type;
+    json['type'] = type;
     return json;
   }
 }
 
 @JsonSerializable()
 class AuthenticateEvent extends ClientToServerEvents {
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  static final type = "Authenticate";
-  final String token;
   AuthenticateEvent({required this.token});
 
   // Add the fromJson factory method
   factory AuthenticateEvent.fromJson(Map<String, dynamic> json) =>
       _$AuthenticateEventFromJson(json);
+
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  static const type = 'Authenticate';
+
+  final String token;
 
   // Add the toJson method
   Map<String, dynamic> toJson() =>
@@ -55,13 +57,14 @@ class AuthenticateEvent extends ClientToServerEvents {
 
 @JsonSerializable()
 class AuthenticatedEvent extends ServerToClientEvents {
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  static const type = "Authenticated";
   AuthenticatedEvent();
 
   // Factory constructor for creating a new instance from a map
   factory AuthenticatedEvent.fromJson(Map<String, dynamic> json) =>
       _$AuthenticatedEventFromJson(json);
+
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  static const type = 'Authenticated';
 
   // Method for converting an instance to a map
   Map<String, dynamic> toJson() => _$AuthenticatedEventToJson(this);
@@ -69,48 +72,55 @@ class AuthenticatedEvent extends ServerToClientEvents {
 
 @JsonSerializable()
 class MessageEvent extends ServerToClientEvents {
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  static const type = "Message";
-  @JsonKey(readValue: _passDownToParseMessage)
-  final Message message;
+
   MessageEvent(this.message);
 
   // Factory constructor for creating a new instance from a map
   factory MessageEvent.fromJson(Map<String, dynamic> json) =>
       _$MessageEventFromJson(json);
 
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  static const type = 'Message';
+
+  @JsonKey(readValue: _passDownToParseMessage)
+  final Message message;
+
   // Method for converting an instance to a map
   Map<String, dynamic> toJson() => _$MessageEventToJson(this);
 
-  static _passDownToParseMessage(Map map, String str) {
+  static Object? _passDownToParseMessage(
+    Map<dynamic, dynamic> map,
+    String str,
+  ) {
     return map;
   }
 }
 
 @JsonSerializable()
 class ReadyEvent extends ServerToClientEvents {
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  static const type = "Ready";
-
-  final List<User> users;
-  final List<Channel> channels;
 
   ReadyEvent(this.users, this.channels);
 
   factory ReadyEvent.fromJson(Map<String, dynamic> json) {
-    return  _$ReadyEventFromJson(json);
-    }
+    return _$ReadyEventFromJson(json);
+  }
+
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  static const type = 'Ready';
+
+  final List<User> users;
+  final List<Channel> channels;
 
   Map<String, dynamic> toJson() => _$ReadyEventToJson(this);
 }
 
 @JsonSerializable()
 class UnknownEvent extends ServerToClientEvents {
-  final String type;
   UnknownEvent({required this.type});
 
   factory UnknownEvent.fromJson(Map<String, dynamic> json) =>
       _$UnknownEventFromJson(json);
+  final String type;
 
   // Add the toJson method
   Map<String, dynamic> toJson() => _$UnknownEventToJson(this);

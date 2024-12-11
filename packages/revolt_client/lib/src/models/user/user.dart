@@ -7,57 +7,57 @@ part 'user.g.dart';
 
 @immutable
 abstract class BaseUser {
-  @JsonKey(name: "_id")
+  const BaseUser({required this.id});
+  @JsonKey(name: '_id')
   final String id;
-
-  BaseUser({required this.id});
 }
 
 abstract class User extends BaseUser {
-  final String username;
-  final String discriminator;
-  final bool online;
-
-  User({
+  const User({
     required super.id,
     required this.username,
     required this.discriminator,
     required this.online,
-  }) ;
+  });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    if (json case {'relationship': "User"}) {
+    if (json case {'relationship': 'User'}) {
       return CurrentUser.fromJson(json);
     }
     return RelationUser.fromJson(json);
   }
+
+  final String username;
+  final String discriminator;
+  final bool online;
 
   Map<String, dynamic> toJson();
 }
 
 @JsonEnum()
 enum RelationStatus {
-  @JsonValue("Friend")
+  @JsonValue('Friend')
   friend,
-  @JsonValue("Outgoing")
+  @JsonValue('Outgoing')
   outgoing,
-  @JsonValue("Incoming")
+  @JsonValue('Incoming')
   incoming,
-  @JsonValue("User")
+  @JsonValue('User')
   user,
-  @JsonValue("None")
+  @JsonValue('None')
   none
 }
 
 @JsonSerializable()
 class Relation extends BaseUser {
-  @JsonKey(name: "status")
-  final RelationStatus relationStatus;
-
-  Relation({required String id, required this.relationStatus}) : super(id: id);
+  const Relation({required String id, required this.relationStatus})
+      : super(id: id);
 
   factory Relation.fromJson(Map<String, dynamic> json) =>
       _$RelationFromJson(json);
+
+  @JsonKey(name: 'status')
+  final RelationStatus relationStatus;
 
   Map<String, dynamic> toJson() => _$RelationToJson(this);
 }
@@ -65,36 +65,42 @@ class Relation extends BaseUser {
 @JsonSerializable()
 @CopyWith()
 class RelationUser extends User {
-  //
-  @JsonKey(name: "relationship")
-  final RelationStatus relationStatus;
-
-  RelationUser(
-      {required String super.id,
-      required super.username,
-      required super.discriminator,
-      required super.online,
-      required this.relationStatus});
+  const RelationUser({
+    required super.id,
+    required super.username,
+    required super.discriminator,
+    required super.online,
+    required this.relationStatus,
+  });
 
   factory RelationUser.fromJson(Map<String, dynamic> json) =>
       _$RelationUserFromJson(json);
 
+  //
+  @JsonKey(name: 'relationship')
+  final RelationStatus relationStatus;
+
+  @override
   Map<String, dynamic> toJson() => _$RelationUserToJson(this);
 }
 
 @JsonSerializable()
 @CopyWith()
 class CurrentUser extends User {
-  @JsonKey(defaultValue: [])
-  final List<Relation>? relations;
-  CurrentUser(
-      {required String super.id,
-      required super.username,
-      required super.discriminator,
-      required super.online,
-      required this.relations});
+  const CurrentUser({
+    required super.id,
+    required super.username,
+    required super.discriminator,
+    required super.online,
+    required this.relations,
+  });
+
   factory CurrentUser.fromJson(Map<String, dynamic> json) =>
       _$CurrentUserFromJson(json);
 
+  @JsonKey(defaultValue: [])
+  final List<Relation>? relations;
+
+  @override
   Map<String, dynamic> toJson() => _$CurrentUserToJson(this);
 }

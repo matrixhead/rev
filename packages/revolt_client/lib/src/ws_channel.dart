@@ -6,15 +6,16 @@ import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WsChannel {
-  final WebSocketChannel channel;
 
-  WsChannel({WebSocketChannel? channel, required RevConfig config})
+  WsChannel({required RevConfig config, WebSocketChannel? channel})
       : channel = channel ??
             WebSocketChannel.connect(
               Uri.parse('ws://${config.baseUrl}:${config.wsPort}'),
             );
+            
+  final WebSocketChannel channel;
 
-  get isReady => channel.ready;
+  Future<void> get isReady => channel.ready;
 
   Stream<ServerToClientEvents> get stream =>
       channel.stream.map<ServerToClientEvents>(
@@ -22,7 +23,7 @@ class WsChannel {
             ServerToClientEvents.fromJson(parseJsonToMap(event as String)),
       );
 
-  authenticateWsChannel(String sessionToken) {
+  void authenticateWsChannel(String sessionToken) {
     final json = jsonEncode(AuthenticateEvent(token: sessionToken).toJson());
     channel.sink.add(json);
   }

@@ -3,8 +3,11 @@ import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RevState {
-  final BehaviorSubject<Map<String,RelationUser>> relationUsers = BehaviorSubject.seeded({});
+  RevState();
+  final BehaviorSubject<Map<String, RelationUser>> relationUsers =
+      BehaviorSubject.seeded(
+    {},
+  );
   CurrentUser? currentUser;
   final ChannelRepository channelRepo = ChannelRepository();
-  RevState();
 }

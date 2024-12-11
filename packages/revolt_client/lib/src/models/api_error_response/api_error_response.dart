@@ -3,32 +3,32 @@ part 'api_error_response.g.dart';
 
 @JsonEnum()
 enum ErrorType {
-  @JsonValue("UnverifiedAccount")
+  @JsonValue('UnverifiedAccount')
   unverifiedAccount,
-  @JsonValue("InvalidToken")
+  @JsonValue('InvalidToken')
   invalidToken,
-  @JsonValue("ShortPassword")
+  @JsonValue('ShortPassword')
   shortPassword,
-  @JsonValue("AlreadyOnboarded")
+  @JsonValue('AlreadyOnboarded')
   alreadyOnboarded,
-  @JsonValue("MissingPermission")
+  @JsonValue('MissingPermission')
   missingPermission,
-  @JsonValue("AlreadyFriends")
+  @JsonValue('AlreadyFriends')
   alreadyFriends,
   unknown,
 }
 
 @JsonSerializable()
 class ApiErrorResponse {
-  @JsonKey(name: "type", unknownEnumValue: ErrorType.unknown)
-  final ErrorType errortype;
-
   const ApiErrorResponse({
     required this.errortype,
   });
 
   factory ApiErrorResponse.fromJson(Map<String, dynamic> json) =>
       _$ApiErrorResponseFromJson(json);
+
+  @JsonKey(name: 'type', unknownEnumValue: ErrorType.unknown)
+  final ErrorType errortype;
 
   Map<String, dynamic> toJson() => _$ApiErrorResponseToJson(this);
 }

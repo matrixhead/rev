@@ -20,27 +20,27 @@
 //   final email = "example15@gmail.com";
 //   final password = "supersecurePassword";
 
-//   // await revoltClient.signUp(email: email, password: password);
-//   // print("enter $email verification code: ");
-//   // String verificationCode = stdin.readLineSync()!;
-//   // await revoltClient.verifyAccount(verificationCode: verificationCode);
+//   // await revoltClient.signUp(email: email, password: password); print("enter
+//   // $email verification code: "); String verificationCode =
+//   // stdin.readLineSync()!; await revoltClient.verifyAccount(verificationCode:
+//   // verificationCode);
 
 //   await revoltClient.login(email: email, password: password);
 
-//   // await revoltClient.completeOnboarding(username: "hi");
-//   // final currentUser = await revoltClient.fetchSelf();
-//   // client1UserCompleter.complete(currentUser);
+//   // await revoltClient.completeOnboarding(username: "hi"); final currentUser =
+//   // await revoltClient.fetchSelf(); client1UserCompleter.complete(currentUser);
 
 //   // final client2User  = await client2UserCompleter.future;
 
-//   // // final res = await revoltClient.sendFriendRequest(
-//   // //     username: client2User.username,
-//   // //     discriminator: client2User.discriminator);
+//   // // final res = await revoltClient.sendFriendRequest( //     username:
+//   // client2User.username, //     discriminator: client2User.discriminator);
 
-//   // // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
-//   // final channels = await revoltClient.fetchDirectMessageChannels(); 
+//   // // final user = await revoltClient.fetchUser(id:
+//   // "01JDPMTYA9X83XX55XBMNDX0M7"); final channels = await
+//   // revoltClient.fetchDirectMessageChannels();
 
-//   // final message  = await revoltClient.sendMessage(channelId: channels[0].id,content: "hello this is hari",);
+//   // final message  = await revoltClient.sendMessage(channelId:
+//   // channels[0].id,content: "hello this is hari",);
 //   print("hi");
 // }
 
@@ -53,31 +53,35 @@
 //   final email = "example14@gmail.com";
 //   final password = "22jUhEtnRS3vJBf";
 
-//   // await revoltClient.signUp(email: email, password: password);
-//   // print("enter $email verification code: ");
-//   // String verificationCode = stdin.readLineSync()!;
-//   // await revoltClient.verifyAccount(verificationCode: verificationCode);
+//   // await revoltClient.signUp(email: email, password: password); print("enter
+//   // $email verification code: "); String verificationCode =
+//   // stdin.readLineSync()!; await revoltClient.verifyAccount(verificationCode:
+//   // verificationCode);
 
 //   await revoltClient.login(email: email, password: password);
 
 //   // await revoltClient.completeOnboarding(username: "hi");
-//   final currentUser =  await revoltClient.fetchSelf();
+//   final currentUser = await revoltClient.fetchSelf();
 //   client2UserCompleter.complete(currentUser);
 
-//   // final user = await revoltClient.fetchUser(id: "01JDPMTYA9X83XX55XBMNDX0M7");
+//   // final user = await revoltClient.fetchUser(id:
+//   // "01JDPMTYA9X83XX55XBMNDX0M7");
 
-//   // final res = await revoltClient.sendFriendRequest(
-//   //   username: "738", discriminator: "7246");
-//   // final friend = await revoltClient.fetchUser(id: "01JDXPP9WC5BK77CA1TNYEAW69");
-//   // final channels = await revoltClient.fetchDirectMessageChannels(); 
+//   // final res = await revoltClient.sendFriendRequest( username: "738",
+//   //   discriminator: "7246"); final friend = await revoltClient.fetchUser(id:
+//   //   "01JDXPP9WC5BK77CA1TNYEAW69"); final channels = await
+//   //   revoltClient.fetchDirectMessageChannels();
 
-//   // final message  = await revoltClient.sendMessage(channelId: channels[0].id,content: "hi",);
+//   // final message  = await revoltClient.sendMessage(channelId:
+//   // channels[0].id,content: "hi",);
 
-//   // final (messages,messageuser) = await revoltClient.fetchMessages(id: channels[0].id,includeUsers: true);
-//    final isWsReady = await revoltClient.wsChannel.isReady;
-//    revoltClient.wsChannel.stream.listen((event) => 
-//     print("fsd")
-//    ,);
-//    revoltClient.wsChannel.authenticateWsChannel(revoltClient.revAuth.session!.sessionToken);
+//   // final (messages,messageuser) = await revoltClient.fetchMessages(id:
+//   // channels[0].id,includeUsers: true);
+//   final isWsReady = await revoltClient.wsChannel.isReady;
+//   revoltClient.wsChannel.stream.listen(
+//     (event) => print("fsd"),
+//   );
+//   revoltClient.wsChannel
+//       .authenticateWsChannel(revoltClient.revAuth.session!.sessionToken);
 //   print("hi");
-//   }
+// }

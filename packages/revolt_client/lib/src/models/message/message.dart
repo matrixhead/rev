@@ -4,18 +4,6 @@ part 'message.g.dart';
 
 @JsonSerializable()
 class Message {
-  @JsonKey(name: "_id")
-  String id;
-  @JsonKey(name: "nonce")
-  String nonce;
-  @JsonKey(name: "channel")
-  String channel;
-  @JsonKey(name: "author")
-  String author;
-  @JsonKey(name: "content")
-  String content;
-  @JsonKey(name: "user")
-  RelationUser? user;
 
   Message(
       {required this.id,
@@ -23,11 +11,23 @@ class Message {
       required this.channel,
       required this.author,
       required this.content,
-      required this.user});
+      required this.user,});
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return _$MessageFromJson(json);
   }
+  @JsonKey(name: '_id')
+  String id;
+  @JsonKey(name: 'nonce')
+  String nonce;
+  @JsonKey(name: 'channel')
+  String channel;
+  @JsonKey(name: 'author')
+  String author;
+  @JsonKey(name: 'content')
+  String content;
+  @JsonKey(name: 'user')
+  RelationUser? user;
 
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 }

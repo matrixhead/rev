@@ -2,26 +2,25 @@ import 'package:http/http.dart' as http;
 import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 
-
 typedef RevResponse = http.Response;
 
 class RevHttpClient {
+  RevHttpClient({
+    required RevConfig config,
+    http.Client? httpClient,
+  })  : httpClient = httpClient ?? http.Client(),
+        apiUrl = '${config.baseUrl}:${config.httpPort}';
+
   final String apiUrl;
   final http.Client httpClient;
   String? _token;
-
-  RevHttpClient({
-    http.Client? httpClient,
-    required RevConfig config,
-  })  : httpClient = httpClient ?? http.Client(),
-        apiUrl = "${config.baseUrl}:${config.httpPort}";
 
   set setToken(String? token) => _token = token;
 
   Map<String, String> _getBaseHeader() {
     final headers = <String, String>{};
     if (_token != null) {
-      headers["X-Session-Token"] = _token!;
+      headers['X-Session-Token'] = _token!;
     }
     return headers;
   }

@@ -103,7 +103,7 @@ Future<List<Channel>> fetchDirectMessageChannels(
   }
 }
 
-//todo: move this to a seperate module of channels
+// TODO(mtrxhead): move this to a seperate module of channels.
 Future<(LinkedHashMap<String, Message>, List<RelationUser>)> fetchMessages(
     {required RevHttpClient httpClient,
     required String id,

@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/models.dart';
 
-Future<SessionDetails> login(RevHttpClient clientConfig,
-    {required String email,
-    String? password,
-    String? challenge,
-    String? friendlyName,
-    String? captcha,}) async {
+Future<SessionDetails> login(
+  RevHttpClient clientConfig, {
+  required String email,
+  String? password,
+  String? challenge,
+  String? friendlyName,
+  String? captcha,
+}) async {
   //
   final body = json.encode(
     {
@@ -34,10 +36,12 @@ Future<SessionDetails> login(RevHttpClient clientConfig,
 }
 
 Future<void> verifyAccount(
-    RevHttpClient clientConfig, String verificationCode) async {
+  RevHttpClient clientConfig,
+  String verificationCode,
+) async {
   try {
     await clientConfig.post(
-      path: "auth/account/verify/$verificationCode",
+      path: 'auth/account/verify/$verificationCode',
     );
     return;
   } on NetworkRevError catch (e) {
@@ -45,20 +49,24 @@ Future<void> verifyAccount(
   }
 }
 
-Future<void> signUp(RevHttpClient clientConfig,
-    {required String email,
-    String? password,
-    String? invite,
-    String? captcha}) async {
-  final body = json.encode({
-    "email": email,
-    "password": password,
-    "captcha": captcha
-  }..removeWhere((key, value) => value == null));
+Future<void> signUp(
+  RevHttpClient clientConfig, {
+  required String email,
+  String? password,
+  String? invite,
+  String? captcha,
+}) async {
+  final body = json.encode(
+    {
+      'email': email,
+      'password': password,
+      'captcha': captcha,
+    }..removeWhere((key, value) => value == null),
+  );
 
   try {
     await clientConfig.post(
-      path: "/auth/account/create",
+      path: '/auth/account/create',
       body: body,
     );
     return;

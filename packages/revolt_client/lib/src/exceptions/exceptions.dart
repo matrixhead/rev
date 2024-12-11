@@ -13,19 +13,18 @@ class RevError implements Exception {
 }
 
 class NetworkRevError extends RevError {
-  //
   NetworkRevError(super.message, this.response);
-
-  final Response response;
 
   factory NetworkRevError.fromRespone({required Response response}) {
     return NetworkRevError(response.body, response);
   }
+
+  final Response response;
 }
 
 class RevApiError extends RevError {
-  final int statuscode;
   RevApiError(super.message, this.statuscode);
+
   factory RevApiError.fromNetworkError(NetworkRevError error) {
     try {
       return RevApiErrorWithResponse(
@@ -38,6 +37,8 @@ class RevApiError extends RevError {
       return RevApiError(error.response.body, error.response.statusCode);
     }
   }
+
+  final int statuscode;
 }
 
 class RevApiErrorWithResponse extends RevApiError {
@@ -46,7 +47,6 @@ class RevApiErrorWithResponse extends RevApiError {
     required this.errorResponse,
     required int statuscode,
   }) : super(message, statuscode);
-  final ApiErrorResponse errorResponse;
 
   factory RevApiErrorWithResponse.fromNetworkError(NetworkRevError error) {
     return RevApiErrorWithResponse(
@@ -56,6 +56,8 @@ class RevApiErrorWithResponse extends RevApiError {
       statuscode: error.response.statusCode,
     );
   }
+
+  final ApiErrorResponse errorResponse;
 }
 
 class RevAuthError extends RevError {
@@ -63,7 +65,7 @@ class RevAuthError extends RevError {
 }
 
 class AccountNotVeifiedError extends RevAuthError {
-  AccountNotVeifiedError() : super("account not verified");
+  AccountNotVeifiedError() : super('account not verified');
 }
 
 //signUp Exception
@@ -76,11 +78,12 @@ class VerificationException extends RevAuthError {
 }
 
 class DataError extends RevError {
-  final RevApiError apiError;
+
+  DataError({required this.apiError}) : super(apiError.message);
 
   factory DataError.fromApiError(RevApiError error) {
     return DataError(apiError: error);
   }
 
-  DataError({required this.apiError}) : super(apiError.message);
+  final RevApiError apiError;
 }

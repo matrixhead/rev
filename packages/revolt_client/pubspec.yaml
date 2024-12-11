@@ -4,25 +4,22 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
-
-dependencies: 
+dependencies:
+  copy_with_extension: ^5.0.4
   freezed_annotation: ^2.0.3
   http: ^1.2.2
   json_annotation: ^4.9.0
   rxdart: ^0.28.0
-  copy_with_extension: ^5.0.4
-  web_socket_channel: ^3.0.1
   shared_preferences: ^2.3.3
-  
-
+  web_socket_channel: ^3.0.1
 
 dev_dependencies:
-  lints: ^5.1.0
-  test: ^1.16.0
-  json_serializable: ^6.0.1
   build_runner: ^2.1.5
-  mockito: ^5.0.16
   copy_with_extension_gen: ^5.0.4
+  json_serializable: ^6.0.1
+  lints: ^5.1.0
+  mockito: ^5.0.16
+  test: ^1.16.0
   very_good_analysis: ^6.0.0

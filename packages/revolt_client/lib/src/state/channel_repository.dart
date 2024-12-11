@@ -9,7 +9,7 @@ class ChannelRepository {
   final Map<String, String> _dmchannelUserMappings = {};
 
   RevChannel addOrUpdateChannel(Channel channel, CurrentUser currentUser) {
-    if (_channels[channel.id] case RevChannel enrichedChannel) {
+    if (_channels[channel.id] case final RevChannel enrichedChannel) {
       enrichedChannel._updateChannel(channel, currentUser);
       return enrichedChannel;
     }

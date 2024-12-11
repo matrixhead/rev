@@ -17,12 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class RevoltClient {
-  final RevHttpClient httpClient;
-  final RevAuth revAuth;
-  late final RevData revData;
-  final RevState revState;
-  final WsChannel wsChannel;
-  late final SharedPreferencesAsync prefs;
 
   RevoltClient({
     Client? httpClient,
@@ -38,31 +32,35 @@ class RevoltClient {
           channel: wsChannel,
         ),
         revAuth = RevAuth() {
-    revData = RevData(revState,this.httpClient);
+    revData = RevData(revState, this.httpClient);
     _init();
   }
+  final RevHttpClient httpClient;
+  final RevAuth revAuth;
+  late final RevData revData;
+  final RevState revState;
+  final WsChannel wsChannel;
+  late final SharedPreferencesAsync prefs;
 
-  _init() async {
+  Future<void> _init() async {
     prefs = SharedPreferencesAsync();
-    setUpAuth();
+    await setUpAuth();
     listenOnWsEvent();
   }
 
-  listenOnWsEvent() {
+  void listenOnWsEvent() {
     wsChannel.stream.listen((event) {
       switch (event) {
-        case ReadyEvent readyEvent:
+        case final ReadyEvent readyEvent:
           revData.onReadyEvent(readyEvent);
-          break;
-case MessageEvent messageEvent:
+        case final  MessageEvent messageEvent:
           revData.onMessageEvent(messageEvent);
-          break;
         default:
       }
     });
   }
 
-  setUpAuth() async {
+  Future<void> setUpAuth() async {
     revAuth.authEvents.listen((authEvent) {
       if (authEvent == AuthStatus.authsucess) {
         httpClient.setToken = revAuth.session!.sessionToken;
@@ -73,33 +71,37 @@ case MessageEvent messageEvent:
     });
 
     if (await prefs.getString('session') case final String json) {
-      revAuth.setSession = SessionDetails.fromJson(parseJsonToMap(json));
+      revAuth.setSession( SessionDetails.fromJson(parseJsonToMap(json)));
     }
   }
 
-  login(
-      {required String email,
-      String? password,
-      String? challenge,
-      String? friendlyName,
-      String? captcha}) async {
-    await revAuth.login(httpClient,
-        email: email,
-        password: password,
-        challenge: challenge,
-        friendlyName: friendlyName,
-        captcha: captcha);
-    prefs.setString('session', jsonEncode(revAuth.session!.toJson()));
+  Future<void> login({
+    required String email,
+    String? password,
+    String? challenge,
+    String? friendlyName,
+    String? captcha,
+  }) async {
+    await revAuth.login(
+      httpClient,
+      email: email,
+      password: password,
+      challenge: challenge,
+      friendlyName: friendlyName,
+      captcha: captcha,
+    );
+    await prefs.setString('session', jsonEncode(revAuth.session!.toJson()));
   }
 
-  verifyAccount({required String verificationCode}) async =>
+  Future<void> verifyAccount({required String verificationCode}) async =>
       revAuth.verifyAccount(httpClient, verificationCode);
 
-  signUp(
-          {required String email,
-          required String password,
-          String? invite,
-          String? captcha}) async =>
+  Future<void> signUp({
+    required String email,
+    required String password,
+    String? invite,
+    String? captcha,
+  }) async =>
       revAuth.signUp(
         httpClient,
         email: email,
@@ -111,24 +113,26 @@ case MessageEvent messageEvent:
   Future<CurrentUser> fetchSelf() async => revData.fetchSelf();
 
   Future<CurrentUser> completeOnboarding({required String username}) async =>
-      revData.completeOnboarding( username);
+      revData.completeOnboarding(username);
 
   Future<RelationUser> fetchUser({required String id}) async =>
-      revData.fetchUser( id: id);
+      revData.fetchUser(id: id);
 
-  Future<RelationUser> sendFriendRequest(
-          {required String username }) async =>
+  Future<RelationUser> sendFriendRequest({
+    required String username,
+  }) async =>
       revData.sendFriendRequest(
-          username: username);
+        username: username,
+      );
 
   Future<RelationUser> acceptFriendRequest({required String id}) async =>
-      revData.acceptFriendRequest( id: id);
+      revData.acceptFriendRequest(id: id);
 
   Future<RevChannel> getDmChannelForUser({required String userId}) async =>
-      revData.getDmChannelForUser( userid: userId);
+      revData.getDmChannelForUser(userid: userId);
 
   Future<RevChannel> getChannelforId({required String channelId}) async =>
-      revData.fetchChannel( channelId: channelId);
+      revData.fetchChannel(channelId: channelId);
 
   Future<List<Channel>> fetchDirectMessageChannels() async =>
       revData.fetchDirectMessageChannels(httpClient);
@@ -143,7 +147,6 @@ case MessageEvent messageEvent:
     bool? includeUsers,
   }) async =>
       revData.fetchMessages(
-        
         id: id,
         after: after,
         before: before,
@@ -159,19 +162,20 @@ case MessageEvent messageEvent:
     String? idempotencykey,
   }) async {
     return revData.sendMessage(
-      
-        channelId: channelId,
-        content: content,
-        idempotencykey: idempotencykey ?? getRandString(20));
+      channelId: channelId,
+      content: content,
+      idempotencykey: idempotencykey ?? getRandString(20),
+    );
   }
 
   BehaviorSubject<AuthStatus> get authEvents => revAuth.authEvents;
 
-  BehaviorSubject<Map<String,RelationUser>> get relationUsersStream => revState.relationUsers;
+  BehaviorSubject<Map<String, RelationUser>> get relationUsersStream =>
+      revState.relationUsers;
 }
 
 String getRandString(int len) {
-  var random = Random.secure();
-  var values = List<int>.generate(len, (i) => random.nextInt(255));
+  final  random = Random.secure();
+  final values = List<int>.generate(len, (i) => random.nextInt(255));
   return base64UrlEncode(values);
 }

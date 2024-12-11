@@ -8,23 +8,13 @@ import 'package:json_annotation/json_annotation.dart';
 part 'channel.g.dart';
 
 enum ChannelType {
-  @JsonValue("DirectMessage")
+  @JsonValue('DirectMessage')
   directMessage,
   unknown
 }
 @CopyWith()
 @JsonSerializable()
 class Channel {
-  @JsonKey(name: "channel_type",unknownEnumValue: ChannelType.unknown)
-  ChannelType channelType;
-  @JsonKey(name: "_id")
-  String id;
-  @JsonKey(name: "active")
-  bool active;
-  @JsonKey(name: "recipients")
-  List<String> recipients;
-  @JsonKey(name: "last_message_id")
-  String? lastMessageId;
 
   Channel({
     required this.channelType,
@@ -36,7 +26,16 @@ class Channel {
 
   factory Channel.fromJson(Map<String, dynamic> json) =>
       _$ChannelFromJson(json);
+  @JsonKey(name: 'channel_type',unknownEnumValue: ChannelType.unknown)
+  ChannelType channelType;
+  @JsonKey(name: '_id')
+  String id;
+  @JsonKey(name: 'active')
+  bool active;
+  @JsonKey(name: 'recipients')
+  List<String> recipients;
+  @JsonKey(name: 'last_message_id')
+  String? lastMessageId;
 
   Map<String, dynamic> toJson() => _$ChannelToJson(this);
 }
-
