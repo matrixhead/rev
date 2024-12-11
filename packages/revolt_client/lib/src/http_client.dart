@@ -11,7 +11,7 @@ class RevHttpClient {
   String? _token;
 
   RevHttpClient({
-    httpClient,
+    http.Client? httpClient,
     required RevConfig config,
   })  : httpClient = httpClient ?? http.Client(),
         apiUrl = "${config.baseUrl}:${config.httpPort}";

@@ -19,11 +19,11 @@ abstract class User extends BaseUser {
   final bool online;
 
   User({
-    required id,
+    required super.id,
     required this.username,
     required this.discriminator,
     required this.online,
-  }) : super(id: id);
+  }) ;
 
   factory User.fromJson(Map<String, dynamic> json) {
     if (json case {'relationship': "User"}) {

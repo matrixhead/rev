@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:http/http.dart';
+import 'package:revolt_client/src/api_wrapper/helpers.dart';
 import 'package:revolt_client/src/auth/auth.dart';
 import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/data/data.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
+import 'package:revolt_client/src/models/models.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
@@ -13,7 +15,6 @@ import 'package:revolt_client/src/ws_channel.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'models/models.dart';
 
 class RevoltClient {
   final RevHttpClient httpClient;
@@ -71,8 +72,8 @@ case MessageEvent messageEvent:
       }
     });
 
-    if (await prefs.getString("session") case String json) {
-      revAuth.setSession = SessionDetails.fromJson(jsonDecode(json));
+    if (await prefs.getString('session') case final String json) {
+      revAuth.setSession = SessionDetails.fromJson(parseJsonToMap(json));
     }
   }
 
@@ -88,7 +89,7 @@ case MessageEvent messageEvent:
         challenge: challenge,
         friendlyName: friendlyName,
         captcha: captcha);
-    prefs.setString("session", jsonEncode(revAuth.session!.toJson()));
+    prefs.setString('session', jsonEncode(revAuth.session!.toJson()));
   }
 
   verifyAccount({required String verificationCode}) async =>

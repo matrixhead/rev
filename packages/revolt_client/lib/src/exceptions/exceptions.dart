@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:http/http.dart';
+import 'package:revolt_client/src/api_wrapper/helpers.dart';
 import 'package:revolt_client/src/models/api_error_response/api_error_response.dart';
 
 class RevError implements Exception {
+  RevError(this.message);
+
   /// Error message
   final String message;
-
-  RevError(this.message);
 
   @override
   String toString() => 'RevError(message: $message)';
@@ -28,26 +27,34 @@ class RevApiError extends RevError {
   final int statuscode;
   RevApiError(super.message, this.statuscode);
   factory RevApiError.fromNetworkError(NetworkRevError error) {
-    try{
-    return RevApiErrorWithResponse(error.message,
+    try {
+      return RevApiErrorWithResponse(
+        error.message,
         errorResponse:
-            ApiErrorResponse.fromJson(jsonDecode(error.response.body)),statuscode: error.response.statusCode);
-    }on Exception {
-     return RevApiError(error.response.body,error.response.statusCode);
+            ApiErrorResponse.fromJson(parseJsonToMap(error.response.body)),
+        statuscode: error.response.statusCode,
+      );
+    } on Exception {
+      return RevApiError(error.response.body, error.response.statusCode);
     }
   }
 }
 
 class RevApiErrorWithResponse extends RevApiError {
-  RevApiErrorWithResponse(String message,
-      {required this.errorResponse, required statuscode})
-      : super(message, statuscode);
+  RevApiErrorWithResponse(
+    String message, {
+    required this.errorResponse,
+    required int statuscode,
+  }) : super(message, statuscode);
   final ApiErrorResponse errorResponse;
 
   factory RevApiErrorWithResponse.fromNetworkError(NetworkRevError error) {
-    return RevApiErrorWithResponse(error.message,
-        errorResponse:
-            ApiErrorResponse.fromJson(jsonDecode(error.response.body)),statuscode: error.response.statusCode);
+    return RevApiErrorWithResponse(
+      error.message,
+      errorResponse:
+          ApiErrorResponse.fromJson(parseJsonToMap(error.response.body)),
+      statuscode: error.response.statusCode,
+    );
   }
 }
 
