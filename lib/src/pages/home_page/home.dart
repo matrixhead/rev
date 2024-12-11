@@ -57,9 +57,12 @@ class ChatOverlay extends StatefulWidget {
 
 class _ChatOverlayState extends State<ChatOverlay> {
   late final PageController _pageController;
+  late final PageStorageBucket _bucket;
   @override
   void initState() {
     _pageController = PageController(initialPage: 0);
+    _bucket = PageStorageBucket();
+
     super.initState();
   }
 
@@ -72,6 +75,10 @@ class _ChatOverlayState extends State<ChatOverlay> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
+      buildWhen: (previous, current) {
+        return previous.currentSelectedChannel !=
+            current.currentSelectedChannel;
+      },
       builder: (context, state) {
         return BlocListener<HomeCubit, HomeState>(
           listener: (context, state) {
@@ -82,21 +89,37 @@ class _ChatOverlayState extends State<ChatOverlay> {
                   curve: Curves.easeOut);
             }
           },
-          child: PageView(
-            onPageChanged: (int page) {
-              context
-                  .read<HomeCubit>()
-                  .setPage(page: page, withAnimation: false);
-            },
-            controller: _pageController,
-            hitTestBehavior: state.page.pageNumber == 0
-                ? HitTestBehavior.translucent
-                : HitTestBehavior.opaque,
-            children: [
-              SizedBox.expand(),
-              if (state.currentSelectedChannel case String currentSelectedChannel)
-               ChatPage(channelId: currentSelectedChannel) 
-            ],
+          child: PageStorage(
+            bucket: _bucket,
+            child: Builder(builder: (context) {
+              return PageView.builder(
+                onPageChanged: (int page) {
+                  context
+                      .read<HomeCubit>()
+                      .setPage(page: page, withAnimation: false);
+                },
+                controller: _pageController,
+                hitTestBehavior: state.page.pageNumber == 0
+                    ? HitTestBehavior.translucent
+                    : HitTestBehavior.opaque,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return SizedBox.expand();
+                  }
+                  return BlocProvider.value(
+                    value: context
+                        .read<HomeCubit>()
+                        .chatCubitChannelMappings
+                        .getorCreateCubit(
+                            channelid: state.currentSelectedChannel!),
+                    child: ChatPageView(
+                      key: PageStorageKey(state.currentSelectedChannel),
+                    ),
+                  );
+                },
+                itemCount: state.currentSelectedChannel == null ? 1 : 2,
+              );
+            }),
           ),
         );
       },

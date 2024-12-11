@@ -1,34 +1,11 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rebar/src/pages/chat_page/cubit/chat_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
-class ChatPage extends StatefulWidget {
-  final String channelId;
-  const ChatPage({super.key, required this.channelId});
 
-  @override
-  State<ChatPage> createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage> {
-  late final ChatCubit chatCubit;
-  @override
-  void initState() {
-    chatCubit = ChatCubit(
-      client: context.read<RevoltClient>(),
-    )..init(widget.channelId);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: chatCubit,
-      child: const ChatPageView(),
-    );
-  }
-}
 
 class ChatPageView extends StatelessWidget {
   const ChatPageView({super.key});
@@ -38,7 +15,7 @@ class ChatPageView extends StatelessWidget {
     return BlocBuilder<ChatCubit, ChatState>(
       builder: (context, state) {
         return Scaffold(
-          body: state is ChatStateChannelLoaded
+          body: state.channel != null
               ? ChatPageBody()
               : Center(child: CircularProgressIndicator()),
         );
@@ -55,7 +32,36 @@ class ChatPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [Expanded(child: Placeholder()), BottomBar()],
+      children: [Expanded(child: MessagesList()), BottomBar()],
+    );
+  }
+}
+
+class MessagesList extends StatelessWidget {
+  const MessagesList({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ChatCubit, ChatState>(
+      builder: (context, state) {
+        if (state.messages case LinkedHashMap<String, Message> messages) {
+          return ListView.builder(
+            reverse: true,
+            itemBuilder: (context, index) {
+              return SizedBox(
+                  height: 50,
+                  child: Card(
+                    child: Text(messages.values.elementAt(index).content),
+                  ));
+            },
+            itemCount: messages.length,
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 }

@@ -25,3 +25,4 @@ dev_dependencies:
   build_runner: ^2.1.5
   mockito: ^5.0.16
   copy_with_extension_gen: ^5.0.4
+  very_good_analysis: ^6.0.0

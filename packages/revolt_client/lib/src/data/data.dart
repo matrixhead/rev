@@ -1,18 +1,20 @@
+import 'dart:collection';
+
+import 'package:http/src/client.dart';
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
-import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
-import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
 
 class RevData {
   final RevState revState;
-  RevData(this.revState);
+  final RevHttpClient httpClient;
+  RevData(this.revState, this.httpClient);
 
   Future<CurrentUser> fetchSelf(
-    RevHttpClient httpClient,
+    
   ) async {
     try {
       return api.fetchSelf(httpClient);
@@ -22,7 +24,7 @@ class RevData {
   }
 
   Future<CurrentUser> completeOnboarding(
-      RevHttpClient httpClient, String username) {
+       String username) {
     try {
       return api.completeOnboarding(httpClient, username);
     } on RevApiError catch (e) {
@@ -30,7 +32,7 @@ class RevData {
     }
   }
 
-  Future<RelationUser> fetchUser(RevHttpClient httpClient,
+  Future<RelationUser> fetchUser(
       {required String id}) {
     try {
       return api.fetchUser(httpClient, id: id);
@@ -39,7 +41,7 @@ class RevData {
     }
   }
 
-  Future<RelationUser> sendFriendRequest(RevHttpClient httpClient,
+  Future<RelationUser> sendFriendRequest(
       {required String username}) {
     try {
       return api.sendFriendRequest(httpClient, username: username);
@@ -48,7 +50,7 @@ class RevData {
     }
   }
 
-  Future<RelationUser> acceptFriendRequest(RevHttpClient httpClient,
+  Future<RelationUser> acceptFriendRequest(
       {required String id}) {
     try {
       return api.acceptFriendRequest(httpClient, id: id);
@@ -57,16 +59,16 @@ class RevData {
     }
   }
 
-  Future<RevChannel> getDmChannelForUser(RevHttpClient httpClient,
+  Future<RevChannel> getDmChannelForUser(
       {required String userid}) async {
     if (revState.channelRepo.getDmChannelForUser(userid)
         case RevChannel channel) {
       return channel;
     }
-    return openDirectMessageChannel(httpClient, id: userid);
+    return openDirectMessageChannel( id: userid);
   }
 
-  Future<RevChannel> openDirectMessageChannel(RevHttpClient httpClient,
+  Future<RevChannel> openDirectMessageChannel(
       {required String id}) async {
     try {
       final channel = await api.openDirectMessageChannel(httpClient, id: id);
@@ -77,7 +79,7 @@ class RevData {
     }
   }
 
-  Future<RevChannel> fetchChannel(RevHttpClient httpClient,
+  Future<RevChannel> fetchChannel(
       {required String channelId}) async {
     if (revState.channelRepo.getChannelforId(channelId)
         case RevChannel channel) {
@@ -100,8 +102,8 @@ class RevData {
     }
   }
 
-  Future<(List<Message>, List<RelationUser>)> fetchMessages(
-      {required RevHttpClient httpClient,
+  Future<void> fetchMessages(
+      {
       required String id,
       int? limit,
       String? before,
@@ -110,7 +112,8 @@ class RevData {
       String? nearby,
       bool? includeUsers}) async {
     try {
-      return api.fetchMessages(
+
+   final   ( messages , _) =  await api.fetchMessages(
         httpClient: httpClient,
         id: id,
         after: after,
@@ -120,13 +123,14 @@ class RevData {
         nearby: nearby,
         sort: sort,
       );
+      revState.channelRepo.getChannelforId(id)?.messages.add(messages);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
   }
 
   Future<Message> sendMessage(
-      {required RevHttpClient httpClient,
+      {
       required String channelId,
       required String content,
       required String idempotencykey}) {
@@ -156,5 +160,13 @@ class RevData {
     for (final channel in readyEvent.channels) {
       revState.channelRepo.addOrUpdateChannel(channel, revState.currentUser!);
     }
+  }
+
+  void onMessageEvent(MessageEvent messageEvent) async {
+    final channel = await fetchChannel(channelId: messageEvent.message.channel);
+    final messages = LinkedHashMap<String,Message>.from( channel.messages.value);
+    messages[messageEvent.message.id] = messageEvent.message;
+    channel.messages.add(messages);
+
   }
 }

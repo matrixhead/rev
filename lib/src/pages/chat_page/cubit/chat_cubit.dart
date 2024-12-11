@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -10,25 +11,26 @@ part 'chat_cubit.freezed.dart';
 class ChatCubit extends Cubit<ChatState> {
   final RevoltClient client;
 
-  StreamSubscription<Map<String, Message>>? _messagesStreamSubscription;
+  StreamSubscription<LinkedHashMap<String, Message>>?
+      _messagesStreamSubscription;
 
   ChatCubit({
     required this.client,
-  }) : super(ChatState.initial());
+  }) : super(ChatState());
 
   init(String channelId) async {
     final channel = await client.getChannelforId(channelId: channelId);
-    emit(ChatState.channelLoaded(channel));
-    channel.messages.listen(listenOnMessages);
+    emit(ChatState(channel));
+    _messagesStreamSubscription = channel.messages.listen(listenOnMessages);
+    client.fetchMessages(id: channelId);
   }
 
-  sendMessage(String message){
-    final loadedState = state as ChatStateChannelLoaded;
-    client.sendMessage(channelId: loadedState.channel.id, content: message);
+  sendMessage(String message) {
+    client.sendMessage(channelId: state.channel!.id, content: message);
   }
 
-  listenOnMessages(Map<String, Message> messages) {
-    print("hi");
+  listenOnMessages(LinkedHashMap<String, Message> messages) {
+    emit(state.copyWith(messages: messages));
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:revolt_client/src/exceptions/exceptions.dart';
@@ -102,7 +103,7 @@ Future<List<Channel>> fetchDirectMessageChannels(
 }
 
 //todo: move this to a seperate module of channels
-Future<(List<Message>, List<RelationUser>)> fetchMessages(
+Future<(LinkedHashMap<String, Message>, List<RelationUser>)> fetchMessages(
     {required RevHttpClient httpClient,
     required String id,
     int? limit,
@@ -123,23 +124,25 @@ Future<(List<Message>, List<RelationUser>)> fetchMessages(
         path: "/channels/$id/messages", queryParameters: queries);
 
     if (includeUsers != null && includeUsers) {
-      final messages =
-          List<Message>.from(jsonDecode(response.body)["messages"].map((v) {
-        return Message.fromJson(v);
-      }));
-      final users = List<RelationUser>.from(jsonDecode(response.body)["users"].map((v) {
+      final LinkedHashMap<String, Message> messages = LinkedHashMap();
+      for (final messageJson in jsonDecode(response.body)["messages"]) {
+        final message = Message.fromJson(messageJson);
+        messages[message.id] = message;
+      }
+      final users =
+          List<RelationUser>.from(jsonDecode(response.body)["users"].map((v) {
         return RelationUser.fromJson(v);
       }));
-      return (messages,users);
-    }else{
-       final messages =
-          List<Message>.from(jsonDecode(response.body).map((v) {
-        return Message.fromJson(v);
-      }));
-     
-      return (messages,<RelationUser>[]);
-    }
+      return (messages, users);
+    } else {
+      final LinkedHashMap<String, Message> messages = LinkedHashMap();
+      for (final messageJson in jsonDecode(response.body)) {
+        final message = Message.fromJson(messageJson);
+        messages[message.id] = message;
+      }
 
+      return (messages, <RelationUser>[]);
+    }
   } on NetworkRevError catch (e) {
     throw RevApiError.fromNetworkError(e);
   }

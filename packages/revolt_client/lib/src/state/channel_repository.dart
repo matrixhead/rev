@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
@@ -26,16 +27,15 @@ class ChannelRepository {
     return _channels[channelId];
   }
 
-  RevChannel? getChannelforId(String channelId){
+  RevChannel? getChannelforId(String channelId) {
     return _channels[channelId];
   }
-
 }
 
 class RevChannel {
   Channel channel;
-  final BehaviorSubject<Map<String, Message>> messages =
-      BehaviorSubject.seeded({});
+  final BehaviorSubject<LinkedHashMap<String, Message>> messages =
+      BehaviorSubject.seeded(LinkedHashMap());
 
   RevChannel._internal({required this.channel});
 
@@ -43,21 +43,20 @@ class RevChannel {
       {required Channel channel, required CurrentUser currentUser}) {
     return RevChannel._internal(
         channel:
-            _removerCurrentUser(channel: channel, currentUser: currentUser));
+            _removeCurrentUser(channel: channel, currentUser: currentUser));
   }
 
   _updateChannel(Channel channel, CurrentUser currentUser) {
     this.channel =
-        _removerCurrentUser(channel: channel, currentUser: currentUser);
+        _removeCurrentUser(channel: channel, currentUser: currentUser);
   }
 
-  static Channel _removerCurrentUser(
+  static Channel _removeCurrentUser(
       {required Channel channel, required CurrentUser currentUser}) {
     final recipientsWOcurrentUser = channel.recipients;
     recipientsWOcurrentUser.remove(currentUser.id);
     return channel.copyWith(recipients: recipientsWOcurrentUser);
   }
-
 
   String get id => channel.id;
 
@@ -65,3 +64,4 @@ class RevChannel {
 
   ChannelType get channelType => channel.channelType;
 }
+

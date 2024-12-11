@@ -6,7 +6,6 @@ import 'package:revolt_client/src/auth/auth.dart';
 import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/data/data.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
-import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
@@ -38,7 +37,7 @@ class RevoltClient {
           channel: wsChannel,
         ),
         revAuth = RevAuth() {
-    revData = RevData(revState);
+    revData = RevData(revState,this.httpClient);
     _init();
   }
 
@@ -53,6 +52,9 @@ class RevoltClient {
       switch (event) {
         case ReadyEvent readyEvent:
           revData.onReadyEvent(readyEvent);
+          break;
+case MessageEvent messageEvent:
+          revData.onMessageEvent(messageEvent);
           break;
         default:
       }
@@ -105,32 +107,32 @@ class RevoltClient {
         invite: invite,
       );
 
-  Future<CurrentUser> fetchSelf() async => revData.fetchSelf(httpClient);
+  Future<CurrentUser> fetchSelf() async => revData.fetchSelf();
 
   Future<CurrentUser> completeOnboarding({required String username}) async =>
-      revData.completeOnboarding(httpClient, username);
+      revData.completeOnboarding( username);
 
   Future<RelationUser> fetchUser({required String id}) async =>
-      revData.fetchUser(httpClient, id: id);
+      revData.fetchUser( id: id);
 
   Future<RelationUser> sendFriendRequest(
           {required String username }) async =>
-      revData.sendFriendRequest(httpClient,
+      revData.sendFriendRequest(
           username: username);
 
   Future<RelationUser> acceptFriendRequest({required String id}) async =>
-      revData.acceptFriendRequest(httpClient, id: id);
+      revData.acceptFriendRequest( id: id);
 
   Future<RevChannel> getDmChannelForUser({required String userId}) async =>
-      revData.getDmChannelForUser(httpClient, userid: userId);
+      revData.getDmChannelForUser( userid: userId);
 
   Future<RevChannel> getChannelforId({required String channelId}) async =>
-      revData.fetchChannel(httpClient, channelId: channelId);
+      revData.fetchChannel( channelId: channelId);
 
   Future<List<Channel>> fetchDirectMessageChannels() async =>
       revData.fetchDirectMessageChannels(httpClient);
 
-  Future<(List<Message>, List<RelationUser>)> fetchMessages({
+  Future<void> fetchMessages({
     required String id,
     int? limit,
     String? before,
@@ -140,7 +142,7 @@ class RevoltClient {
     bool? includeUsers,
   }) async =>
       revData.fetchMessages(
-        httpClient: httpClient,
+        
         id: id,
         after: after,
         before: before,
@@ -156,7 +158,7 @@ class RevoltClient {
     String? idempotencykey,
   }) async {
     return revData.sendMessage(
-        httpClient: httpClient,
+      
         channelId: channelId,
         content: content,
         idempotencykey: idempotencykey ?? getRandString(20));
