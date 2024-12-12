@@ -2,29 +2,38 @@ import 'dart:convert';
 
 import 'package:revolt_client/src/api_wrapper/helpers.dart';
 import 'package:revolt_client/src/config/config.dart';
+import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class WsChannel {
+class RevWsChannel {
+  RevWsChannel({required RevConfig config, WebSocketChannel? channel})
+      : _channel = channel,
+        _uri = Uri.parse('ws://${config.baseUrl}:${config.wsPort}');
 
-  WsChannel({required RevConfig config, WebSocketChannel? channel})
-      : channel = channel ??
-            WebSocketChannel.connect(
-              Uri.parse('ws://${config.baseUrl}:${config.wsPort}'),
-            );
-            
-  final WebSocketChannel channel;
+  WebSocketChannel? _channel;
+  final Uri _uri;
 
-  Future<void> get isReady => channel.ready;
+  WebSocketChannel get _getChannel {
+    if (_channel case final WebSocketChannel channel) {
+      return channel;
+    }
+    throw RevWebsocketNotInitialized();
+  }
+
+  Future<void> get isReady => _getChannel.ready;
 
   Stream<ServerToClientEvents> get stream =>
-      channel.stream.map<ServerToClientEvents>(
+      _getChannel.stream.map<ServerToClientEvents>(
         (event) =>
             ServerToClientEvents.fromJson(parseJsonToMap(event as String)),
       );
+  void init() {
+    _channel = WebSocketChannel.connect(_uri);
+  }
 
   void authenticateWsChannel(String sessionToken) {
     final json = jsonEncode(AuthenticateEvent(token: sessionToken).toJson());
-    channel.sink.add(json);
+    _getChannel.sink.add(json);
   }
 }

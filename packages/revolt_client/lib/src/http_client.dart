@@ -5,24 +5,25 @@ import 'package:revolt_client/src/exceptions/exceptions.dart';
 typedef RevResponse = http.Response;
 
 class RevHttpClient {
-  RevHttpClient({
-    required RevConfig config,
-    http.Client? httpClient,
-  })  : httpClient = httpClient ?? http.Client(),
-        apiUrl = '${config.baseUrl}:${config.httpPort}';
+  RevHttpClient({required RevConfig config, http.Client? httpClient})
+    : httpClient = httpClient ?? http.Client(),
+      apiUrl = '${config.baseUrl}:${config.httpPort}';
 
+  RevHttpClient._internal({required this.apiUrl, required this.httpClient});
   final String apiUrl;
   final http.Client httpClient;
-  String? _token;
-
-  set setToken(String? token) => _token = token;
 
   Map<String, String> _getBaseHeader() {
     final headers = <String, String>{};
-    if (_token != null) {
-      headers['X-Session-Token'] = _token!;
-    }
     return headers;
+  }
+
+  RevHttpClientAuthenticated toAuthenticated(String token) {
+    return RevHttpClientAuthenticated(
+      token: token,
+      httpClient: httpClient,
+      apiUrl: apiUrl,
+    );
   }
 
   Future<RevResponse> post({
@@ -87,5 +88,23 @@ class RevHttpClient {
     } else {
       throw NetworkRevError.fromRespone(response: res);
     }
+  }
+}
+
+class RevHttpClientAuthenticated extends RevHttpClient {
+  RevHttpClientAuthenticated({
+    required String token,
+    required super.httpClient,
+    required super.apiUrl,
+  }) : _token = token,
+       super._internal();
+
+  final String _token;
+
+  @override
+  Map<String, String> _getBaseHeader() {
+    final headers = super._getBaseHeader();
+    headers['X-Session-Token'] = _token;
+    return headers;
   }
 }

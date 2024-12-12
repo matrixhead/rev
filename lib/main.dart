@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   final config = RevConfig.debug().copyWith(baseUrl:"192.168.0.114"); 
-  final revoltClient = RevoltClient(clientConfig: config);
+  final revoltClient = RevoltClient(clientConfig: config)..init();
   runApp(
     EasyLocalization(
       supportedLocales: const [

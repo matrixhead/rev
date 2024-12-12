@@ -78,7 +78,6 @@ class VerificationException extends RevAuthError {
 }
 
 class DataError extends RevError {
-
   DataError({required this.apiError}) : super(apiError.message);
 
   factory DataError.fromApiError(RevApiError error) {
@@ -86,4 +85,20 @@ class DataError extends RevError {
   }
 
   final RevApiError apiError;
+}
+
+class RevDataUnauthorizedAccess extends RevError {
+  RevDataUnauthorizedAccess()
+      : super(
+          'RevData accessed before initialization '
+          'possibly because authentication has not '
+          'been completed',
+        );
+}
+
+class RevWebsocketNotInitialized extends RevError {
+  RevWebsocketNotInitialized()
+      : super(
+          'Websocket accessed before initialization '
+        );
 }

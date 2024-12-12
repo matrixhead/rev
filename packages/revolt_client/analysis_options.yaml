@@ -21,6 +21,8 @@ include: package:very_good_analysis/analysis_options.yaml
 #     - camel_case_types
 
 analyzer:
+  exclude:
+    - "**/*.g.dart"
   errors:
     invalid_annotation_target: ignore
     # lines_longer_than_80_chars: ignore

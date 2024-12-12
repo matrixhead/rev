@@ -2,38 +2,39 @@ import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/api_error_response/api_error_response.dart';
 import 'package:revolt_client/src/models/models.dart';
-import 'package:rxdart/subjects.dart';
+import 'package:revolt_client/src/state/rev_state.dart';
 
 class RevAuth {
-  BehaviorSubject<AuthStatus> authEvents =
-      BehaviorSubject<AuthStatus>(sync: true)..add(AuthStatus.unknown);
+  RevAuth({required RevState state, required RevHttpClient revHttpClient})
+    : _state = state,
+      _revHttpClient = revHttpClient;
 
-  SessionDetails? session;
+  final RevState _state;
+  final RevHttpClient _revHttpClient;
 
-  Future<void> login(
-    RevHttpClient clientConfig, {
+  Future<void> login({
     required String email,
     String? password,
     String? challenge,
     String? friendlyName,
     String? captcha,
   }) async {
-    authEvents.add(AuthStatus.submitted);
+    _state.authRepo.authEvents.add(AuthStatus.submitted);
     try {
-      session = await api.login(
-        clientConfig,
+      _state.authRepo.session = await api.login(
+        _revHttpClient,
         email: email,
         password: password,
         challenge: challenge,
         friendlyName: friendlyName,
         captcha: captcha,
       );
-      authEvents.add(AuthStatus.authsucess);
+      _state.authRepo.authEvents.add(AuthStatus.authsucess);
     } on RevApiError catch (e) {
-      authEvents.add(AuthStatus.authFailed);
+      _state.authRepo.authEvents.add(AuthStatus.authFailed);
       switch (e) {
         case RevApiErrorWithResponse(
-              errorResponse: final ApiErrorResponse error
+              errorResponse: final ApiErrorResponse error,
             )
             when error.errortype == ErrorType.unverifiedAccount:
           throw AccountNotVeifiedError();
@@ -44,23 +45,19 @@ class RevAuth {
   }
 
   void setSession(SessionDetails session) {
-    this.session = session;
-    authEvents.add(AuthStatus.authsucess);
+    _state.authRepo.session = session;
+    _state.authRepo.authEvents.add(AuthStatus.authsucess);
   }
 
-  Future<void> verifyAccount(
-    RevHttpClient clientConfig,
-    String verificationCode,
-  ) async {
+  Future<void> verifyAccount(String verificationCode) async {
     try {
-      return await api.verifyAccount(clientConfig, verificationCode);
+      return await api.verifyAccount(_revHttpClient, verificationCode);
     } on RevApiError catch (e) {
       throw VerificationException(e.toString());
     }
   }
 
-  Future<void> signUp(
-    RevHttpClient clientConfig, {
+  Future<void> signUp({
     required String email,
     required String password,
     String? invite,
@@ -68,7 +65,7 @@ class RevAuth {
   }) async {
     try {
       await api.signUp(
-        clientConfig,
+        _revHttpClient,
         email: email,
         password: password,
         invite: invite,

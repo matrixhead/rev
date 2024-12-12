@@ -10,7 +10,7 @@ import 'package:revolt_client/src/state/rev_state.dart';
 class RevData {
   RevData(this.revState, this.httpClient);
   final RevState revState;
-  final RevHttpClient httpClient;
+  final RevHttpClientAuthenticated httpClient;
 
   Future<CurrentUser> fetchSelf() async {
     try {
