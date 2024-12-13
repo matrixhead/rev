@@ -4,5 +4,6 @@ enum AuthStatus {
   authsucess,
   authFailed,
   notVerified,
+  notOnboarded,
   loggedout,
 }

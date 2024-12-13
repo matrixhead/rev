@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatelessWidget {
-  const SplashPage({Key? key}) : super(key: key);
+  static const route = "/";
+  const SplashPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +11,7 @@ class SplashPage extends StatelessWidget {
 }
 
 class SplashView extends StatelessWidget {
-  const SplashView({Key? key}) : super(key: key);
+  const SplashView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -49,6 +49,20 @@ Future<void> verifyAccount(
   }
 }
 
+Future<void> checkOnboardingStatus(
+  RevHttpClient clientConfig,
+  String verificationCode,
+) async {
+  try {
+    await clientConfig.get(
+      path: '/onboard/hello',
+    );
+    return;
+  } on NetworkRevError catch (e) {
+    throw RevApiError.fromNetworkError(e);
+  }
+}
+
 Future<void> signUp(
   RevHttpClient clientConfig, {
   required String email,

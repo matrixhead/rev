@@ -6,6 +6,7 @@ import 'package:revolt_client/revolt_client.dart';
 import 'widgets/widgets.dart';
 
 class LoginPage extends StatelessWidget {
+  static const route = "/login";
   const LoginPage({super.key});
 
   @override

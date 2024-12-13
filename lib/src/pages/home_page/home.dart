@@ -5,6 +5,7 @@ import 'package:rebar/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class HomePage extends StatelessWidget {
+  static const route = "/home";
   const HomePage({super.key});
 
   @override
