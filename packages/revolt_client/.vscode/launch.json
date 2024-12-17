@@ -8,7 +8,23 @@
             "name": "revolt_client",
             "request": "launch",
             "type": "dart",
-            "program": "example/revolt_client_example.dart"
+        },
+        {
+            "name": "revolt_client(no mock)",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define",
+                "NO-MOCK=true",
+            ],
+            "codeLens": {
+                "for": [
+                    // "run-test",
+                    // "run-test-file",
+                    "debug-test",
+                    "debug-test-file"
+                ],
+                "title": "${debugType} (no mock)" },
         },
         {
             "name": "revolt_client (profile mode)",

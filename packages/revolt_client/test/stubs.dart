@@ -5,7 +5,8 @@ import 'package:mockito/mockito.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 typedef Client = http.Client;
-(String, String) registerLoginStub(Client client, RevConfig config) {
+
+void registerLoginStub(Client client, RevConfig config) {
   when(
     client.post(
       Uri.parse(
@@ -26,7 +27,6 @@ typedef Client = http.Client;
       200,
     ),
   );
-  return ('myemail.example.cm', 'securePassword@123');
 }
 
 void registerOnboardingStub(
@@ -43,4 +43,53 @@ void registerOnboardingStub(
     (_) async =>
         http.Response(jsonEncode({'onboarding': onboardingStatus}), 200),
   );
+}
+
+void registerSignupStub(Client client, RevConfig config) {
+  when(
+    client.post(
+      Uri.parse(
+        'http://${config.baseUrl}:${config.httpPort}/auth/account/create',
+      ),
+      headers: anyNamed('headers'),
+      body: anyNamed('body'),
+    ),
+  ).thenAnswer((_) async => http.Response('', 204));
+}
+
+void registerverifyStub(
+  Client client,
+  RevConfig config,
+  String verificationCode,
+) {
+  when(
+    client.post(
+      Uri.parse(
+        'http://${config.baseUrl}:${config.httpPort}/auth/account/verify/$verificationCode',
+      ),
+      headers: anyNamed('headers'),
+      body: anyNamed('body'),
+    ),
+  ).thenAnswer((_) async => http.Response('', 200));
+}
+
+void registerCompleteOnboardingStub(
+  Client client,
+  RevConfig config,
+  String username,
+) {
+  final responseBody = {
+    '_id': '01JFA9RPGMRVXDNDMMXGZGTVQ7',
+    'username': 'myuser',
+    'discriminator': '3549',
+    'relationship': 'User',
+    'online': false,
+  };
+  when(
+    client.post(
+      Uri.parse('http://${config.baseUrl}:${config.httpPort}/onboard/complete'),
+      headers: anyNamed('headers'),
+      body: anyNamed('body'),
+    ),
+  ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
 }
