@@ -24,17 +24,22 @@ class RevoltClient {
     RevConfig? clientConfig,
     SharedPreferencesAsync? sharedPreferences,
   }) {
+    final revState = RevState();
     final revConfig = clientConfig ?? RevConfig.debug();
     final revHttpClient = RevHttpClient(
       httpClient: httpClient,
       config: revConfig,
+      state: revState,
     );
     final revWsChannel = RevWsChannel(channel: wsChannel, config: revConfig);
     final prefs = sharedPreferences ?? SharedPreferencesAsync();
+    final revAuth = RevAuth(state: revState, revHttpClient: revHttpClient);
     return RevoltClient._internal(
       httpClient: revHttpClient,
       wsChannel: revWsChannel,
       prefs: prefs,
+      revState: revState,
+      revAuth: revAuth,
     );
   }
 
@@ -42,17 +47,19 @@ class RevoltClient {
     required RevHttpClient httpClient,
     required RevWsChannel wsChannel,
     required SharedPreferencesAsync prefs,
+    required RevState revState,
+    required RevAuth revAuth,
   }) : _sharedpreferences = prefs,
        _wsChannel = wsChannel,
-       _httpClient = httpClient {
-    _revAuth = RevAuth(state: _revState, revHttpClient: httpClient);
-  }
+       _httpClient = httpClient,
+       _revState = revState,
+       _revAuth = revAuth;
 
   RevHttpClient _httpClient;
   final RevWsChannel _wsChannel;
   final SharedPreferencesAsync _sharedpreferences;
   late final RevAuth _revAuth;
-  final _revState = RevState();
+  final RevState _revState;
   RevData? _revData;
 
   RevData get _getRevData {
@@ -85,16 +92,10 @@ class RevoltClient {
   Future<void> setUpAuth() async {
     _revState.authRepo.authEvents.listen((authEvent) {
       if (authEvent == AuthStatus.authsucess) {
-        _httpClient = _httpClient.toAuthenticated(
-          _revState.authRepo.session!.sessionToken,
-        );
         _wsChannel.authenticateWsChannel(
           _revState.authRepo.session!.sessionToken,
         );
-        _revData = RevData(
-          _revState,
-          _httpClient as RevHttpClientAuthenticated,
-        );
+        _revData = RevData(_revState, _httpClient);
       }
     });
 
@@ -110,7 +111,7 @@ class RevoltClient {
     String? friendlyName,
     String? captcha,
   }) async {
-    await _revAuth.login(
+    await _revAuth.loginAndCheckOnboarding(
       email: email,
       password: password,
       challenge: challenge,
@@ -141,7 +142,7 @@ class RevoltClient {
   Future<CurrentUser> fetchSelf() async => _getRevData.fetchSelf();
 
   Future<CurrentUser> completeOnboarding({required String username}) async =>
-      _getRevData.completeOnboarding(username);
+      _revAuth.completeOnboarding(username);
 
   Future<RelationUser> fetchUser({required String id}) async =>
       _getRevData.fetchUser(id: id);

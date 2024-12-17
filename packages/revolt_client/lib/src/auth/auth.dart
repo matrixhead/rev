@@ -12,7 +12,7 @@ class RevAuth {
   final RevState _state;
   final RevHttpClient _revHttpClient;
 
-  Future<void> login({
+  Future<void> loginAndCheckOnboarding({
     required String email,
     String? password,
     String? challenge,
@@ -21,7 +21,55 @@ class RevAuth {
   }) async {
     _state.authRepo.authEvents.add(AuthStatus.submitted);
     try {
-      _state.authRepo.session = await api.login(
+      _state.authRepo.session = await login(
+        email: email,
+        captcha: captcha,
+        challenge: challenge,
+        friendlyName: friendlyName,
+        password: password,
+      );
+      final notOnboarded = await checkOnboardingStatus();
+      if (notOnboarded) {
+        _state.authRepo.authEvents.add(AuthStatus.notOnboarded);
+      } else {
+        _state.authRepo.authEvents.add(AuthStatus.authsucess);
+      }
+    } on RevAuthError {
+      _state.authRepo.authEvents.add(AuthStatus.authFailed);
+      rethrow;
+    }
+  }
+
+  Future<bool> checkOnboardingStatus() {
+    try {
+      return api.checkOnboardingStatus(_revHttpClient);
+    } on RevApiError catch (e) {
+      throw RevAuthError(e.toString());
+    }
+  }
+
+  Future<CurrentUser> completeOnboarding(String username) async {
+    try {
+      final currentUser = await api.completeOnboarding(
+        _revHttpClient,
+        username,
+      );
+      _state.authRepo.authEvents.add(AuthStatus.authsucess);
+      return currentUser;
+    } on RevApiError catch (e) {
+      throw RevAuthError(e.toString());
+    }
+  }
+
+  Future<SessionDetails> login({
+    required String email,
+    String? password,
+    String? challenge,
+    String? friendlyName,
+    String? captcha,
+  }) async {
+    try {
+      return await api.login(
         _revHttpClient,
         email: email,
         password: password,
@@ -29,9 +77,7 @@ class RevAuth {
         friendlyName: friendlyName,
         captcha: captcha,
       );
-      _state.authRepo.authEvents.add(AuthStatus.authsucess);
     } on RevApiError catch (e) {
-      _state.authRepo.authEvents.add(AuthStatus.authFailed);
       switch (e) {
         case RevApiErrorWithResponse(
               errorResponse: final ApiErrorResponse error,

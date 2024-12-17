@@ -10,7 +10,7 @@ import 'package:revolt_client/src/state/rev_state.dart';
 class RevData {
   RevData(this.revState, this.httpClient);
   final RevState revState;
-  final RevHttpClientAuthenticated httpClient;
+  final RevHttpClient httpClient;
 
   Future<CurrentUser> fetchSelf() async {
     try {
@@ -20,15 +20,6 @@ class RevData {
     }
   }
 
-  Future<CurrentUser> completeOnboarding(
-    String username,
-  ) {
-    try {
-      return api.completeOnboarding(httpClient, username);
-    } on RevApiError catch (e) {
-      throw DataError.fromApiError(e);
-    }
-  }
 
   Future<RelationUser> fetchUser({
     required String id,

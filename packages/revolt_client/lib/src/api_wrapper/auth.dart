@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:revolt_client/src/api_wrapper/helpers.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/models.dart';
 
@@ -49,15 +50,15 @@ Future<void> verifyAccount(
   }
 }
 
-Future<void> checkOnboardingStatus(
+Future<bool> checkOnboardingStatus(
   RevHttpClient clientConfig,
-  String verificationCode,
 ) async {
   try {
-    await clientConfig.get(
+  final res =   await clientConfig.get(
       path: '/onboard/hello',
     );
-    return;
+  final json = parseJsonToMap(res.body);
+    return json['onboarding'] as bool;
   } on NetworkRevError catch (e) {
     throw RevApiError.fromNetworkError(e);
   }

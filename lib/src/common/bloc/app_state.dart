@@ -1,6 +1,6 @@
 part of 'app_bloc.dart';
 
-enum AppStatus { authenticated, unauthenticated }
+enum AppStatus { authenticated, unauthenticated, notOnboarded }
 
 @immutable
 class AppState extends Equatable {

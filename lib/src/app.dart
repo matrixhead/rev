@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rebar/src/common/bloc/app_bloc.dart';
 import 'package:rebar/src/pages/home_page/home.dart';
 import 'package:rebar/src/pages/login_page/login_page.dart';
+import 'package:rebar/src/pages/onboarding_page/onboarding_page.dart';
 import 'package:rebar/src/pages/splash/splash.dart';
 import 'package:rebar/src/routes.dart';
 import 'package:rebar/src/utils/theme/theme_builder.dart';
@@ -54,6 +55,9 @@ class _AppViewState extends State<AppView> {
             switch (state.appStatus) {
               case AppStatus.authenticated:
                 _navigator.pushNamedAndRemoveUntil(HomePage.route, (route) => false);
+                break;
+              case AppStatus.notOnboarded:
+                _navigator.pushNamedAndRemoveUntil(OnboardingPage.route, (route) => false);
                 break;
               case AppStatus.unauthenticated:
                 _navigator.pushNamedAndRemoveUntil(LoginPage.route, (route) => false);

@@ -29,7 +29,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   ) {
     if (event.authStatus == AuthStatus.authsucess) {
       emit(state.copyWith(appStatus: AppStatus.authenticated));
-    } else if (event.authStatus == AuthStatus.loggedout ||
+    } 
+    else if(event.authStatus == AuthStatus.notOnboarded){
+      emit(state.copyWith(appStatus: AppStatus.notOnboarded));
+    }
+    else if (event.authStatus == AuthStatus.loggedout ||
         event.authStatus == AuthStatus.unknown) {
       emit(state.copyWith(appStatus: AppStatus.unauthenticated));
     }

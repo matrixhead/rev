@@ -20,16 +20,17 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   void verificationCodeChanged(String verificationCode) {
-     emit(state.copyWith(verificationCode: verificationCode));
+    emit(state.copyWith(verificationCode: verificationCode));
   }
 
-  void onSubmit()async {
+  void onSubmit() async {
     _client.signUp(email: state.email, password: state.password);
     emit(state.copyWith(signupCompleted: true));
   }
 
- Future<void> verificationCodeSubmit() async {
-   await _client.verifyAccount(verificationCode: state.verificationCode);
-   emit(state.copyWith(verificationCompleted: true));
+  Future<void> verificationCodeSubmit() async {
+    await _client.verifyAccount(verificationCode: state.verificationCode);
+    //  emit(state.copyWith(verificationCompleted: true));
+    await _client.login(email: state.email, password: state.password);
   }
 }
