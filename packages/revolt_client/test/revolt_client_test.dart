@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
@@ -9,12 +11,23 @@ import 'dummy.dart';
 @GenerateNiceMocks([
   MockSpec<http.Client>(),
   MockSpec<SharedPreferencesAsync>(),
-  MockSpec<WebSocketChannel>(),
+  MockSpec<WebSocketChannel>(as: #$MockWebSocketChannel),
 ])
 import 'revolt_client_test.mocks.dart';
 import 'stubs.dart';
 
 const noMock = (String.fromEnvironment('NO-MOCK') == 'true');
+
+class MockWebSocketChannel extends $MockWebSocketChannel {
+  StreamController<dynamic> mockStreamController = StreamController.broadcast(
+    sync: true,
+  );
+  @override
+  Stream<dynamic> get stream {
+    return mockStreamController.stream;
+  }
+}
+
 void main() {
   late RevConfig config;
   late http.Client mockhttpClient;
@@ -80,11 +93,9 @@ void main() {
         emits(AuthStatus.notOnboarded),
       );
       await revoltClient.completeOnboarding(username: dummyUsername);
-      await expectLater(
-        revoltClient.authEvents,
-        emits(AuthStatus.authsucess),
-      );
-
+      await expectLater(revoltClient.authEvents, emits(AuthStatus.authsucess));
     });
+
+    test('check', () async {});
   });
 }

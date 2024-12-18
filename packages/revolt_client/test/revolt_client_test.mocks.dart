@@ -593,7 +593,7 @@ class MockSharedPreferencesAsync extends _i1.Mock
 /// A class which mocks [WebSocketChannel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebSocketChannel extends _i1.Mock implements _i3.WebSocketChannel {
+class $MockWebSocketChannel extends _i1.Mock implements _i3.WebSocketChannel {
   @override
   _i5.Future<void> get ready => (super.noSuchMethod(
         Invocation.getter(#ready),
