@@ -2,18 +2,21 @@ import 'dart:collection';
 
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
+import 'package:revolt_client/src/data/channel_repo.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
 
 class RevData {
-  RevData(this.state, this.httpClient);
+  RevData(this.state, this.httpClient)
+    : channelRepo = ChannelReposotory(state: state);
   final RevState state;
   final RevHttpClient httpClient;
+  final ChannelReposotory channelRepo;
 
   Future<CurrentUser> fetchSelf() async {
-    if (state.currentUser case final CurrentUser cu) {
+    if (state.userRepoState.currentUser case final CurrentUser cu) {
       return cu;
     }
     try {
@@ -42,7 +45,7 @@ class RevData {
   Future<RelationUser> acceptFriendRequest({required String id}) async {
     try {
       final user = await api.acceptFriendRequest(httpClient, id: id);
-      state.addorUpdateRelationUsers(user);
+      state.userRepoState.addorUpdateRelationUsers(user);
       return user;
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
@@ -50,7 +53,7 @@ class RevData {
   }
 
   Future<RevChannel> getDmChannelForUser({required String userid}) async {
-    if (state.channelRepo.getDmChannelForUser(userid)
+    if (channelRepo.getDmChannelForUser(userid)
         case final RevChannel channel) {
       return channel;
     }
@@ -60,20 +63,26 @@ class RevData {
   Future<RevChannel> openDirectMessageChannel({required String id}) async {
     try {
       final channel = await api.openDirectMessageChannel(httpClient, id: id);
-      return state.channelRepo.addOrUpdateChannel(channel, state.currentUser!);
+      return channelRepo.addOrUpdateChannel(
+        channel,
+        await fetchSelf(),
+      );
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
   }
 
   Future<RevChannel> fetchChannel({required String channelId}) async {
-    if (state.channelRepo.getChannelforId(channelId)
+    if (channelRepo.getChannelforId(channelId)
         case final RevChannel channel) {
       return channel;
     }
     try {
       final channel = await api.fetchChannel(httpClient, channelId: channelId);
-      return state.channelRepo.addOrUpdateChannel(channel, state.currentUser!);
+      return channelRepo.addOrUpdateChannel(
+        channel,
+        await fetchSelf(),
+      );
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -107,7 +116,7 @@ class RevData {
         nearby: nearby,
         sort: sort,
       );
-      state.channelRepo.getChannelforId(id)?.messages.add(messages);
+      channelRepo.getChannelforId(id)?.messages.add(messages);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -130,19 +139,19 @@ class RevData {
     }
   }
 
-  void onReadyEvent(ReadyEvent readyEvent) {
-    final currentRU = state.relationUsers.value;
+  Future<void> onReadyEvent(ReadyEvent readyEvent) async {
+    final currentRU = state.userRepoState.relationUsers.value;
     for (final user in readyEvent.users) {
       switch (user) {
         case final RelationUser relationUser:
           currentRU[relationUser.id] = relationUser;
         case final CurrentUser currentUser:
-          state.currentUser = currentUser;
+          state.userRepoState.currentUser = currentUser;
       }
     }
-    state.relationUsers.add(currentRU);
+    state.userRepoState.relationUsers.add(currentRU);
     for (final channel in readyEvent.channels) {
-      state.channelRepo.addOrUpdateChannel(channel, state.currentUser!);
+      channelRepo.addOrUpdateChannel(channel, await fetchSelf());
     }
   }
 
@@ -156,6 +165,6 @@ class RevData {
   }
 
   void onUserRelationShipEvent(UserRelationShipEvent userRelationShipEvent) {
-    state.addorUpdateRelationUsers(userRelationShipEvent.user);
+    state.userRepoState.addorUpdateRelationUsers(userRelationShipEvent.user);
   }
 }

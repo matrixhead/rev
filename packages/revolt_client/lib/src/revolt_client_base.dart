@@ -1,20 +1,19 @@
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:http/http.dart';
 import 'package:revolt_client/src/api_wrapper/helpers.dart';
 import 'package:revolt_client/src/auth/auth.dart';
 import 'package:revolt_client/src/config/config.dart';
+import 'package:revolt_client/src/data/channel_repo.dart';
 import 'package:revolt_client/src/data/data.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/models.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
-import 'package:revolt_client/src/state/channel_repository.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
 import 'package:revolt_client/src/ws_channel.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class RevoltClient {
@@ -191,19 +190,17 @@ class RevoltClient {
     return _getRevData.sendMessage(
       channelId: channelId,
       content: content,
-      idempotencykey: idempotencykey ?? getRandString(20),
+      idempotencykey: idempotencykey ?? getuuid(20),
     );
   }
 
-  BehaviorSubject<AuthStatus> get authEvents => _revState.authRepoState.authEvents;
+  BehaviorSubject<AuthStatus> get authEvents =>
+      _revState.authRepoState.authEvents;
 
   BehaviorSubject<Map<String, RelationUser>> get relationUsersStream =>
-      _revState.relationUsers;
+      _revState.userRepoState.relationUsers;
 }
 
-// todo change this to uuid
-String getRandString(int len) {
-  final random = Random.secure();
-  final values = List<int>.generate(len, (i) => random.nextInt(255));
-  return base64UrlEncode(values);
+String getuuid(int len) {
+  return const Uuid().v1();
 }

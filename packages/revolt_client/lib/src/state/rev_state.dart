@@ -1,14 +1,16 @@
-import 'package:revolt_client/src/models/user/user.dart';
-import 'package:revolt_client/src/state/authentication_repository.dart';
-import 'package:revolt_client/src/state/channel_repository.dart';
+import 'package:revolt_client/revolt_client.dart';
+import 'package:revolt_client/src/data/channel_repo.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RevState {
   RevState();
-  final ChannelRepositoryState channelRepo = ChannelRepositoryState();
+  final ChannelRepositoryState channelRepoState = ChannelRepositoryState();
   final AuthenticationRepositoryState authRepoState =
       AuthenticationRepositoryState();
-  // TODO: move the following two fields to user repo
+  final UserRepositoryState userRepoState = UserRepositoryState();
+}
+
+class UserRepositoryState {
   final BehaviorSubject<Map<String, RelationUser>> relationUsers =
       BehaviorSubject.seeded(<String, RelationUser>{});
   CurrentUser? currentUser;
@@ -17,4 +19,9 @@ class RevState {
     users[user.id] = user;
     relationUsers.add(users);
   }
+}
+
+class ChannelRepositoryState {
+  final Map<String, RevChannel> channels = {};
+  final Map<String, String> dmchannelUserMappings = {};
 }

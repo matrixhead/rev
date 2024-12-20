@@ -1,34 +1,41 @@
 import 'dart:collection';
+
+import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
-import 'package:revolt_client/src/models/message/message.dart';
-import 'package:revolt_client/src/models/user/user.dart';
+import 'package:revolt_client/src/state/rev_state.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ChannelRepositoryState {
-  final Map<String, RevChannel> _channels = {};
-  final Map<String, String> _dmchannelUserMappings = {};
+class ChannelReposotory {
+  ChannelReposotory({required this.state});
+
+  final RevState state;
 
   RevChannel addOrUpdateChannel(Channel channel, CurrentUser currentUser) {
-    if (_channels[channel.id] case final RevChannel enrichedChannel) {
+    if (state.channelRepoState.channels[channel.id]
+        case final RevChannel enrichedChannel) {
       enrichedChannel._updateChannel(channel, currentUser);
       return enrichedChannel;
     }
-    final enrichedChannel =
-        RevChannel._fromChannel(channel: channel, currentUser: currentUser);
+    final enrichedChannel = RevChannel._fromChannel(
+      channel: channel,
+      currentUser: currentUser,
+    );
     if (channel.channelType == ChannelType.directMessage) {
-      _dmchannelUserMappings[enrichedChannel.otherIds[0]] = channel.id;
+      state.channelRepoState.dmchannelUserMappings[enrichedChannel
+              .otherIds[0]] =
+          channel.id;
     }
-    _channels[channel.id] = enrichedChannel;
+    state.channelRepoState.channels[channel.id] = enrichedChannel;
     return enrichedChannel;
   }
 
   RevChannel? getDmChannelForUser(String userid) {
-    final channelId = _dmchannelUserMappings[userid];
-    return _channels[channelId];
+    final channelId = state.channelRepoState.dmchannelUserMappings[userid];
+    return state.channelRepoState.channels[channelId];
   }
 
   RevChannel? getChannelforId(String channelId) {
-    return _channels[channelId];
+    return state.channelRepoState.channels[channelId];
   }
 }
 
@@ -70,4 +77,12 @@ class RevChannel {
 
   /// Returns the type of the channel.
   ChannelType get channelType => _channel.channelType;
+}
+
+class AuthenticationRepositoryState {
+  BehaviorSubject<AuthStatus> authEvents = BehaviorSubject<AuthStatus>.seeded(
+    AuthStatus.unknown,
+    sync: true,
+  );
+  SessionDetails? session;
 }
