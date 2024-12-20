@@ -71,6 +71,7 @@ class RevoltClient {
   }
 
   Future<void> init() async {
+    await _sharedpreferences.clear();
     await setUpWs();
     await setUpAuth();
   }
@@ -84,16 +85,18 @@ class RevoltClient {
           _getRevData.onReadyEvent(readyEvent);
         case final MessageEvent messageEvent:
           _getRevData.onMessageEvent(messageEvent);
+        case final UserRelationShipEvent userRelationShipEvent:
+          _getRevData.onUserRelationShipEvent(userRelationShipEvent);
         default:
       }
     });
   }
 
   Future<void> setUpAuth() async {
-    _revState.authRepo.authEvents.listen((authEvent) {
+    _revState.authRepoState.authEvents.listen((authEvent) {
       if (authEvent == AuthStatus.authsucess) {
         _wsChannel.authenticateWsChannel(
-          _revState.authRepo.session!.sessionToken,
+          _revState.authRepoState.session!.sessionToken,
         );
         _revData = RevData(_revState, _httpClient);
       }
@@ -120,7 +123,7 @@ class RevoltClient {
     );
     await _sharedpreferences.setString(
       'session',
-      jsonEncode(_revState.authRepo.session!.toJson()),
+      jsonEncode(_revState.authRepoState.session!.toJson()),
     );
   }
 
@@ -192,12 +195,13 @@ class RevoltClient {
     );
   }
 
-  BehaviorSubject<AuthStatus> get authEvents => _revState.authRepo.authEvents;
+  BehaviorSubject<AuthStatus> get authEvents => _revState.authRepoState.authEvents;
 
   BehaviorSubject<Map<String, RelationUser>> get relationUsersStream =>
       _revState.relationUsers;
 }
 
+// todo change this to uuid
 String getRandString(int len) {
   final random = Random.secure();
   final values = List<int>.generate(len, (i) => random.nextInt(255));

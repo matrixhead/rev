@@ -1,0 +1,60 @@
+{
+    "ready_event": {
+        "type": "Ready",
+        "users": [
+            {
+                "_id": "2",
+                "username": "user2",
+                "discriminator": "0002",
+                "relationship": "Incoming",
+                "online": false
+            },
+            {
+                "_id": "1",
+                "username": "user1",
+                "discriminator": "0001",
+                "relations": [
+                    {
+                        "_id": "2",
+                        "status": "Incoming"
+                    }
+                ],
+                "relationship": "User",
+                "online": true
+            }
+        ],
+        "servers": [],
+        "channels": [
+            {
+                "channel_type": "DirectMessage",
+                "_id": "channel_id_1",
+                "active": true,
+                "recipients": [
+                    "1",
+                    "2"
+                ],
+                "last_message_id": "message_id_1"
+            }
+        ],
+        "members": [],
+        "emojis": []
+    },
+    "user_relationship_incoming": {
+        "type": "UserRelationship",
+        "id": "1",
+        "user": {
+            "_id": "3",
+            "username": "user3",
+            "discriminator": "0003",
+            "relationship": "Incoming",
+            "online": false
+        }
+    },
+    "accept_friend_request_response": {
+        "_id": "3",
+        "username": "user3",
+        "discriminator": "0003",
+        "relationship": "Friend",
+        "online": false
+    }
+}

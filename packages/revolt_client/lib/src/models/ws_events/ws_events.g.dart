@@ -47,6 +47,20 @@ Map<String, dynamic> _$ReadyEventToJson(ReadyEvent instance) =>
       'channels': instance.channels,
     };
 
+UserRelationShipEvent _$UserRelationShipEventFromJson(
+        Map<String, dynamic> json) =>
+    UserRelationShipEvent(
+      json['id'] as String,
+      RelationUser.fromJson(json['user'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$UserRelationShipEventToJson(
+        UserRelationShipEvent instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'user': instance.user,
+    };
+
 UnknownEvent _$UnknownEventFromJson(Map<String, dynamic> json) => UnknownEvent(
       type: json['type'] as String,
     );

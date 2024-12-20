@@ -19,8 +19,8 @@ class RevHttpClient {
 
   Map<String, String> _getBaseHeader() {
     final headers = <String, String>{};
-    if (state.authRepo.session != null) {
-      headers['X-Session-Token'] = state.authRepo.session!.sessionToken;
+    if (state.authRepoState.session != null) {
+      headers['X-Session-Token'] = state.authRepoState.session!.sessionToken;
     }
     return headers;
   }

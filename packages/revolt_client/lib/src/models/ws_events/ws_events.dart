@@ -19,6 +19,8 @@ abstract class ServerToClientEvents extends WsEvents {
         return MessageEvent.fromJson(json);
       case ReadyEvent.type:
         return ReadyEvent.fromJson(json);
+      case UserRelationShipEvent.type:
+        return UserRelationShipEvent.fromJson(json);
       default:
         return UnknownEvent.fromJson(json);
     }
@@ -112,6 +114,25 @@ class ReadyEvent extends ServerToClientEvents {
   final List<Channel> channels;
 
   Map<String, dynamic> toJson() => _$ReadyEventToJson(this);
+}
+
+
+@JsonSerializable()
+class UserRelationShipEvent extends ServerToClientEvents {
+
+  UserRelationShipEvent(this.id, this.user);
+
+  factory UserRelationShipEvent.fromJson(Map<String, dynamic> json) {
+    return _$UserRelationShipEventFromJson(json);
+  }
+
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  static const type = 'UserRelationship';
+
+  final String id;
+  final RelationUser user;
+
+  Map<String, dynamic> toJson() => _$UserRelationShipEventToJson(this);
 }
 
 @JsonSerializable()

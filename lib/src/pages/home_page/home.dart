@@ -137,7 +137,15 @@ class Stage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: Icon(Icons.recent_actors),
+          leading: InkWell(
+              onLongPress: () async {
+                final user = await context.read<RevoltClient>().fetchSelf();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('${user.username}#${user.discriminator}'),
+                  duration: const Duration(seconds: 1),
+                ));
+              },
+              child: Icon(Icons.recent_actors)),
           title: Text("Friends"),
           actions: [
             IconButton(onPressed: () {}, icon: Icon(Icons.add_comment)),

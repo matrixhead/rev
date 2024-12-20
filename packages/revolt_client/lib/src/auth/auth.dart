@@ -19,9 +19,9 @@ class RevAuth {
     String? friendlyName,
     String? captcha,
   }) async {
-    _state.authRepo.authEvents.add(AuthStatus.submitted);
+    _state.authRepoState.authEvents.add(AuthStatus.submitted);
     try {
-      _state.authRepo.session = await login(
+      _state.authRepoState.session = await login(
         email: email,
         captcha: captcha,
         challenge: challenge,
@@ -30,12 +30,12 @@ class RevAuth {
       );
       final notOnboarded = await checkOnboardingStatus();
       if (notOnboarded) {
-        _state.authRepo.authEvents.add(AuthStatus.notOnboarded);
+        _state.authRepoState.authEvents.add(AuthStatus.notOnboarded);
       } else {
-        _state.authRepo.authEvents.add(AuthStatus.authsucess);
+        _state.authRepoState.authEvents.add(AuthStatus.authsucess);
       }
     } on RevAuthError {
-      _state.authRepo.authEvents.add(AuthStatus.authFailed);
+      _state.authRepoState.authEvents.add(AuthStatus.authFailed);
       rethrow;
     }
   }
@@ -54,7 +54,7 @@ class RevAuth {
         _revHttpClient,
         username,
       );
-      _state.authRepo.authEvents.add(AuthStatus.authsucess);
+      _state.authRepoState.authEvents.add(AuthStatus.authsucess);
       return currentUser;
     } on RevApiError catch (e) {
       throw RevAuthError(e.toString());
@@ -91,8 +91,8 @@ class RevAuth {
   }
 
   void setSession(SessionDetails session) {
-    _state.authRepo.session = session;
-    _state.authRepo.authEvents.add(AuthStatus.authsucess);
+    _state.authRepoState.session = session;
+    _state.authRepoState.authEvents.add(AuthStatus.authsucess);
   }
 
   Future<void> verifyAccount(String verificationCode) async {

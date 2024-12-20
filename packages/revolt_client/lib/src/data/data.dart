@@ -8,11 +8,14 @@ import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
 
 class RevData {
-  RevData(this.revState, this.httpClient);
-  final RevState revState;
+  RevData(this.state, this.httpClient);
+  final RevState state;
   final RevHttpClient httpClient;
 
   Future<CurrentUser> fetchSelf() async {
+    if (state.currentUser case final CurrentUser cu) {
+      return cu;
+    }
     try {
       return api.fetchSelf(httpClient);
     } on RevApiError catch (e) {
@@ -20,10 +23,7 @@ class RevData {
     }
   }
 
-
-  Future<RelationUser> fetchUser({
-    required String id,
-  }) {
+  Future<RelationUser> fetchUser({required String id}) {
     try {
       return api.fetchUser(httpClient, id: id);
     } on RevApiError catch (e) {
@@ -31,9 +31,7 @@ class RevData {
     }
   }
 
-  Future<RelationUser> sendFriendRequest({
-    required String username,
-  }) {
+  Future<RelationUser> sendFriendRequest({required String username}) {
     try {
       return api.sendFriendRequest(httpClient, username: username);
     } on RevApiError catch (e) {
@@ -41,49 +39,41 @@ class RevData {
     }
   }
 
-  Future<RelationUser> acceptFriendRequest({
-    required String id,
-  }) {
+  Future<RelationUser> acceptFriendRequest({required String id}) async {
     try {
-      return api.acceptFriendRequest(httpClient, id: id);
+      final user = await api.acceptFriendRequest(httpClient, id: id);
+      state.addorUpdateRelationUsers(user);
+      return user;
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
   }
 
-  Future<RevChannel> getDmChannelForUser({
-    required String userid,
-  }) async {
-    if (revState.channelRepo.getDmChannelForUser(userid)
+  Future<RevChannel> getDmChannelForUser({required String userid}) async {
+    if (state.channelRepo.getDmChannelForUser(userid)
         case final RevChannel channel) {
       return channel;
     }
     return openDirectMessageChannel(id: userid);
   }
 
-  Future<RevChannel> openDirectMessageChannel({
-    required String id,
-  }) async {
+  Future<RevChannel> openDirectMessageChannel({required String id}) async {
     try {
       final channel = await api.openDirectMessageChannel(httpClient, id: id);
-      return revState.channelRepo
-          .addOrUpdateChannel(channel, revState.currentUser!);
+      return state.channelRepo.addOrUpdateChannel(channel, state.currentUser!);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
   }
 
-  Future<RevChannel> fetchChannel({
-    required String channelId,
-  }) async {
-    if (revState.channelRepo.getChannelforId(channelId)
+  Future<RevChannel> fetchChannel({required String channelId}) async {
+    if (state.channelRepo.getChannelforId(channelId)
         case final RevChannel channel) {
       return channel;
     }
     try {
       final channel = await api.fetchChannel(httpClient, channelId: channelId);
-      return revState.channelRepo
-          .addOrUpdateChannel(channel, revState.currentUser!);
+      return state.channelRepo.addOrUpdateChannel(channel, state.currentUser!);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -117,7 +107,7 @@ class RevData {
         nearby: nearby,
         sort: sort,
       );
-      revState.channelRepo.getChannelforId(id)?.messages.add(messages);
+      state.channelRepo.getChannelforId(id)?.messages.add(messages);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -141,26 +131,31 @@ class RevData {
   }
 
   void onReadyEvent(ReadyEvent readyEvent) {
-    final currentRU = revState.relationUsers.value;
+    final currentRU = state.relationUsers.value;
     for (final user in readyEvent.users) {
       switch (user) {
         case final RelationUser relationUser:
           currentRU[relationUser.id] = relationUser;
         case final CurrentUser currentUser:
-          revState.currentUser = currentUser;
+          state.currentUser = currentUser;
       }
     }
-    revState.relationUsers.add(currentRU);
+    state.relationUsers.add(currentRU);
     for (final channel in readyEvent.channels) {
-      revState.channelRepo.addOrUpdateChannel(channel, revState.currentUser!);
+      state.channelRepo.addOrUpdateChannel(channel, state.currentUser!);
     }
   }
 
   Future<void> onMessageEvent(MessageEvent messageEvent) async {
     final channel = await fetchChannel(channelId: messageEvent.message.channel);
-    final messages =
-        LinkedHashMap<String, Message>.from(channel.messages.value);
+    final messages = LinkedHashMap<String, Message>.from(
+      channel.messages.value,
+    );
     messages[messageEvent.message.id] = messageEvent.message;
     channel.messages.add(messages);
+  }
+
+  void onUserRelationShipEvent(UserRelationShipEvent userRelationShipEvent) {
+    state.addorUpdateRelationUsers(userRelationShipEvent.user);
   }
 }

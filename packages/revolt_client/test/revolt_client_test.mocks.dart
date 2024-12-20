@@ -772,3 +772,68 @@ class $MockWebSocketChannel extends _i1.Mock implements _i3.WebSocketChannel {
         ),
       ) as _i4.StreamChannel<S>);
 }
+
+/// A class which mocks [WebSocketSink].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWebSocketSink extends _i1.Mock implements _i3.WebSocketSink {
+  @override
+  _i5.Future<dynamic> get done => (super.noSuchMethod(
+        Invocation.getter(#done),
+        returnValue: _i5.Future<dynamic>.value(),
+        returnValueForMissingStub: _i5.Future<dynamic>.value(),
+      ) as _i5.Future<dynamic>);
+
+  @override
+  _i5.Future<dynamic> close([
+    int? closeCode,
+    String? closeReason,
+  ]) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #close,
+          [
+            closeCode,
+            closeReason,
+          ],
+        ),
+        returnValue: _i5.Future<dynamic>.value(),
+        returnValueForMissingStub: _i5.Future<dynamic>.value(),
+      ) as _i5.Future<dynamic>);
+
+  @override
+  void add(dynamic data) => super.noSuchMethod(
+        Invocation.method(
+          #add,
+          [data],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void addError(
+    Object? error, [
+    StackTrace? stackTrace,
+  ]) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #addError,
+          [
+            error,
+            stackTrace,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i5.Future<dynamic> addStream(_i5.Stream<dynamic>? stream) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addStream,
+          [stream],
+        ),
+        returnValue: _i5.Future<dynamic>.value(),
+        returnValueForMissingStub: _i5.Future<dynamic>.value(),
+      ) as _i5.Future<dynamic>);
+}

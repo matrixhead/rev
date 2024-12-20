@@ -8,8 +8,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class RevWsChannel {
   RevWsChannel({required RevConfig config, WebSocketChannel? channel})
-      : _channel = channel,
-        _uri = Uri.parse('ws://${config.baseUrl}:${config.wsPort}');
+    : _channel = channel,
+      _uri = Uri.parse('ws://${config.baseUrl}:${config.wsPort}');
 
   WebSocketChannel? _channel;
   final Uri _uri;
@@ -24,12 +24,11 @@ class RevWsChannel {
   Future<void> get isReady => _getChannel.ready;
 
   Stream<ServerToClientEvents> get stream =>
-      _getChannel.stream.map<ServerToClientEvents>(
-        (event) =>
-            ServerToClientEvents.fromJson(parseJsonToMap(event as String)),
-      );
+      _getChannel.stream.map<ServerToClientEvents>((event) {
+        return ServerToClientEvents.fromJson(parseJsonToMap(event as String));
+      });
   void init() {
-    _channel = WebSocketChannel.connect(_uri);
+    _channel ??= WebSocketChannel.connect(_uri);
   }
 
   void authenticateWsChannel(String sessionToken) {

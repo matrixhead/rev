@@ -4,7 +4,7 @@ import 'package:revolt_client/src/models/message/message.dart';
 import 'package:revolt_client/src/models/user/user.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ChannelRepository {
+class ChannelRepositoryState {
   final Map<String, RevChannel> _channels = {};
   final Map<String, String> _dmchannelUserMappings = {};
 

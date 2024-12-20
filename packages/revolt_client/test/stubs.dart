@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:revolt_client/revolt_client.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+import 'revolt_client_test.dart';
 
 typedef Client = http.Client;
 
@@ -92,4 +95,42 @@ void registerCompleteOnboardingStub(
       body: anyNamed('body'),
     ),
   ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
+}
+
+void registeracceptFriendRequestStub(
+  Client client,
+  RevConfig config,
+  String username,
+  String discriminator,
+) {
+
+  when(
+    client.put(
+      Uri.parse(
+       'http://${config.baseUrl}:${config.httpPort}/users/$username%23$discriminator/friend'),
+      
+      headers: anyNamed('headers'),
+      body: anyNamed('body'),
+      encoding: anyNamed('encoding'),
+    ),
+  ).thenAnswer(
+    (_) async => http.Response(
+      jsonEncode(mockJson['accept_friend_request_response']),
+      200,
+    ),
+  );
+}
+
+void addMockReadyevent(WebSocketChannel ws) {
+  if (ws case final MockWebSocketChannel mws) {
+    mws.mockStreamController.add(jsonEncode(mockJson['ready_event']));
+  }
+}
+
+void addMockUserRelationshipWithIncoming(WebSocketChannel ws) {
+  if (ws case final MockWebSocketChannel mws) {
+    mws.mockStreamController.add(
+      jsonEncode(mockJson['user_relationship_incoming']),
+    );
+  }
 }
