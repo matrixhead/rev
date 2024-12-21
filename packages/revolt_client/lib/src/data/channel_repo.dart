@@ -10,69 +10,60 @@ class ChannelReposotory {
 
   final RevState state;
 
-  RevChannel addOrUpdateChannel(Channel channel, CurrentUser currentUser) {
-    if (state.channelRepoState.channels[channel.id]
-        case final RevChannel enrichedChannel) {
-      enrichedChannel._updateChannel(channel, currentUser);
-      return enrichedChannel;
+  RevChannel addOrUpdateChannel(Channel channel) {
+    if (state.channelRepoState.channelStates[channel.id]
+        case final RevChannelState channelState) {
+      final revChannel = RevChannel(channelState: channelState)
+        .._updateChannel(channel);
+      return revChannel;
     }
-    final enrichedChannel = RevChannel._fromChannel(
-      channel: channel,
-      currentUser: currentUser,
+    final channelState = RevChannelState(channel: channel);
+    state.channelRepoState.channelStates[channel.id] = channelState;
+
+    return RevChannel(channelState: channelState);
+  }
+
+  void addChannelUserMapping(String currentuserId, Channel dmChannel) {
+    final otherUserId = dmChannel.recipients.firstWhere(
+      (val) => val != currentuserId,
     );
-    if (channel.channelType == ChannelType.directMessage) {
-      state.channelRepoState.dmchannelUserMappings[enrichedChannel
-              .otherIds[0]] =
-          channel.id;
-    }
-    state.channelRepoState.channels[channel.id] = enrichedChannel;
-    return enrichedChannel;
+    state.channelRepoState.dmchannelUserMappings[otherUserId] = dmChannel.id;
   }
 
   RevChannel? getDmChannelForUser(String userid) {
     final channelId = state.channelRepoState.dmchannelUserMappings[userid];
-    return state.channelRepoState.channels[channelId];
+    if (state.channelRepoState.channelStates[channelId]
+        case final RevChannelState channelState) {
+      return RevChannel(channelState: channelState);
+    }
+    return null;
   }
 
   RevChannel? getChannelforId(String channelId) {
-    return state.channelRepoState.channels[channelId];
+    if (state.channelRepoState.channelStates[channelId]
+        case final RevChannelState channelState) {
+      return RevChannel(channelState: channelState);
+    }
+    return null;
   }
-}
-
-class RevChannelState {
-  RevChannelState({required Channel channel}) : _channel = channel;
-  Channel _channel;
-
-  final List<ClientRevMessage> _sentMessages = [];
-
-  final LinkedHashMap<String, ServerRevMessage> _messages = LinkedHashMap();
-
-  final BehaviorSubject<Iterable<RevMessage>> messages = BehaviorSubject.seeded(
-    [],
-  );
 }
 
 /// A class representing a channel in the Revolt client.
 class RevChannel {
-  RevChannel._internal({required Channel channel}) : _channel = channel;
+  RevChannel({required RevChannelState channelState})
+    : _channelState = channelState;
 
-  factory RevChannel._fromChannel({
-    required Channel channel,
-    required CurrentUser currentUser,
-  }) {
-    return RevChannel._internal(
-      channel: _removeCurrentUser(channel: channel, currentUser: currentUser),
-    );
-  }
-  Channel _channel;
+  final RevChannelState _channelState;
 
-  final List<ClientRevMessage> _sentMessages = [];
+  Channel get _channel => _channelState.channel;
 
-  final LinkedHashMap<String, ServerRevMessage> _messages = LinkedHashMap();
+  List<ClientRevMessage> get _sentMessages => _channelState.sentMessages;
 
-  final BehaviorSubject<Iterable<RevMessage>> messages = BehaviorSubject.seeded(
-    [],
-  );
+  LinkedHashMap<String, ServerRevMessage> get _messages =>
+      _channelState.messages;
+
+  BehaviorSubject<Iterable<RevMessage>> get messages =>
+      _channelState.messagesSubject;
 
   void emitMessages() {
     final messageIter = _messages.values.cast<RevMessage>();
@@ -94,23 +85,15 @@ class RevChannel {
     emitMessages();
   }
 
-  void _updateChannel(Channel channel, CurrentUser currentUser) {
-    _channel = _removeCurrentUser(channel: channel, currentUser: currentUser);
-  }
-
-  static Channel _removeCurrentUser({
-    required Channel channel,
-    required CurrentUser currentUser,
-  }) {
-    final recipientsWOcurrentUser = channel.recipients..remove(currentUser.id);
-    return channel.copyWith(recipients: recipientsWOcurrentUser);
+  void _updateChannel(Channel channel) {
+    _channelState.channel = channel;
   }
 
   /// Returns the unique identifier of the channel.
   String get id => _channel.id;
 
   /// Returns a list of recipient IDs associated with the channel.
-  List<String> get otherIds => _channel.recipients;
+  List<String> get recipients => _channel.recipients;
 
   /// Returns the type of the channel.
   ChannelType get channelType => _channel.channelType;

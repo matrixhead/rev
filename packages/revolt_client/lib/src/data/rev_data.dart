@@ -60,7 +60,8 @@ class RevData {
   Future<RevChannel> openDirectMessageChannel({required String id}) async {
     try {
       final channel = await api.openDirectMessageChannel(httpClient, id: id);
-      return channelRepo.addOrUpdateChannel(channel, await fetchSelf());
+      channelRepo.addChannelUserMapping((await fetchSelf()).id, channel);
+      return channelRepo.addOrUpdateChannel(channel);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -72,7 +73,10 @@ class RevData {
     }
     try {
       final channel = await api.fetchChannel(httpClient, channelId: channelId);
-      return channelRepo.addOrUpdateChannel(channel, await fetchSelf());
+      if (channel.channelType == ChannelType.directMessage) {
+        channelRepo.addChannelUserMapping((await fetchSelf()).id, channel);
+      }
+      return channelRepo.addOrUpdateChannel(channel);
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
     }
@@ -118,10 +122,10 @@ class RevData {
     required String idempotencyKey,
   }) async {
     try {
-      final channel = channelRepo.getChannelforId(channelId)!
-      ..addSendMessage(
-        ClientRevMessage(content: content, idempotencyKey: idempotencyKey),
-      );
+      final channel =
+          channelRepo.getChannelforId(channelId)!..addSendMessage(
+            ClientRevMessage(content: content, idempotencyKey: idempotencyKey),
+          );
       final message = await api.sendMessage(
         httpClient: httpClient,
         channelId: channelId,
@@ -147,7 +151,13 @@ class RevData {
     }
     state.userRepoState.relationUsers.add(currentRU);
     for (final channel in readyEvent.channels) {
-      channelRepo.addOrUpdateChannel(channel, await fetchSelf());
+      channelRepo.addOrUpdateChannel(channel);
+      if (channel.channelType == ChannelType.directMessage) {
+        channelRepo.addChannelUserMapping(
+          state.userRepoState.currentUser!.id,
+          channel,
+        );
+      }
     }
   }
 

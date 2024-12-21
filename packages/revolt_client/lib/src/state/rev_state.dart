@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/data/channel_repo.dart';
+import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RevState {
@@ -22,7 +25,7 @@ class UserRepositoryState {
 }
 
 class ChannelRepositoryState {
-  final Map<String, RevChannel> channels = {};
+  final Map<String, RevChannelState> channelStates = {};
   final Map<String, String> dmchannelUserMappings = {};
 }
 
@@ -32,4 +35,17 @@ class AuthenticationRepositoryState {
     sync: true,
   );
   SessionDetails? session;
+}
+
+class RevChannelState {
+  RevChannelState({required this.channel});
+
+  Channel channel;
+
+  final List<ClientRevMessage> sentMessages = [];
+
+  final LinkedHashMap<String, ServerRevMessage> messages = LinkedHashMap();
+
+  final BehaviorSubject<Iterable<RevMessage>> messagesSubject =
+      BehaviorSubject.seeded([]);
 }
