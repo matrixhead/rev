@@ -25,3 +25,11 @@ class ChannelRepositoryState {
   final Map<String, RevChannel> channels = {};
   final Map<String, String> dmchannelUserMappings = {};
 }
+
+class AuthenticationRepositoryState {
+  BehaviorSubject<AuthStatus> authEvents = BehaviorSubject<AuthStatus>.seeded(
+    AuthStatus.unknown,
+    sync: true,
+  );
+  SessionDetails? session;
+}

@@ -17,8 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChatState {
   RevChannel? get channel => throw _privateConstructorUsedError;
-  LinkedHashMap<String, Message>? get messages =>
-      throw _privateConstructorUsedError;
+  Iterable<RevMessage>? get messages => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -32,7 +31,7 @@ abstract class $ChatStateCopyWith<$Res> {
   factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
-  $Res call({RevChannel? channel, LinkedHashMap<String, Message>? messages});
+  $Res call({RevChannel? channel, Iterable<RevMessage>? messages});
 }
 
 /// @nodoc
@@ -61,7 +60,7 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
       messages: freezed == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as LinkedHashMap<String, Message>?,
+              as Iterable<RevMessage>?,
     ) as $Val);
   }
 }
@@ -74,7 +73,7 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({RevChannel? channel, LinkedHashMap<String, Message>? messages});
+  $Res call({RevChannel? channel, Iterable<RevMessage>? messages});
 }
 
 /// @nodoc
@@ -101,7 +100,7 @@ class __$$ChatStateImplCopyWithImpl<$Res>
       freezed == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as LinkedHashMap<String, Message>?,
+              as Iterable<RevMessage>?,
     ));
   }
 }
@@ -114,25 +113,12 @@ class _$ChatStateImpl implements _ChatState {
   @override
   final RevChannel? channel;
   @override
-  final LinkedHashMap<String, Message>? messages;
+  final Iterable<RevMessage>? messages;
 
   @override
   String toString() {
     return 'ChatState(channel: $channel, messages: $messages)';
   }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ChatStateImpl &&
-            (identical(other.channel, channel) || other.channel == channel) &&
-            const DeepCollectionEquality().equals(other.messages, messages));
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, channel, const DeepCollectionEquality().hash(messages));
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -146,12 +132,12 @@ class _$ChatStateImpl implements _ChatState {
 abstract class _ChatState implements ChatState {
   factory _ChatState(
       [final RevChannel? channel,
-      final LinkedHashMap<String, Message>? messages]) = _$ChatStateImpl;
+      final Iterable<RevMessage>? messages]) = _$ChatStateImpl;
 
   @override
   RevChannel? get channel;
   @override
-  LinkedHashMap<String, Message>? get messages;
+  Iterable<RevMessage>? get messages;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

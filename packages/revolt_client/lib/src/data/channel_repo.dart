@@ -39,6 +39,19 @@ class ChannelReposotory {
   }
 }
 
+class RevChannelState {
+  RevChannelState({required Channel channel}) : _channel = channel;
+  Channel _channel;
+
+  final List<ClientRevMessage> _sentMessages = [];
+
+  final LinkedHashMap<String, ServerRevMessage> _messages = LinkedHashMap();
+
+  final BehaviorSubject<Iterable<RevMessage>> messages = BehaviorSubject.seeded(
+    [],
+  );
+}
+
 /// A class representing a channel in the Revolt client.
 class RevChannel {
   RevChannel._internal({required Channel channel}) : _channel = channel;
@@ -53,9 +66,33 @@ class RevChannel {
   }
   Channel _channel;
 
-  /// A BehaviorSubject that holds a seeded LinkedHashMap of messages.
-  final BehaviorSubject<LinkedHashMap<String, Message>> messages =
-      BehaviorSubject.seeded(LinkedHashMap());
+  final List<ClientRevMessage> _sentMessages = [];
+
+  final LinkedHashMap<String, ServerRevMessage> _messages = LinkedHashMap();
+
+  final BehaviorSubject<Iterable<RevMessage>> messages = BehaviorSubject.seeded(
+    [],
+  );
+
+  void emitMessages() {
+    final messageIter = _messages.values.cast<RevMessage>();
+    final sentMessagesIter = _sentMessages.cast<RevMessage>();
+    final iterable = messageIter.followedBy(sentMessagesIter);
+    messages.add(iterable);
+  }
+
+  void addSendMessage(ClientRevMessage message) {
+    _sentMessages.add(message);
+    emitMessages();
+  }
+
+  void addMessages(List<Message> messages) {
+    for (final message in messages) {
+      _messages[message.id] = ServerRevMessage.fromMessage(message: message);
+      _sentMessages.removeWhere((val) => val.idempotencyKey == message.nonce);
+    }
+    emitMessages();
+  }
 
   void _updateChannel(Channel channel, CurrentUser currentUser) {
     _channel = _removeCurrentUser(channel: channel, currentUser: currentUser);
@@ -79,10 +116,23 @@ class RevChannel {
   ChannelType get channelType => _channel.channelType;
 }
 
-class AuthenticationRepositoryState {
-  BehaviorSubject<AuthStatus> authEvents = BehaviorSubject<AuthStatus>.seeded(
-    AuthStatus.unknown,
-    sync: true,
-  );
-  SessionDetails? session;
+abstract class RevMessage {
+  RevMessage({required this.content});
+
+  final String content;
+}
+
+class ClientRevMessage implements RevMessage {
+  ClientRevMessage({required this.content, required this.idempotencyKey});
+  final String idempotencyKey;
+
+  @override
+  final String content;
+}
+
+class ServerRevMessage implements RevMessage {
+  ServerRevMessage.fromMessage({required this.message});
+  final Message message;
+  @override
+  String get content => message.content;
 }

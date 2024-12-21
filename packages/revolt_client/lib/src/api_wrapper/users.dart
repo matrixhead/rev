@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:revolt_client/src/api_wrapper/helpers.dart';
@@ -104,7 +103,7 @@ Future<List<Channel>> fetchDirectMessageChannels(
 }
 
 // TODO(mtrxhead): move this to a seperate module of channels.
-Future<(LinkedHashMap<String, Message>, List<RelationUser>)> fetchMessages(
+Future<(List<Message>, List<RelationUser>)> fetchMessages(
     {required RevHttpClient httpClient,
     required String id,
     int? limit,
@@ -126,12 +125,12 @@ Future<(LinkedHashMap<String, Message>, List<RelationUser>)> fetchMessages(
 
     if (includeUsers != null && includeUsers) {
       // ignore: prefer_collection_literals
-      final  messages = LinkedHashMap<String,Message>();
+      final  messages = <Message>[];
       final json = parseJsonToMap(response.body);
       for (final messageJson
           in json['messages'] as List<Map<String, dynamic>>) {
         final message = Message.fromJson(messageJson);
-        messages[message.id] = message;
+        messages.add(message);
       }
       final users = List<RelationUser>.from(
           (json['users'] as List<Map<String, dynamic>>).map((v) {
@@ -140,10 +139,10 @@ Future<(LinkedHashMap<String, Message>, List<RelationUser>)> fetchMessages(
       return (messages, users);
     } else {
       // ignore: prefer_collection_literals
-      final  messages = LinkedHashMap<String, Message>();
+      final  messages = <Message>[];
       for (final messageJson in parseJsonToList(response.body)) {
         final message = Message.fromJson(messageJson as Map<String,dynamic>);
-        messages[message.id] = message;
+        messages.add(message);
       }
 
       return (messages, <RelationUser>[]);

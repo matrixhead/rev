@@ -1,8 +1,8 @@
 part of 'chat_cubit.dart';
 
-@freezed
+@Freezed(equal: false)
 class ChatState with _$ChatState {
   factory ChatState(
-      [RevChannel? channel,
-      LinkedHashMap<String, Message>? messages]) = _ChatState;
+      [final RevChannel? channel,
+      final Iterable<RevMessage>? messages]) = _ChatState;
 }

@@ -4,7 +4,7 @@ import 'package:revolt_client/src/api_wrapper/helpers.dart';
 import 'package:revolt_client/src/auth/auth.dart';
 import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/data/channel_repo.dart';
-import 'package:revolt_client/src/data/data.dart';
+import 'package:revolt_client/src/data/rev_data.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/models.dart';
@@ -190,7 +190,7 @@ class RevoltClient {
     return _getRevData.sendMessage(
       channelId: channelId,
       content: content,
-      idempotencykey: idempotencykey ?? getuuid(20),
+      idempotencyKey: idempotencykey ?? getuuid(),
     );
   }
 
@@ -201,6 +201,6 @@ class RevoltClient {
       _revState.userRepoState.relationUsers;
 }
 
-String getuuid(int len) {
+String getuuid() {
   return const Uuid().v1();
 }

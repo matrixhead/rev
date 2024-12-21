@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rebar/src/pages/chat_page/cubit/chat_cubit.dart';
@@ -46,14 +44,13 @@ class MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatCubit, ChatState>(
       builder: (context, state) {
-        if (state.messages case LinkedHashMap<String, Message> messages) {
+        if (state.messages case Iterable<RevMessage> messages) {
           return ListView.builder(
-            reverse: true,
             itemBuilder: (context, index) {
               return SizedBox(
                   height: 50,
                   child: Card(
-                    child: Text(messages.values.elementAt(index).content),
+                    child: Text(messages.elementAt(index).content),
                   ));
             },
             itemCount: messages.length,
