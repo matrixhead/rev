@@ -169,4 +169,14 @@ class RevData {
   void onUserRelationShipEvent(UserRelationShipEvent userRelationShipEvent) {
     state.userRepoState.addorUpdateRelationUsers(userRelationShipEvent.user);
   }
+
+  void onChannelCreateEvent(ChannelCreateEvent channelCreateEvent) {
+    channelRepo.addOrUpdateChannel(channelCreateEvent.channel);
+    if (channelCreateEvent.channel.channelType == ChannelType.directMessage) {
+      channelRepo.addChannelUserMapping(
+        state.userRepoState.currentUser!.id,
+        channelCreateEvent.channel,
+      );
+    }
+  }
 }

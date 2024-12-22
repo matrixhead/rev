@@ -100,15 +100,12 @@ void registerCompleteOnboardingStub(
 void registeracceptFriendRequestStub(
   Client client,
   RevConfig config,
-  String username,
-  String discriminator,
+  String id,
 ) {
-
   when(
     client.put(
-      Uri.parse(
-       'http://${config.baseUrl}:${config.httpPort}/users/$username%23$discriminator/friend'),
-      
+      Uri.parse('http://${config.baseUrl}:${config.httpPort}/users/$id/friend'),
+
       headers: anyNamed('headers'),
       body: anyNamed('body'),
       encoding: anyNamed('encoding'),
@@ -116,6 +113,20 @@ void registeracceptFriendRequestStub(
   ).thenAnswer(
     (_) async => http.Response(
       jsonEncode(mockJson['accept_friend_request_response']),
+      200,
+    ),
+  );
+}
+
+void registerOpenDmStub(Client client, RevConfig config, String id) {
+  when(
+    client.get(
+      Uri.parse('http://${config.baseUrl}:${config.httpPort}/users/$id/dm'),
+      headers: anyNamed('headers'),
+    ),
+  ).thenAnswer(
+    (_) async => http.Response(
+      jsonEncode(mockJson['open_dm_response']),
       200,
     ),
   );
@@ -131,6 +142,14 @@ void addMockUserRelationshipWithIncoming(WebSocketChannel ws) {
   if (ws case final MockWebSocketChannel mws) {
     mws.mockStreamController.add(
       jsonEncode(mockJson['user_relationship_incoming']),
+    );
+  }
+}
+
+void addChannelcreateEventForDm(WebSocketChannel ws) {
+  if (ws case final MockWebSocketChannel mws) {
+    mws.mockStreamController.add(
+      jsonEncode(mockJson['channel_create_dm']),
     );
   }
 }

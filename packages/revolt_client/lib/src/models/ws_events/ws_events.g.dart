@@ -61,6 +61,17 @@ Map<String, dynamic> _$UserRelationShipEventToJson(
       'user': instance.user,
     };
 
+ChannelCreateEvent _$ChannelCreateEventFromJson(Map<String, dynamic> json) =>
+    ChannelCreateEvent(
+      Channel.fromJson(ChannelCreateEvent._passDownToParse(json, 'channel')
+          as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ChannelCreateEventToJson(ChannelCreateEvent instance) =>
+    <String, dynamic>{
+      'channel': instance.channel,
+    };
+
 UnknownEvent _$UnknownEventFromJson(Map<String, dynamic> json) => UnknownEvent(
       type: json['type'] as String,
     );

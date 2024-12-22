@@ -146,18 +146,52 @@ void main() async {
       if (mock) {
         addMockReadyevent(ws);
         addMockUserRelationshipWithIncoming(ws);
-        registeracceptFriendRequestStub(mockhttpClient, config, '3','0003');
-        await revoltClient.acceptFriendRequest(id: '3#0003');
-       await expectLater(
+        registeracceptFriendRequestStub(mockhttpClient, config, '3');
+        await revoltClient.acceptFriendRequest(id: '3');
+        await expectLater(
           revoltClient.relationUsersStream,
           emits(
             predicate<Map<String, RelationUser>>((map) {
-              return map['3']!.relationStatus ==
-                  RelationStatus.friend;
+              return map['3']!.relationStatus == RelationStatus.friend;
             }),
           ),
         );
       }
     });
+  });
+
+  group('channel', () {
+    setUp(() async {
+      registerLoginStub(mockhttpClient, config);
+      registerOnboardingStub(mockhttpClient, config, onboardingStatus: false);
+      await revoltClient.login(email: dummyEmail, password: dummyPassword);
+      addMockReadyevent(ws);
+    });
+    test('fetch channel for user', () async {
+      final channel = await revoltClient.getDmChannelForUser(userId: '2');
+      expect(channel.id, 'channel_id_1');
+    });
+    test('open a new dm channel after accepting friend request', () async {
+      addMockUserRelationshipWithIncoming(ws);
+      registeracceptFriendRequestStub(mockhttpClient, config, '3');
+      await revoltClient.acceptFriendRequest(id: '3');
+      // channel didn't exist so client need to sent a open dm request to
+      // server.
+      registerOpenDmStub(mockhttpClient, config, '3');
+      final channel = await revoltClient.getDmChannelForUser(userId: '3');
+      expect(channel.id, 'channel_id_2');
+    });
+
+     test('channelcreate event loads channel', () async {
+      addMockUserRelationshipWithIncoming(ws);
+      registeracceptFriendRequestStub(mockhttpClient, config, '3');
+      await revoltClient.acceptFriendRequest(id: '3');
+      // channel didn't exist so client need to sent a open dm request to
+      // server.
+      addChannelcreateEventForDm(ws);
+      final channel = await revoltClient.getDmChannelForUser(userId: '3');
+      expect(channel.id, 'channel_id_2');
+    });
+
   });
 }

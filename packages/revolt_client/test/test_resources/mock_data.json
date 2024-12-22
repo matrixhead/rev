@@ -50,11 +50,30 @@
             "online": false
         }
     },
+    "channel_create_dm": {
+        "type": "ChannelCreate",
+        "channel_type": "DirectMessage",
+        "_id": "channel_id_2",
+        "active": true,
+        "recipients": [
+            "1",
+            "3"
+        ]
+    },
     "accept_friend_request_response": {
         "_id": "3",
         "username": "user3",
         "discriminator": "0003",
         "relationship": "Friend",
         "online": false
+    },
+    "open_dm_response": {
+        "channel_type": "DirectMessage",
+        "_id": "channel_id_2",
+        "active": true,
+        "recipients": [
+            "1",
+            "3"
+        ]
     }
 }

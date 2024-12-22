@@ -86,6 +86,8 @@ class RevoltClient {
           _getRevData.onMessageEvent(messageEvent);
         case final UserRelationShipEvent userRelationShipEvent:
           _getRevData.onUserRelationShipEvent(userRelationShipEvent);
+        case final ChannelCreateEvent channelCreateEvent:
+          _getRevData.onChannelCreateEvent(channelCreateEvent);
         default:
       }
     });
