@@ -17,7 +17,8 @@ class ChatCubit extends Cubit<ChatState> {
 
   init(String channelId) async {
     final channel = await client.getChannelforId(channelId: channelId);
-    emit(ChatState(channel));
+    final title = (await client.getOtherUsersForChannel(channel))[0].username;
+    emit(ChatState(channel: channel,title: title));
     _messagesStreamSubscription = channel.messages.listen(listenOnMessages);
     client.fetchMessages(id: channelId);
   }

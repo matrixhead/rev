@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rebar/src/pages/chat_page/cubit/chat_cubit.dart';
+import 'package:rebar/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class ChatPageView extends StatelessWidget {
@@ -11,6 +12,14 @@ class ChatPageView extends StatelessWidget {
     return BlocBuilder<ChatCubit, ChatState>(
       builder: (context, state) {
         return Scaffold(
+          appBar: AppBar(
+            leading: InkWell(
+                onTap: () => context
+                    .read<HomeCubit>()
+                    .setPage(page: 0, withAnimation: true),
+                child: Icon(Icons.arrow_back)),
+            title: Text(state.title),
+          ),
           body: state.channel != null
               ? ChatPageBody()
               : Center(child: CircularProgressIndicator()),
@@ -62,10 +71,8 @@ class _MessagesListState extends State<MessagesList> {
     return BlocConsumer<ChatCubit, ChatState>(
       listener: (context, state) {
         if (atEdge) {
-          _controller.animateTo(
+          _controller.jumpTo(
             _controller.position.maxScrollExtent,
-            duration: Duration(seconds: 1),
-            curve: Curves.fastOutSlowIn,
           );
         }
       },
@@ -74,12 +81,14 @@ class _MessagesListState extends State<MessagesList> {
           return NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,
             child: ListView.builder(
+              reverse: true,
               controller: _controller,
               itemBuilder: (context, index) {
+                final message = messages.elementAt(index);
                 return SizedBox(
                     height: 50,
                     child: Card(
-                      child: Text(messages.elementAt(index).content),
+                      child: Text(message.content),
                     ));
               },
               itemCount: messages.length,

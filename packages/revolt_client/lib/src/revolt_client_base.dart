@@ -70,7 +70,7 @@ class RevoltClient {
   }
 
   Future<void> init() async {
-    await _sharedpreferences.clear();
+    // await _sharedpreferences.clear();
     await setUpWs();
     await setUpAuth();
   }
@@ -194,6 +194,10 @@ class RevoltClient {
       content: content,
       idempotencyKey: idempotencykey ?? getuuid(),
     );
+  }
+
+  Future<List<RelationUser>> getOtherUsersForChannel(RevChannel channel){
+   return  _getRevData.getOtherUsersForChannel( channel);
   }
 
   BehaviorSubject<AuthStatus> get authEvents =>

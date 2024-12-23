@@ -59,27 +59,28 @@ class RevChannel {
 
   List<ClientRevMessage> get _sentMessages => _channelState.sentMessages;
 
-  LinkedHashMap<String, ServerRevMessage> get _messages =>
-      _channelState.messages;
+  List<ServerRevMessage> get _messages => _channelState.messages;
 
   BehaviorSubject<Iterable<RevMessage>> get messages =>
       _channelState.messagesSubject;
 
   void emitMessages() {
-    final messageIter = _messages.values.cast<RevMessage>();
+    final messageIter = _messages.cast<RevMessage>();
     final sentMessagesIter = _sentMessages.cast<RevMessage>();
-    final iterable = messageIter.followedBy(sentMessagesIter);
+    final iterable = sentMessagesIter.followedBy(messageIter);
     messages.add(iterable);
   }
 
   void addSendMessage(ClientRevMessage message) {
-    _sentMessages.add(message);
+    _sentMessages.insert(0, message);
     emitMessages();
   }
 
   void addMessages(List<Message> messages) {
-    for (final message in messages) {
-      _messages[message.id] = ServerRevMessage.fromMessage(message: message);
+    for (final (index, message) in messages.indexed) {
+      // This operation is somewhat expensive; consider finding a more efficient
+      // approach.
+      _messages.insert(index, ServerRevMessage.fromMessage(message: message));
       _sentMessages.removeWhere((val) => val.idempotencyKey == message.nonce);
     }
     emitMessages();

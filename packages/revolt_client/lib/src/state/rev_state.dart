@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/data/channel_repo.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
@@ -44,7 +42,7 @@ class RevChannelState {
 
   final List<ClientRevMessage> sentMessages = [];
 
-  final LinkedHashMap<String, ServerRevMessage> messages = LinkedHashMap();
+  final List<ServerRevMessage> messages = [];
 
   final BehaviorSubject<Iterable<RevMessage>> messagesSubject =
       BehaviorSubject.seeded([]);

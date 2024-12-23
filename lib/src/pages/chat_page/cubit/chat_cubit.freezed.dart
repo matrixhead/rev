@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ChatState {
   RevChannel? get channel => throw _privateConstructorUsedError;
   Iterable<RevMessage>? get messages => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -31,7 +32,8 @@ abstract class $ChatStateCopyWith<$Res> {
   factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
-  $Res call({RevChannel? channel, Iterable<RevMessage>? messages});
+  $Res call(
+      {RevChannel? channel, Iterable<RevMessage>? messages, String title});
 }
 
 /// @nodoc
@@ -51,6 +53,7 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   $Res call({
     Object? channel = freezed,
     Object? messages = freezed,
+    Object? title = null,
   }) {
     return _then(_value.copyWith(
       channel: freezed == channel
@@ -61,6 +64,10 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as Iterable<RevMessage>?,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -73,7 +80,8 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({RevChannel? channel, Iterable<RevMessage>? messages});
+  $Res call(
+      {RevChannel? channel, Iterable<RevMessage>? messages, String title});
 }
 
 /// @nodoc
@@ -91,16 +99,21 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   $Res call({
     Object? channel = freezed,
     Object? messages = freezed,
+    Object? title = null,
   }) {
     return _then(_$ChatStateImpl(
-      freezed == channel
+      channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as RevChannel?,
-      freezed == messages
+      messages: freezed == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as Iterable<RevMessage>?,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -108,16 +121,19 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ChatStateImpl implements _ChatState {
-  _$ChatStateImpl([this.channel, this.messages]);
+  _$ChatStateImpl({this.channel, this.messages, this.title = ""});
 
   @override
   final RevChannel? channel;
   @override
   final Iterable<RevMessage>? messages;
+  @override
+  @JsonKey()
+  final String title;
 
   @override
   String toString() {
-    return 'ChatState(channel: $channel, messages: $messages)';
+    return 'ChatState(channel: $channel, messages: $messages, title: $title)';
   }
 
   /// Create a copy of ChatState
@@ -131,13 +147,16 @@ class _$ChatStateImpl implements _ChatState {
 
 abstract class _ChatState implements ChatState {
   factory _ChatState(
-      [final RevChannel? channel,
-      final Iterable<RevMessage>? messages]) = _$ChatStateImpl;
+      {final RevChannel? channel,
+      final Iterable<RevMessage>? messages,
+      final String title}) = _$ChatStateImpl;
 
   @override
   RevChannel? get channel;
   @override
   Iterable<RevMessage>? get messages;
+  @override
+  String get title;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

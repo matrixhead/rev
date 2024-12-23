@@ -122,8 +122,9 @@ class RevData {
     required String idempotencyKey,
   }) async {
     try {
-      final channel =
-          channelRepo.getChannelforId(channelId)!..addSendMessage(
+      channelRepo
+          .getChannelforId(channelId)!
+          .addSendMessage(
             ClientRevMessage(content: content, idempotencyKey: idempotencyKey),
           );
       final message = await api.sendMessage(
@@ -132,7 +133,8 @@ class RevData {
         content: content,
         idempotencyKey: idempotencyKey,
       );
-      channel.addMessages([message]);
+      // We are ignoring the returned value of the message call here, as the
+      // WebSocket will handle adding it to the state.
       return message;
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
@@ -178,5 +180,22 @@ class RevData {
         channelCreateEvent.channel,
       );
     }
+  }
+
+  Future<List<RelationUser>> getOtherUsersForChannel(RevChannel channel) async {
+    final users = <RelationUser>[];
+    for (final user in channel.recipients) {
+      if (user == state.userRepoState.currentUser!.id) {
+        continue;
+      }
+      if (state.userRepoState.relationUsers.value[user]
+          case final RelationUser relationUser) {
+        users.add(relationUser);
+        continue;
+      }
+      final relationUser = await fetchUser(id: user);
+      users.add(relationUser);
+    }
+    return users;
   }
 }
