@@ -125,10 +125,23 @@ void registerOpenDmStub(Client client, RevConfig config, String id) {
       headers: anyNamed('headers'),
     ),
   ).thenAnswer(
-    (_) async => http.Response(
-      jsonEncode(mockJson['open_dm_response']),
-      200,
+    (_) async => http.Response(jsonEncode(mockJson['open_dm_response']), 200),
+  );
+}
+
+void registerSendMessageStub(Client client, RevConfig config, String channelId) {
+  when(
+    client.post(
+      Uri.parse(
+        'http://${config.baseUrl}:${config.httpPort}/channels/$channelId/messages',
+      ),
+      headers: anyNamed('headers'),
+      body: anyNamed('body'),
+      encoding: anyNamed('encoding'),
     ),
+  ).thenAnswer(
+    (_) async =>
+        http.Response(jsonEncode(mockJson['send_message_response']), 200),
   );
 }
 
@@ -148,8 +161,12 @@ void addMockUserRelationshipWithIncoming(WebSocketChannel ws) {
 
 void addChannelcreateEventForDm(WebSocketChannel ws) {
   if (ws case final MockWebSocketChannel mws) {
-    mws.mockStreamController.add(
-      jsonEncode(mockJson['channel_create_dm']),
-    );
+    mws.mockStreamController.add(jsonEncode(mockJson['channel_create_dm']));
+  }
+}
+
+void addMessageEventForDm(WebSocketChannel ws) {
+  if (ws case final MockWebSocketChannel mws) {
+    mws.mockStreamController.add(jsonEncode(mockJson['message_event']));
   }
 }

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:revolt_client/revolt_client.dart';
+import 'package:revolt_client/src/data/channel_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -182,7 +183,7 @@ void main() async {
       expect(channel.id, 'channel_id_2');
     });
 
-     test('channelcreate event loads channel', () async {
+    test('channelcreate event loads channel', () async {
       addMockUserRelationshipWithIncoming(ws);
       registeracceptFriendRequestStub(mockhttpClient, config, '3');
       await revoltClient.acceptFriendRequest(id: '3');
@@ -193,5 +194,51 @@ void main() async {
       expect(channel.id, 'channel_id_2');
     });
 
+    test('recieve message dm', () async {
+      final channel = await revoltClient.getDmChannelForUser(userId: '2');
+      final messageStreamMatchFuture = expectLater(
+        channel.messages,
+        emitsInOrder([
+          <RevMessage>[],
+          predicate<Iterable<RevMessage>>((messages) {
+            return messages.any(
+              (message) => message.content == 'hi this is a unique message',
+            );
+          }),
+        ]),
+      );
+      addMessageEventForDm(ws);
+      await messageStreamMatchFuture;
+    });
+
+    test('sent message dm', () async {
+      final channel = await revoltClient.getDmChannelForUser(userId: '2');
+      final messageStreamMatchFuture = expectLater(
+        channel.messages,
+        emitsInOrder([
+          <RevMessage>[],
+          predicate<Iterable<RevMessage>>((messages) {
+            return messages.any(
+              (message) =>
+                  message.content == 'hi this is a unique message' &&
+                  message is ClientRevMessage,
+            );
+          }),
+          predicate<Iterable<RevMessage>>((messages) {
+            return messages.any(
+              (message) =>
+                  message.content == 'hi this is a unique message' &&
+                  message is ServerRevMessage,
+            );
+          }),
+        ]),
+      );
+      registerSendMessageStub(mockhttpClient, config, channel.id);
+     await revoltClient.sendMessage(
+        channelId: channel.id,
+        content: 'hi this is a unique message',
+      );
+      await messageStreamMatchFuture;
+    });
   });
 }
