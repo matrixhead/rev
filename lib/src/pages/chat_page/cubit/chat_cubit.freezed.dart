@@ -18,7 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ChatState {
   RevChannel? get channel => throw _privateConstructorUsedError;
   Iterable<RevMessage>? get messages => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
+  Iterable<RelationUser>? get otherUsers => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +33,9 @@ abstract class $ChatStateCopyWith<$Res> {
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
   $Res call(
-      {RevChannel? channel, Iterable<RevMessage>? messages, String title});
+      {RevChannel? channel,
+      Iterable<RevMessage>? messages,
+      Iterable<RelationUser>? otherUsers});
 }
 
 /// @nodoc
@@ -53,7 +55,7 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   $Res call({
     Object? channel = freezed,
     Object? messages = freezed,
-    Object? title = null,
+    Object? otherUsers = freezed,
   }) {
     return _then(_value.copyWith(
       channel: freezed == channel
@@ -64,10 +66,10 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as Iterable<RevMessage>?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
+      otherUsers: freezed == otherUsers
+          ? _value.otherUsers
+          : otherUsers // ignore: cast_nullable_to_non_nullable
+              as Iterable<RelationUser>?,
     ) as $Val);
   }
 }
@@ -81,7 +83,9 @@ abstract class _$$ChatStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {RevChannel? channel, Iterable<RevMessage>? messages, String title});
+      {RevChannel? channel,
+      Iterable<RevMessage>? messages,
+      Iterable<RelationUser>? otherUsers});
 }
 
 /// @nodoc
@@ -99,7 +103,7 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   $Res call({
     Object? channel = freezed,
     Object? messages = freezed,
-    Object? title = null,
+    Object? otherUsers = freezed,
   }) {
     return _then(_$ChatStateImpl(
       channel: freezed == channel
@@ -110,30 +114,29 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as Iterable<RevMessage>?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
+      otherUsers: freezed == otherUsers
+          ? _value.otherUsers
+          : otherUsers // ignore: cast_nullable_to_non_nullable
+              as Iterable<RelationUser>?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$ChatStateImpl implements _ChatState {
-  _$ChatStateImpl({this.channel, this.messages, this.title = ""});
+class _$ChatStateImpl extends _ChatState {
+  _$ChatStateImpl({this.channel, this.messages, this.otherUsers}) : super._();
 
   @override
   final RevChannel? channel;
   @override
   final Iterable<RevMessage>? messages;
   @override
-  @JsonKey()
-  final String title;
+  final Iterable<RelationUser>? otherUsers;
 
   @override
   String toString() {
-    return 'ChatState(channel: $channel, messages: $messages, title: $title)';
+    return 'ChatState(channel: $channel, messages: $messages, otherUsers: $otherUsers)';
   }
 
   /// Create a copy of ChatState
@@ -145,18 +148,19 @@ class _$ChatStateImpl implements _ChatState {
       __$$ChatStateImplCopyWithImpl<_$ChatStateImpl>(this, _$identity);
 }
 
-abstract class _ChatState implements ChatState {
+abstract class _ChatState extends ChatState {
   factory _ChatState(
       {final RevChannel? channel,
       final Iterable<RevMessage>? messages,
-      final String title}) = _$ChatStateImpl;
+      final Iterable<RelationUser>? otherUsers}) = _$ChatStateImpl;
+  _ChatState._() : super._();
 
   @override
   RevChannel? get channel;
   @override
   Iterable<RevMessage>? get messages;
   @override
-  String get title;
+  Iterable<RelationUser>? get otherUsers;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

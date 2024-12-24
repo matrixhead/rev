@@ -15,11 +15,6 @@ class UserRepositoryState {
   final BehaviorSubject<Map<String, RelationUser>> relationUsers =
       BehaviorSubject.seeded(<String, RelationUser>{});
   CurrentUser? currentUser;
-  void addorUpdateRelationUsers(RelationUser user) {
-    final users = Map<String, RelationUser>.from(relationUsers.value);
-    users[user.id] = user;
-    relationUsers.add(users);
-  }
 }
 
 class ChannelRepositoryState {

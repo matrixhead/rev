@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/data/channel_repo.dart';
+import 'package:revolt_client/src/data/user_repo.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
@@ -8,10 +11,12 @@ import 'package:revolt_client/src/state/rev_state.dart';
 
 class RevData {
   RevData(this.state, this.httpClient)
-    : channelRepo = ChannelReposotory(state: state);
+    : channelRepo = ChannelReposotory(state: state),
+      userRepo = UserRepository(state: state);
   final RevState state;
   final RevHttpClient httpClient;
   final ChannelReposotory channelRepo;
+  final UserRepository userRepo;
 
   Future<CurrentUser> fetchSelf() async {
     if (state.userRepoState.currentUser case final CurrentUser cu) {
@@ -43,7 +48,7 @@ class RevData {
   Future<RelationUser> acceptFriendRequest({required String id}) async {
     try {
       final user = await api.acceptFriendRequest(httpClient, id: id);
-      state.userRepoState.addorUpdateRelationUsers(user);
+      userRepo.addorUpdateRelationUsers(user);
       return user;
     } on RevApiError catch (e) {
       throw DataError.fromApiError(e);
@@ -169,7 +174,7 @@ class RevData {
   }
 
   void onUserRelationShipEvent(UserRelationShipEvent userRelationShipEvent) {
-    state.userRepoState.addorUpdateRelationUsers(userRelationShipEvent.user);
+    userRepo.addorUpdateRelationUsers(userRelationShipEvent.user);
   }
 
   void onChannelCreateEvent(ChannelCreateEvent channelCreateEvent) {
@@ -182,20 +187,36 @@ class RevData {
     }
   }
 
-  Future<List<RelationUser>> getOtherUsersForChannel(RevChannel channel) async {
-    final users = <RelationUser>[];
-    for (final user in channel.recipients) {
-      if (user == state.userRepoState.currentUser!.id) {
-        continue;
-      }
-      if (state.userRepoState.relationUsers.value[user]
-          case final RelationUser relationUser) {
-        users.add(relationUser);
-        continue;
-      }
-      final relationUser = await fetchUser(id: user);
-      users.add(relationUser);
+  Future<List<RelationUser>> fetchOtherUsersForChannel(
+    RevChannel channel,
+  ) async {
+    final cu = await fetchSelf();
+    if (channel.channelType == ChannelType.directMessage) {
+      final otherUserId = channel.recipients.firstWhere((id) => id != cu.id);
+      final user = await fetchUser(id: otherUserId);
+      userRepo.addorUpdateRelationUsers(user);
+      return [user];
     }
-    return users;
+    throw UnimplementedError('implement for group');
+  }
+
+  Stream<Iterable<RelationUser>> getOtherUsersForChannelStream(
+    RevChannel channel,
+  ) async* {
+    final cu = await fetchSelf();
+    final shouldFetchUsers =
+        !channel.recipients.every((userId) {
+          return userRepo.relationUsers.containsKey(userId) || userId == cu.id;
+        });
+    if (shouldFetchUsers) {
+      await fetchOtherUsersForChannel(channel);
+    }
+    yield* userRepo.relationUsersStream.map<Iterable<RelationUser>>((
+      relationUsers,
+    ) {
+      return channel.recipients
+          .where((userId) => userId != cu.id)
+          .map((userID) => relationUsers[userID]!);
+    });
   }
 }

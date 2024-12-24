@@ -10,6 +10,7 @@ class ChatCubit extends Cubit<ChatState> {
   final RevoltClient client;
 
   StreamSubscription<Iterable<RevMessage>>? _messagesStreamSubscription;
+  StreamSubscription<Iterable<RelationUser>>? _otherUsersStreamSubscription;
 
   ChatCubit({
     required this.client,
@@ -17,14 +18,16 @@ class ChatCubit extends Cubit<ChatState> {
 
   init(String channelId) async {
     final channel = await client.getChannelforId(channelId: channelId);
-    final title = (await client.getOtherUsersForChannel(channel))[0].username;
-    emit(ChatState(channel: channel,title: title));
+
+    emit(ChatState(channel: channel));
     _messagesStreamSubscription = channel.messages.listen(listenOnMessages);
+    _otherUsersStreamSubscription =
+        client.getOtherUsersForChannel(channel).listen(listenOnOtherUsers);
     client.fetchMessages(id: channelId);
   }
 
   sendMessage(String message) {
-    if(message.isEmpty){
+    if (message.isEmpty) {
       return;
     }
     client.sendMessage(channelId: state.channel!.id, content: message);
@@ -35,9 +38,15 @@ class ChatCubit extends Cubit<ChatState> {
     emit(newState);
   }
 
+  void listenOnOtherUsers(Iterable<RelationUser> relationUsers) {
+    final newState = state.copyWith(otherUsers: relationUsers);
+    emit(newState);
+  }
+
   @override
   Future<void> close() {
     _messagesStreamSubscription?.cancel();
+    _otherUsersStreamSubscription?.cancel();
     return super.close();
   }
 }

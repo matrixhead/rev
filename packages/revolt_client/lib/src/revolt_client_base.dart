@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:revolt_client/src/api_wrapper/helpers.dart';
@@ -196,8 +197,8 @@ class RevoltClient {
     );
   }
 
-  Future<List<RelationUser>> getOtherUsersForChannel(RevChannel channel){
-   return  _getRevData.getOtherUsersForChannel( channel);
+  Stream<Iterable<RelationUser>> getOtherUsersForChannel(RevChannel channel){
+   return  _getRevData.getOtherUsersForChannelStream( channel);
   }
 
   BehaviorSubject<AuthStatus> get authEvents =>
