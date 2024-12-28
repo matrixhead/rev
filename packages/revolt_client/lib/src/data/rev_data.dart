@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:revolt_client/revolt_client.dart';
 import 'package:revolt_client/src/api_wrapper/api_wrapper.dart' as api;
 import 'package:revolt_client/src/data/channel_repo.dart';
@@ -8,6 +9,7 @@ import 'package:revolt_client/src/exceptions/exceptions.dart';
 import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
+import 'package:rxdart/transformers.dart';
 
 class RevData {
   RevData(this.state, this.httpClient)
@@ -130,7 +132,11 @@ class RevData {
       channelRepo
           .getChannelforId(channelId)!
           .addSendMessage(
-            ClientRevMessage(content: content, idempotencyKey: idempotencyKey),
+            ClientRevMessage(
+              content: content,
+              idempotencyKey: idempotencyKey,
+              author: (await fetchSelf()).id,
+            ),
           );
       final message = await api.sendMessage(
         httpClient: httpClient,
@@ -200,7 +206,7 @@ class RevData {
     throw UnimplementedError('implement for group');
   }
 
-  Stream<Iterable<RelationUser>> getOtherUsersForChannelStream(
+  Stream<Map<String, RelationUser>> getOtherUsersForChannelStream(
     RevChannel channel,
   ) async* {
     final cu = await fetchSelf();
@@ -211,12 +217,29 @@ class RevData {
     if (shouldFetchUsers) {
       await fetchOtherUsersForChannel(channel);
     }
-    yield* userRepo.relationUsersStream.map<Iterable<RelationUser>>((
-      relationUsers,
-    ) {
-      return channel.recipients
-          .where((userId) => userId != cu.id)
-          .map((userID) => relationUsers[userID]!);
-    });
+
+    yield* userRepo.relationUsersStream
+        .map((relationUsers) {
+          return Map.fromEntries(
+            channel.recipients
+                .where((userId) => userId != cu.id)
+                .map((userID) => MapEntry(userID, relationUsers[userID]!)),
+          );
+        })
+        .scan(
+          (old, otherUsers, _) => [old[1], otherUsers],
+          <Map<String, RelationUser>>[{}, {}],
+        )
+        .where((oldAndNewOu) {
+          final shouldEmit =
+              !const MapEquality<String, RelationUser>().equals(
+                oldAndNewOu[0],
+                oldAndNewOu[1],
+              );
+          return shouldEmit;
+        })
+        .map((oldAndNewOu) {
+          return oldAndNewOu[1];
+        });
   }
 }

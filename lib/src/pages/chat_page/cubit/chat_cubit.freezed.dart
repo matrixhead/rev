@@ -18,7 +18,9 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ChatState {
   RevChannel? get channel => throw _privateConstructorUsedError;
   Iterable<RevMessage>? get messages => throw _privateConstructorUsedError;
-  Iterable<RelationUser>? get otherUsers => throw _privateConstructorUsedError;
+  Map<String, RelationUser>? get otherUsers =>
+      throw _privateConstructorUsedError;
+  CurrentUser? get currentUser => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -35,7 +37,8 @@ abstract class $ChatStateCopyWith<$Res> {
   $Res call(
       {RevChannel? channel,
       Iterable<RevMessage>? messages,
-      Iterable<RelationUser>? otherUsers});
+      Map<String, RelationUser>? otherUsers,
+      CurrentUser? currentUser});
 }
 
 /// @nodoc
@@ -56,6 +59,7 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
     Object? channel = freezed,
     Object? messages = freezed,
     Object? otherUsers = freezed,
+    Object? currentUser = freezed,
   }) {
     return _then(_value.copyWith(
       channel: freezed == channel
@@ -69,7 +73,11 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
       otherUsers: freezed == otherUsers
           ? _value.otherUsers
           : otherUsers // ignore: cast_nullable_to_non_nullable
-              as Iterable<RelationUser>?,
+              as Map<String, RelationUser>?,
+      currentUser: freezed == currentUser
+          ? _value.currentUser
+          : currentUser // ignore: cast_nullable_to_non_nullable
+              as CurrentUser?,
     ) as $Val);
   }
 }
@@ -85,7 +93,8 @@ abstract class _$$ChatStateImplCopyWith<$Res>
   $Res call(
       {RevChannel? channel,
       Iterable<RevMessage>? messages,
-      Iterable<RelationUser>? otherUsers});
+      Map<String, RelationUser>? otherUsers,
+      CurrentUser? currentUser});
 }
 
 /// @nodoc
@@ -104,6 +113,7 @@ class __$$ChatStateImplCopyWithImpl<$Res>
     Object? channel = freezed,
     Object? messages = freezed,
     Object? otherUsers = freezed,
+    Object? currentUser = freezed,
   }) {
     return _then(_$ChatStateImpl(
       channel: freezed == channel
@@ -115,9 +125,13 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           : messages // ignore: cast_nullable_to_non_nullable
               as Iterable<RevMessage>?,
       otherUsers: freezed == otherUsers
-          ? _value.otherUsers
+          ? _value._otherUsers
           : otherUsers // ignore: cast_nullable_to_non_nullable
-              as Iterable<RelationUser>?,
+              as Map<String, RelationUser>?,
+      currentUser: freezed == currentUser
+          ? _value.currentUser
+          : currentUser // ignore: cast_nullable_to_non_nullable
+              as CurrentUser?,
     ));
   }
 }
@@ -125,18 +139,34 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ChatStateImpl extends _ChatState {
-  _$ChatStateImpl({this.channel, this.messages, this.otherUsers}) : super._();
+  _$ChatStateImpl(
+      {this.channel,
+      this.messages,
+      final Map<String, RelationUser>? otherUsers,
+      this.currentUser})
+      : _otherUsers = otherUsers,
+        super._();
 
   @override
   final RevChannel? channel;
   @override
   final Iterable<RevMessage>? messages;
+  final Map<String, RelationUser>? _otherUsers;
   @override
-  final Iterable<RelationUser>? otherUsers;
+  Map<String, RelationUser>? get otherUsers {
+    final value = _otherUsers;
+    if (value == null) return null;
+    if (_otherUsers is EqualUnmodifiableMapView) return _otherUsers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  final CurrentUser? currentUser;
 
   @override
   String toString() {
-    return 'ChatState(channel: $channel, messages: $messages, otherUsers: $otherUsers)';
+    return 'ChatState(channel: $channel, messages: $messages, otherUsers: $otherUsers, currentUser: $currentUser)';
   }
 
   /// Create a copy of ChatState
@@ -152,7 +182,8 @@ abstract class _ChatState extends ChatState {
   factory _ChatState(
       {final RevChannel? channel,
       final Iterable<RevMessage>? messages,
-      final Iterable<RelationUser>? otherUsers}) = _$ChatStateImpl;
+      final Map<String, RelationUser>? otherUsers,
+      final CurrentUser? currentUser}) = _$ChatStateImpl;
   _ChatState._() : super._();
 
   @override
@@ -160,7 +191,9 @@ abstract class _ChatState extends ChatState {
   @override
   Iterable<RevMessage>? get messages;
   @override
-  Iterable<RelationUser>? get otherUsers;
+  Map<String, RelationUser>? get otherUsers;
+  @override
+  CurrentUser? get currentUser;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

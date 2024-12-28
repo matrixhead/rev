@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rebar/src/common/widgets/googly_eyes.dart';
 import 'package:rebar/src/pages/chat_page/cubit/chat_cubit.dart';
 import 'package:rebar/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
@@ -86,9 +87,34 @@ class _MessagesListState extends State<MessagesList> {
               itemBuilder: (context, index) {
                 final message = messages.elementAt(index);
                 return SizedBox(
-                    height: 50,
+                    height: 80,
                     child: Card(
-                      child: Text(message.content),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            GooglyEyes(
+                                seed: state
+                                    .userNameForId(message.author)
+                                    .hashCode,
+                                size: 50),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  state.userNameForId(message.author),
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                Text(message.content),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ));
               },
               itemCount: messages.length,

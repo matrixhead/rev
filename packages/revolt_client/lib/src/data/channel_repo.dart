@@ -101,17 +101,26 @@ class RevChannel {
 }
 
 abstract class RevMessage {
-  RevMessage({required this.content});
+  RevMessage(this.author, this.idempotencyKey, this.content);
 
   final String content;
+  final String author;
+  final String idempotencyKey;
 }
 
 class ClientRevMessage implements RevMessage {
-  ClientRevMessage({required this.content, required this.idempotencyKey});
-  final String idempotencyKey;
+  ClientRevMessage({
+    required this.content,
+    required this.idempotencyKey,
+    required this.author,
+  });
 
   @override
   final String content;
+  @override
+  final String idempotencyKey;
+  @override
+  final String author;
 }
 
 class ServerRevMessage implements RevMessage {
@@ -119,4 +128,8 @@ class ServerRevMessage implements RevMessage {
   final Message message;
   @override
   String get content => message.content;
+  @override
+  String get idempotencyKey => message.nonce;
+  @override
+  String get author => message.author;
 }

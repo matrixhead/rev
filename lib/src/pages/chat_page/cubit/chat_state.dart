@@ -6,16 +6,20 @@ class ChatState with _$ChatState {
   factory ChatState({
     final RevChannel? channel,
     final Iterable<RevMessage>? messages,
-    final Iterable<RelationUser>? otherUsers,
+    final Map<String,RelationUser>? otherUsers,
+    final CurrentUser? currentUser,
   }) = _ChatState;
 
   String get title {
-    if (otherUsers case final Iterable<RelationUser> otherUsers) {
+    if (otherUsers case final Map<String,RelationUser> otherUsers) {
       if (channel!.channelType == ChannelType.directMessage) {
-        return otherUsers.first.username;
+        return otherUsers.values .first.username;
       }
     }
+    return "loading";
+  }
 
-    return "";
+  String userNameForId(String id) {
+    return otherUsers![id]?.username ?? currentUser!.username;
   }
 }

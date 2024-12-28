@@ -7,7 +7,6 @@ import 'package:revolt_client/src/config/config.dart';
 import 'package:revolt_client/src/data/channel_repo.dart';
 import 'package:revolt_client/src/data/rev_data.dart';
 import 'package:revolt_client/src/exceptions/exceptions.dart';
-import 'package:revolt_client/src/models/channel/channel.dart';
 import 'package:revolt_client/src/models/models.dart';
 import 'package:revolt_client/src/models/ws_events/ws_events.dart';
 import 'package:revolt_client/src/state/rev_state.dart';
@@ -197,8 +196,10 @@ class RevoltClient {
     );
   }
 
-  Stream<Iterable<RelationUser>> getOtherUsersForChannel(RevChannel channel){
-   return  _getRevData.getOtherUsersForChannelStream( channel);
+  Stream<Map<String, RelationUser>> getOtherUsersForChannel(
+    RevChannel channel,
+  ) {
+    return _getRevData.getOtherUsersForChannelStream(channel);
   }
 
   BehaviorSubject<AuthStatus> get authEvents =>
