@@ -12,33 +12,6 @@ class RevAuth {
   final RevState _state;
   final RevHttpClient _revHttpClient;
 
-  Future<void> loginAndCheckOnboarding({
-    required String email,
-    String? password,
-    String? challenge,
-    String? friendlyName,
-    String? captcha,
-  }) async {
-    _state.authRepoState.authEvents.add(AuthStatus.submitted);
-    try {
-      _state.authRepoState.session = await login(
-        email: email,
-        captcha: captcha,
-        challenge: challenge,
-        friendlyName: friendlyName,
-        password: password,
-      );
-      final notOnboarded = await checkOnboardingStatus();
-      if (notOnboarded) {
-        _state.authRepoState.authEvents.add(AuthStatus.notOnboarded);
-      } else {
-        _state.authRepoState.authEvents.add(AuthStatus.authsucess);
-      }
-    } on RevAuthError {
-      _state.authRepoState.authEvents.add(AuthStatus.authFailed);
-      rethrow;
-    }
-  }
 
   Future<bool> checkOnboardingStatus() {
     try {
@@ -54,7 +27,6 @@ class RevAuth {
         _revHttpClient,
         username,
       );
-      _state.authRepoState.authEvents.add(AuthStatus.authsucess);
       return currentUser;
     } on RevApiError catch (e) {
       throw RevAuthError(e.toString());
@@ -92,7 +64,6 @@ class RevAuth {
 
   void setSession(SessionDetails session) {
     _state.authRepoState.session = session;
-    _state.authRepoState.authEvents.add(AuthStatus.authsucess);
   }
 
   Future<void> verifyAccount(String verificationCode) async {

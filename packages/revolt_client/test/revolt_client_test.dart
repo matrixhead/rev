@@ -69,7 +69,6 @@ void main() async {
         sharedPreferences: prefs,
       );
     }
-    await revoltClient.init();
   });
   group('auth', () {
     test('signup', () async {
@@ -87,7 +86,14 @@ void main() async {
       registerLoginStub(mockhttpClient, config);
       registerOnboardingStub(mockhttpClient, config, onboardingStatus: false);
       await revoltClient.login(email: dummyEmail, password: dummyPassword);
-      await expectLater(revoltClient.authEvents, emits(AuthStatus.authsucess));
+      if (mock) {
+        verify(ws.sink.add(argThat(contains('"type":"Authenticate"'))));
+        addMockReadyevent(ws);
+      }
+      await expectLater(
+        revoltClient.authEvents,
+        emitsThrough(AuthStatus.authsucess),
+      );
     });
 
     test('emits notOnboarded', () async {
@@ -109,17 +115,14 @@ void main() async {
         emits(AuthStatus.notOnboarded),
       );
       await revoltClient.completeOnboarding(username: dummyUsername);
-      await expectLater(revoltClient.authEvents, emits(AuthStatus.authsucess));
-    });
-
-    test('authenticate ws on authsuccess', () async {
-      registerLoginStub(mockhttpClient, config);
-      registerOnboardingStub(mockhttpClient, config, onboardingStatus: false);
-      await revoltClient.login(email: dummyEmail, password: dummyPassword);
-      await expectLater(revoltClient.authEvents, emits(AuthStatus.authsucess));
       if (mock) {
         verify(ws.sink.add(argThat(contains('"type":"Authenticate"'))));
+        addMockReadyevent(ws);
       }
+      await expectLater(
+        revoltClient.authEvents,
+        emitsThrough(AuthStatus.authsucess),
+      );
     });
   });
   group('user', () {
@@ -127,11 +130,13 @@ void main() async {
       registerLoginStub(mockhttpClient, config);
       registerOnboardingStub(mockhttpClient, config, onboardingStatus: false);
       await revoltClient.login(email: dummyEmail, password: dummyPassword);
+      if (mock) {
+        addMockReadyevent(ws);
+      }
     });
 
     test('relationUsersStream emits after readyevent', () async {
       if (mock) {
-        addMockReadyevent(ws);
         await expectLater(
           revoltClient.relationUsersStream,
           emitsThrough(
@@ -145,7 +150,6 @@ void main() async {
     });
     test('relationUsersStream emits after accept friend request', () async {
       if (mock) {
-        addMockReadyevent(ws);
         addMockUserRelationshipWithIncoming(ws);
         registeracceptFriendRequestStub(mockhttpClient, config, '3');
         await revoltClient.acceptFriendRequest(id: '3');
@@ -234,10 +238,11 @@ void main() async {
         ]),
       );
       registerSendMessageStub(mockhttpClient, config, channel.id);
-     await revoltClient.sendMessage(
+      await revoltClient.sendMessage(
         channelId: channel.id,
         content: 'hi this is a unique message',
       );
+      addMessageEventAfterSentMessage(ws);
       await messageStreamMatchFuture;
     });
   });

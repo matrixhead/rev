@@ -75,6 +75,21 @@
         },
         "content": "hi this is a unique message"
     },
+    "message_event_after_send_message": {
+        "type": "Message",
+        "_id": "message_2",
+        "nonce": "nonce_2",
+        "channel": "channel_id_1",
+        "author": "1",
+        "user": {
+            "_id": "1",
+            "username": "user1",
+            "discriminator": "0002",
+            "relationship": "User",
+            "online": false
+        },
+        "content": "hi this is a unique message"
+    },
     "accept_friend_request_response": {
         "_id": "3",
         "username": "user3",
@@ -92,15 +107,15 @@
         ]
     },
     "send_message_response": {
-        "_id": "message_1",
-        "nonce": "nonce_1",
+        "_id": "message_2",
+        "nonce": "nonce_2",
         "channel": "channel_id_1",
-        "author": "2",
+        "author": "1",
         "user": {
-            "_id": "2",
-            "username": "user2",
+            "_id": "1",
+            "username": "user1",
             "discriminator": "0002",
-            "relationship": "Friend",
+            "relationship": "None",
             "online": false
         },
         "content": "hi this is a unique message"

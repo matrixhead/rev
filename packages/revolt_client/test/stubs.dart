@@ -129,7 +129,11 @@ void registerOpenDmStub(Client client, RevConfig config, String id) {
   );
 }
 
-void registerSendMessageStub(Client client, RevConfig config, String channelId) {
+void registerSendMessageStub(
+  Client client,
+  RevConfig config,
+  String channelId,
+) {
   when(
     client.post(
       Uri.parse(
@@ -168,5 +172,13 @@ void addChannelcreateEventForDm(WebSocketChannel ws) {
 void addMessageEventForDm(WebSocketChannel ws) {
   if (ws case final MockWebSocketChannel mws) {
     mws.mockStreamController.add(jsonEncode(mockJson['message_event']));
+  }
+}
+
+void addMessageEventAfterSentMessage(WebSocketChannel ws) {
+  if (ws case final MockWebSocketChannel mws) {
+    mws.mockStreamController.add(
+      jsonEncode(mockJson['message_event_after_send_message']),
+    );
   }
 }

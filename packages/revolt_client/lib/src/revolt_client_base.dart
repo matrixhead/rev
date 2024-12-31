@@ -69,21 +69,16 @@ class RevoltClient {
     }
   }
 
-  Future<void> init() async {
-    // await _sharedpreferences.clear();
-    await setUpWs();
-    await setUpAuth();
-  }
-
   Future<void> setUpWs() async {
     _wsChannel.init();
     await _wsChannel.isReady;
-    _wsChannel.stream.listen((event) {
+    _wsChannel.stream.listen((event) async {
       switch (event) {
         case final ReadyEvent readyEvent:
-          _getRevData.onReadyEvent(readyEvent);
+          await _getRevData.onReadyEvent(readyEvent);
+          _revState.authRepoState.authEvents.add(AuthStatus.authsucess);
         case final MessageEvent messageEvent:
-          _getRevData.onMessageEvent(messageEvent);
+        await _getRevData.onMessageEvent(messageEvent);
         case final UserRelationShipEvent userRelationShipEvent:
           _getRevData.onUserRelationShipEvent(userRelationShipEvent);
         case final ChannelCreateEvent channelCreateEvent:
@@ -93,19 +88,13 @@ class RevoltClient {
     });
   }
 
-  Future<void> setUpAuth() async {
-    _revState.authRepoState.authEvents.listen((authEvent) {
-      if (authEvent == AuthStatus.authsucess) {
-        _wsChannel.authenticateWsChannel(
-          _revState.authRepoState.session!.sessionToken,
-        );
-        _revData = RevData(_revState, _httpClient);
-      }
-    });
-
+  Future<bool> loginFromSavedState() async {
     if (await _sharedpreferences.getString('session') case final String json) {
       _revAuth.setSession(SessionDetails.fromJson(parseJsonToMap(json)));
+      await _postLogin();
+      return true;
     }
+    return false;
   }
 
   Future<void> login({
@@ -115,17 +104,40 @@ class RevoltClient {
     String? friendlyName,
     String? captcha,
   }) async {
-    await _revAuth.loginAndCheckOnboarding(
+    _revState.authRepoState.authEvents.add(AuthStatus.submitted);
+    final session = await _revAuth.login(
       email: email,
-      password: password,
+      captcha: captcha,
       challenge: challenge,
       friendlyName: friendlyName,
-      captcha: captcha,
+      password: password,
     );
-    await _sharedpreferences.setString(
+    // We set the session here so that when `complete_onboarding` is called, it
+    // has access to the token to send the POST request.
+    _revAuth.setSession(session);
+    final onboarded = !(await _revAuth.checkOnboardingStatus());
+    if (!onboarded) {
+      _revState.authRepoState.authEvents.add(AuthStatus.notOnboarded);
+      return;
+    }
+   await _postOnboarding();
+  }
+
+// Call this when onboarding is complete.
+  Future<void> _postOnboarding()async{
+     await _sharedpreferences.setString(
       'session',
       jsonEncode(_revState.authRepoState.session!.toJson()),
     );
+    await _postLogin();
+  }
+
+  Future<void> _postLogin() async {
+    await setUpWs();
+    _wsChannel.authenticateWsChannel(
+      _revState.authRepoState.session!.sessionToken,
+    );
+    _revData = RevData(_revState, _httpClient);
   }
 
   Future<void> verifyAccount({required String verificationCode}) async =>
@@ -145,8 +157,10 @@ class RevoltClient {
 
   Future<CurrentUser> fetchSelf() async => _getRevData.fetchSelf();
 
-  Future<CurrentUser> completeOnboarding({required String username}) async =>
-      _revAuth.completeOnboarding(username);
+  Future<void> completeOnboarding({required String username}) async {
+    await  _revAuth.completeOnboarding(username);
+    await _postOnboarding();
+  }
 
   Future<RelationUser> fetchUser({required String id}) async =>
       _getRevData.fetchUser(id: id);
