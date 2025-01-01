@@ -1,0 +1,3 @@
+[submodule "packages/rev_client"]
+	path = packages/rev_client
+	url = https://github.com/matrixhead/rev_client

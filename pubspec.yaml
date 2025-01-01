@@ -30,7 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   revolt_client:
-    path: packages/revolt_client
+    path: packages/rev_client
   flutter_bloc: ^8.0.0
   equatable: ^2.0.3
   easy_localization: ^3.0.0

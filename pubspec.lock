@@ -557,7 +557,7 @@ packages:
   revolt_client:
     dependency: "direct main"
     description:
-      path: "packages/revolt_client"
+      path: "packages/rev_client"
       relative: true
     source: path
     version: "0.0.1"
