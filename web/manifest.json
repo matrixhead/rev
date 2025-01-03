@@ -1,6 +1,6 @@
 {
-    "name": "rebar",
-    "short_name": "rebar",
+    "name": "rev",
+    "short_name": "rev",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

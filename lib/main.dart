@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rebar/src/app.dart';
+import 'package:rev/src/app.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 

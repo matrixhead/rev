@@ -1,4 +1,4 @@
-package com.example.rebar
+package com.example.rev
 
 import io.flutter.embedding.android.FlutterActivity
 

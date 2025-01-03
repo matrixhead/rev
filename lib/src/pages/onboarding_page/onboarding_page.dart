@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/common/widgets/form_text_field.dart';
-import 'package:rebar/src/common/widgets/googly_eyes.dart';
-import 'package:rebar/src/common/widgets/primary_button.dart';
-import 'package:rebar/src/pages/onboarding_page/cubit/onboarding_cubit.dart';
+import 'package:rev/src/common/widgets/form_text_field.dart';
+import 'package:rev/src/common/widgets/googly_eyes.dart';
+import 'package:rev/src/common/widgets/primary_button.dart';
+import 'package:rev/src/pages/onboarding_page/cubit/onboarding_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class OnboardingPage extends StatelessWidget {

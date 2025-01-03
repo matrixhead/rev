@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "rebar",
+            "name": "rev",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart"
         },
         {
-            "name": "rebar (profile mode)",
+            "name": "rev (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"

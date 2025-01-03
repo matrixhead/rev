@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/pages/login_page/cubit/login_cubit.dart';
+import 'package:rev/src/pages/login_page/cubit/login_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 import 'widgets/widgets.dart';

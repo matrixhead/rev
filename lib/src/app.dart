@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/common/bloc/app_bloc.dart';
-import 'package:rebar/src/pages/home_page/home.dart';
-import 'package:rebar/src/pages/login_page/login_page.dart';
-import 'package:rebar/src/pages/onboarding_page/onboarding_page.dart';
-import 'package:rebar/src/pages/splash/splash.dart';
-import 'package:rebar/src/routes.dart';
-import 'package:rebar/src/utils/theme/theme_builder.dart';
+import 'package:rev/src/common/bloc/app_bloc.dart';
+import 'package:rev/src/pages/home_page/home.dart';
+import 'package:rev/src/pages/login_page/login_page.dart';
+import 'package:rev/src/pages/onboarding_page/onboarding_page.dart';
+import 'package:rev/src/pages/splash/splash.dart';
+import 'package:rev/src/routes.dart';
+import 'package:rev/src/utils/theme/theme_builder.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class MyApp extends StatelessWidget {

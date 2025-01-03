@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/pages/chat_page/chat.dart';
-import 'package:rebar/src/pages/home_page/cubit/home_cubit.dart';
+import 'package:rev/src/pages/chat_page/chat.dart';
+import 'package:rev/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class HomePage extends StatelessWidget {

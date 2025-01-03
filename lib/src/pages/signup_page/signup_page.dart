@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/common/widgets/form_text_field.dart';
-import 'package:rebar/src/common/widgets/primary_button.dart';
-import 'package:rebar/src/pages/signup_page/cubit/signup_cubit.dart';
+import 'package:rev/src/common/widgets/form_text_field.dart';
+import 'package:rev/src/common/widgets/primary_button.dart';
+import 'package:rev/src/pages/signup_page/cubit/signup_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class SignupPage extends StatelessWidget {

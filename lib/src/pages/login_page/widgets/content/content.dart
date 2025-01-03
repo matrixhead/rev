@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rebar/src/common/widgets/primary_button.dart';
-import 'package:rebar/src/common/widgets/form_text_field.dart';
-import 'package:rebar/src/pages/login_page/cubit/login_cubit.dart';
-import 'package:rebar/src/pages/signup_page/signup_page.dart';
+import 'package:rev/src/common/widgets/primary_button.dart';
+import 'package:rev/src/common/widgets/form_text_field.dart';
+import 'package:rev/src/pages/login_page/cubit/login_cubit.dart';
+import 'package:rev/src/pages/signup_page/signup_page.dart';
 
 class Content extends StatelessWidget {
   const Content({super.key});

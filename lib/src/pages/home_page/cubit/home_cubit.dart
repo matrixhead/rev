@@ -3,7 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:rebar/src/pages/chat_page/cubit/chat_cubit.dart';
+import 'package:rev/src/pages/chat_page/cubit/chat_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 part 'home_state.dart';
