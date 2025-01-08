@@ -7,8 +7,10 @@ part 'signup_cubit.freezed.dart';
 
 class SignupCubit extends Cubit<SignupState> {
   final RevoltClient _client;
+  final bool emailVerificationenabled;
   SignupCubit({required RevoltClient client})
       : _client = client,
+        emailVerificationenabled = client.config.email,
         super(SignupState());
 
   emailChanged(String email) {
@@ -25,7 +27,11 @@ class SignupCubit extends Cubit<SignupState> {
 
   void onSubmit() async {
     _client.signUp(email: state.email, password: state.password);
+    if (emailVerificationenabled){
     emit(state.copyWith(signupCompleted: true));
+    }else{
+    emit(state.copyWith(verificationCompleted: true));
+    }
   }
 
   Future<void> verificationCodeSubmit() async {
