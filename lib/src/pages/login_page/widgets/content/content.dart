@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rev/generated/locale_keys.g.dart';
 import 'package:rev/src/common/widgets/primary_button.dart';
 import 'package:rev/src/common/widgets/form_text_field.dart';
 import 'package:rev/src/pages/login_page/cubit/login_cubit.dart';
@@ -20,7 +22,7 @@ class Content extends StatelessWidget {
                 children: [
                   FormTextField(
                     key: UniqueKey(),
-                    label: "Email",
+                    label: LocaleKeys.email.tr(),
                     onChanged: context.read<LoginCubit>().emailChanged,
                     keyboardType: TextInputType.emailAddress,
                     autofillHints: [AutofillHints.email],
@@ -30,7 +32,7 @@ class Content extends StatelessWidget {
                   ),
                   FormTextField(
                     key: UniqueKey(),
-                    label: "Password",
+                    label: LocaleKeys.password.tr(),
                     onChanged: context.read<LoginCubit>().passwordChanged,
                     keyboardType: TextInputType.visiblePassword,
                     autofillHints: [AutofillHints.password],
@@ -44,18 +46,18 @@ class Content extends StatelessWidget {
             ),
             PrimaryButton(
               onPressed: context.read<LoginCubit>().onSubmit,
-              label: "Login",
+              label: LocaleKeys.login.tr(),
             ),
             RichText(text: TextSpan()),
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Text("New to Rev? "),
+                Text("${LocaleKeys.newToRev.tr()} "),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamed(SignupPage.route);
                     },
-                    child: Text("Create a new account")),
+                    child: Text(LocaleKeys.createANewAccount.tr())),
               ],
             )
           ],

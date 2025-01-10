@@ -1,3 +1,8 @@
 {
-    "appName":"rev"
+    "appName":"rev",
+    "email":"Email",
+    "password":"Password",
+    "login":"Login",
+    "newToRev":"New to Rev?",
+    "createANewAccount":"Create a new account"
 }
