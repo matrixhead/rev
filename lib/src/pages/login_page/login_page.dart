@@ -31,7 +31,7 @@ class LoginPageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Header(),
-              Content(),
+              Flexible(child: SingleChildScrollView(child: Content())),
               Container(),
             ],
           ),

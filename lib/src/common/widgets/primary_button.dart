@@ -12,9 +12,10 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+
       onPressed: onPressed,
       child: AspectRatio(
-        aspectRatio: 5,
+        aspectRatio: 6,
         child: Center(child: Text(label)),
       ),
     );

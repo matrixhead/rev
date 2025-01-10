@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,29 +43,39 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      navigatorKey: _navigatorKey,
-      routes: routes,
-      initialRoute: SplashPage.route,
-      theme: buildDefaultTheme(),
-      builder: (context, child) {
-        return BlocListener<AppBloc, AppState>(
-          listener: (context, state) {
-            switch (state.appStatus) {
-              case AppStatus.authenticated:
-                _navigator.pushNamedAndRemoveUntil(HomePage.route, (route) => false);
-                break;
-              case AppStatus.notOnboarded:
-                _navigator.pushNamedAndRemoveUntil(OnboardingPage.route, (route) => false);
-                break;
-              case AppStatus.unauthenticated:
-                _navigator.pushNamedAndRemoveUntil(LoginPage.route, (route) => false);
-                break;
-            }
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        final (lightTheme, darkTheme) =
+            buildTheme(lightDynamic, darkDynamic);
+        return MaterialApp(
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          navigatorKey: _navigatorKey,
+          routes: routes,
+          initialRoute: SplashPage.route,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          builder: (context, child) {
+            return BlocListener<AppBloc, AppState>(
+              listener: (context, state) {
+                switch (state.appStatus) {
+                  case AppStatus.authenticated:
+                    _navigator.pushNamedAndRemoveUntil(
+                        HomePage.route, (route) => false);
+                    break;
+                  case AppStatus.notOnboarded:
+                    _navigator.pushNamedAndRemoveUntil(
+                        OnboardingPage.route, (route) => false);
+                    break;
+                  case AppStatus.unauthenticated:
+                    _navigator.pushNamedAndRemoveUntil(
+                        LoginPage.route, (route) => false);
+                    break;
+                }
+              },
+              child: child,
+            );
           },
-          child: child,
         );
       },
     );

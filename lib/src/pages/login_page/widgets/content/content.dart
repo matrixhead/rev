@@ -11,34 +11,56 @@ class Content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AspectRatio(
-          aspectRatio: 1.1,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              FormTextField(
-                label: "Email",
-                onChanged: context.read<LoginCubit>().emailChanged,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AutofillGroup(
+              child: Column(
+                children: [
+                  FormTextField(
+                    key: UniqueKey(),
+                    label: "Email",
+                    onChanged: context.read<LoginCubit>().emailChanged,
+                    keyboardType: TextInputType.emailAddress,
+                    autofillHints: [AutofillHints.email],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  FormTextField(
+                    key: UniqueKey(),
+                    label: "Password",
+                    onChanged: context.read<LoginCubit>().passwordChanged,
+                    keyboardType: TextInputType.visiblePassword,
+                    autofillHints: [AutofillHints.password],
+                    showObscureTextIcon: true,
+                  ),
+                ],
               ),
-              FormTextField(
-                label: "Password",
-                onChanged: context.read<LoginCubit>().passwordChanged,
-              ),
-              PrimaryButton(onPressed: context.read<LoginCubit>().onSubmit,label: "Login",),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            PrimaryButton(
+              onPressed: context.read<LoginCubit>().onSubmit,
+              label: "Login",
+            ),
+            RichText(text: TextSpan()),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text("New to Rev? "),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(SignupPage.route);
+                    },
+                    child: Text("Create a new account")),
+              ],
+            )
+          ],
         ),
-
-              TextButton(onPressed: (){
-                Navigator.of(context).pushNamed(SignupPage.route);
-              }, child: Text("Signup"))
       ],
     );
   }
 }
-
-
-
-
