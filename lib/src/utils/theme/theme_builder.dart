@@ -57,6 +57,10 @@ ElevatedButtonThemeData buildElevatedButtonTheme(ThemeData baseThemeData) {
 TextButtonThemeData buildTextButtonTheme(ThemeData baseThemeData) {
   final style = (baseThemeData.textButtonTheme.style ?? ButtonStyle()).copyWith(
     padding: WidgetStatePropertyAll(EdgeInsets.zero),
+    elevation: WidgetStatePropertyAll(0),
+    splashFactory: NoSplash.splashFactory,
+    backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+    overlayColor: WidgetStatePropertyAll(Colors.transparent),
   );
   return TextButtonThemeData(style: style);
 }

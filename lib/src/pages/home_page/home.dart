@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rev/src/pages/chat_page/chat.dart';
 import 'package:rev/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
@@ -26,17 +27,14 @@ class HomePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        return PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (didPop) {
-              return;
-            }
-            if (state.page.pageNumber == 0) {
-              Navigator.of(context).pop();
-            } else {
-              context.read<HomeCubit>().setPage(page: 0, withAnimation: true);
-            }
+        return BackButtonListener(
+          onBackButtonPressed: () async {
+          if (state.page.pageNumber == 0) {
+            return false;
+          } else {
+            context.read<HomeCubit>().setPage(page: 0, withAnimation: true);
+            return true;
+          }
           },
           child: Stack(
             children: [Stage(), ChatOverlay()],
@@ -268,7 +266,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           ),
           child: const Text('Cancel'),
           onPressed: () {
-            Navigator.of(context).pop();
+            context.pop();
           },
         ),
         TextButton(
@@ -278,7 +276,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           child: const Text('Ok'),
           onPressed: () {
             widget.onSubmit(_controller.text);
-            Navigator.of(context).pop();
+           context.pop();
           },
         ),
       ],
@@ -348,7 +346,7 @@ class PendingRequestDialog extends StatelessWidget {
                               IconButton(
                                   onPressed: () {
                                     homeCubit.acceptFriendRequest(user.id);
-                                    Navigator.of(context).pop();
+                                    context.pop();
                                   },
                                   icon: Icon(Icons.add)),
                               IconButton(

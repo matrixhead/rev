@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rev/generated/locale_keys.g.dart';
 import 'package:rev/src/common/widgets/primary_button.dart';
 import 'package:rev/src/common/widgets/form_text_field.dart';
@@ -55,7 +56,7 @@ class Content extends StatelessWidget {
                 Text("${LocaleKeys.newToRev.tr()} "),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(SignupPage.route);
+                      context.goNamed(SignupPage.route);
                     },
                     child: Text(LocaleKeys.createANewAccount.tr())),
               ],

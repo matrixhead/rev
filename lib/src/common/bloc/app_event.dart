@@ -7,3 +7,9 @@ class AuthenticationStatusChanged extends AppEvent {
   final AuthStatus authStatus;
   AuthenticationStatusChanged(this.authStatus);
 }
+
+class SetThemeMode extends AppEvent {
+  final ThemeMode themeMode;
+
+  SetThemeMode({required this.themeMode});
+}

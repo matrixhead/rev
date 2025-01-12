@@ -6,7 +6,6 @@ import 'package:rev/src/common/bloc/app_bloc.dart';
 import 'package:rev/src/pages/home_page/home.dart';
 import 'package:rev/src/pages/login_page/login_page.dart';
 import 'package:rev/src/pages/onboarding_page/onboarding_page.dart';
-import 'package:rev/src/pages/splash/splash.dart';
 import 'package:rev/src/routes.dart';
 import 'package:rev/src/utils/theme/theme_builder.dart';
 import 'package:revolt_client/revolt_client.dart';
@@ -37,43 +36,34 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState!;
-
+  final _router = getRouter();
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        final (lightTheme, darkTheme) =
-            buildTheme(lightDynamic, darkDynamic);
-        return MaterialApp(
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          navigatorKey: _navigatorKey,
-          routes: routes,
-          initialRoute: SplashPage.route,
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          builder: (context, child) {
-            return BlocListener<AppBloc, AppState>(
-              listener: (context, state) {
-                switch (state.appStatus) {
-                  case AppStatus.authenticated:
-                    _navigator.pushNamedAndRemoveUntil(
-                        HomePage.route, (route) => false);
-                    break;
-                  case AppStatus.notOnboarded:
-                    _navigator.pushNamedAndRemoveUntil(
-                        OnboardingPage.route, (route) => false);
-                    break;
-                  case AppStatus.unauthenticated:
-                    _navigator.pushNamedAndRemoveUntil(
-                        LoginPage.route, (route) => false);
-                    break;
-                }
-              },
-              child: child,
+        final (lightTheme, darkTheme) = buildTheme(lightDynamic, darkDynamic);
+        return BlocConsumer<AppBloc, AppState>(
+          listener: (context, state) {
+            switch (state.appStatus) {
+              case AppStatus.authenticated:
+                _router.go(HomePage.route);
+                break;
+              case AppStatus.notOnboarded:
+                _router.go(OnboardingPage.route);
+                break;
+              case AppStatus.unauthenticated:
+                _router.go(LoginPage.route);
+                break;
+            }
+          },
+          builder: (context, state) {
+            return MaterialApp.router(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              routerConfig: _router,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: state.themeMode,
             );
           },
         );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rev/src/pages/login_page/cubit/login_cubit.dart';
+import 'package:rev/src/pages/login_page/widgets/theme_mode_taunts.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 import 'widgets/widgets.dart';
@@ -12,7 +13,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(client:context.read<RevoltClient>()),
+      create: (context) => LoginCubit(client: context.read<RevoltClient>()),
       child: const LoginPageView(),
     );
   }
@@ -31,8 +32,9 @@ class LoginPageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Header(),
+              SizedBox(height: 16,),
               Flexible(child: SingleChildScrollView(child: Content())),
-              Container(),
+              Footer(),
             ],
           ),
         ),
@@ -40,3 +42,15 @@ class LoginPageView extends StatelessWidget {
     );
   }
 }
+
+class Footer extends StatelessWidget {
+  const Footer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ThemeModeTaunts();
+  }
+}
+

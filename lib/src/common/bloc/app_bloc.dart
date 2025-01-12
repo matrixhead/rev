@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:revolt_client/revolt_client.dart';
 
@@ -13,6 +14,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   late StreamSubscription<AuthStatus> _authenticationStatusSubscription;
   AppBloc({required this.revoltClient}) : super(const AppState()) {
     on<AuthenticationStatusChanged>(_onAuthChanged);
+    on<SetThemeMode>(_onSetThemeMode);
     _authenticationStatusSubscription = revoltClient.authEvents
         .listen((status) => add(AuthenticationStatusChanged(status)));
   }
@@ -23,17 +25,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return super.close();
   }
 
+  void _onSetThemeMode(SetThemeMode event, Emitter<AppState> emit) {
+    emit(state.copyWith(themeMode: event.themeMode));
+  }
+
   void _onAuthChanged(
     AuthenticationStatusChanged event,
     Emitter<AppState> emit,
   ) {
     if (event.authStatus == AuthStatus.authsucess) {
       emit(state.copyWith(appStatus: AppStatus.authenticated));
-    } 
-    else if(event.authStatus == AuthStatus.notOnboarded){
+    } else if (event.authStatus == AuthStatus.notOnboarded) {
       emit(state.copyWith(appStatus: AppStatus.notOnboarded));
-    }
-    else if (event.authStatus == AuthStatus.loggedout ||
+    } else if (event.authStatus == AuthStatus.loggedout ||
         event.authStatus == AuthStatus.unknown) {
       emit(state.copyWith(appStatus: AppStatus.unauthenticated));
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rev/src/common/widgets/form_text_field.dart';
 import 'package:rev/src/common/widgets/primary_button.dart';
 import 'package:rev/src/pages/signup_page/cubit/signup_cubit.dart';
@@ -30,7 +31,7 @@ class SignupPageView extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: BlocConsumer<SignupCubit, SignupState>(
           listener: (context, state) {
-            if (state.verificationCompleted) Navigator.of(context).pop();
+            if (state.verificationCompleted) context.pop();
           },
           builder: (context, state) {
             return state.signupCompleted ? VerificationForm() : SignupForm();
