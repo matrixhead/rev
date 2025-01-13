@@ -1,7 +1,52 @@
+import 'package:collection/collection.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 
 const revRed = Color(0xfffd6671);
+
+const _faceColors = FaceColors(colors: [
+  Colors.amber,
+  Colors.blue,
+  Colors.brown,
+  Colors.cyan,
+  Colors.green,
+  Colors.indigo,
+  Colors.lime,
+  Colors.orange,
+  Colors.pink,
+  Colors.purple,
+  Colors.red,
+  Colors.teal,
+  Colors.yellow,
+]);
+
+class FaceColors extends ThemeExtension<FaceColors> {
+  final List<Color> colors;
+
+  const FaceColors({required this.colors});
+  @override
+  FaceColors copyWith({List<Color>? colors}) {
+    return FaceColors(colors: colors ?? this.colors);
+  }
+
+  @override
+  FaceColors lerp(covariant ThemeExtension<FaceColors>? other, double t) {
+    if (other is! FaceColors) {
+      return this;
+    }
+    final newColors = IterableZip([colors, other.colors])
+        .map((final colorPair) =>
+            Color.lerp(colorPair[0], colorPair[1], t) ?? colorPair[0])
+        .toList();
+    return FaceColors(colors: newColors);
+  }
+
+  FaceColors harmonized(Color hColor) {
+    final hColors =
+        colors.map((final color) => color.harmonizeWith(hColor)).toList();
+    return FaceColors(colors: hColors);
+  }
+}
 
 (
   ColorScheme,
@@ -72,7 +117,8 @@ ThemeData buildFromBaseThemedata(ThemeData baseThemeData) {
       elevatedButtonTheme: buildElevatedButtonTheme(baseThemeData));
   baseThemeData = baseThemeData.copyWith(
       textButtonTheme: buildTextButtonTheme(baseThemeData));
-
+  baseThemeData = baseThemeData.copyWith(
+      extensions: [_faceColors.harmonized(baseThemeData.colorScheme.primary)]);
   return baseThemeData;
 }
 

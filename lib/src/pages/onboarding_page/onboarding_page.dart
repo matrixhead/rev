@@ -7,7 +7,7 @@ import 'package:rev/src/pages/onboarding_page/cubit/onboarding_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
 
 class OnboardingPage extends StatelessWidget {
-  static const String route = "onboarding";
+  static const String route = "/onboarding";
   const OnboardingPage({super.key});
 
   @override

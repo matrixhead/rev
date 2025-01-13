@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:rev/src/utils/theme/theme_builder.dart';
 
 class GooglyEyesAnimated extends StatefulWidget {
   final int seed;
@@ -27,7 +28,6 @@ class GooglyEyesAnimatedState extends State<GooglyEyesAnimated>
       vsync: this,
       duration: const Duration(seconds: 1),
     );
-    setUpAnimation();
     super.initState();
   }
 
@@ -35,7 +35,7 @@ class GooglyEyesAnimatedState extends State<GooglyEyesAnimated>
     if (_controller.isAnimating) {
       _controller.stop();
     }
-    final params = GooglyEyesParameters.fromSeed(widget.seed);
+    final params = GooglyEyesParameters.fromSeed(widget.seed,context);
     // Not entirely sure if old tickers will leak
     _leftEyeDistanceAnimation = Tween<double>(
             begin: _leftEyeDistanceAnimation?.value ?? 0,
@@ -60,7 +60,11 @@ class GooglyEyesAnimatedState extends State<GooglyEyesAnimated>
     _controller.reset();
     _controller.forward();
   }
-
+@override
+  void didChangeDependencies() {
+    setUpAnimation();
+    super.didChangeDependencies();
+  }
   @override
   void didUpdateWidget(covariant GooglyEyesAnimated oldWidget) {
     setUpAnimation();
@@ -91,7 +95,7 @@ class GooglyEyes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final params = GooglyEyesParameters.fromSeed(seed);
+    final params = GooglyEyesParameters.fromSeed(seed,context);
     return GooglyEyesWidget(
       leftEyeDirection: params.leftEyeDirection,
       leftEyeDistance: params.leftEyeDistance,
@@ -118,39 +122,15 @@ class GooglyEyesParameters {
     required this.faceColor,
   });
 
-  static final List<Color> _faceColors = [
-    const Color(0xFFE63946), // Rose Red
-    const Color(0xFFF4A261), // Coral
-    const Color(0xFF2A9D8F), // Teal
-    const Color(0xFFE76F51), // Burnt Orange
-    const Color(0xFFF94144), // Red Salsa
-    const Color(0xFF264653), // Deep Teal
-    const Color(0xFFB5838D), // Dusty Rose
-    const Color(0xFF2B2D42), // Charcoal
-    const Color(0xFFFF6F61), // Living Coral
-    const Color(0xFFFFC300), // Bright Yellow
-    const Color(0xFFFF5733), // Fiery Red
-    const Color(0xFFC70039), // Crimson
-    const Color(0xFF900C3F), // Deep Magenta
-    const Color(0xFF581845), // Plum
-    const Color(0xFF4CC9F0), // Sky Blue
-    const Color(0xFF4361EE), // Cobalt Blue
-    const Color(0xFF3A0CA3), // Indigo
-    const Color(0xFF7209B7), // Purple
-    const Color(0xFFB5179E), // Fuchsia
-    const Color(0xFFD4AF37), // Gold
-    const Color(0xFFCD7F32), // Bronze
-    const Color(0xFF6A5ACD), // Slate Blue
-  ];
-
-  factory GooglyEyesParameters.fromSeed(int seed) {
+  factory GooglyEyesParameters.fromSeed(int seed,BuildContext context) {
     Random random = Random(seed);
+   final faceColors =  Theme.of(context).extension<FaceColors>()!.colors;
     return GooglyEyesParameters(
         leftEyeDistance: random.nextDouble(),
         rightEyeDistance: random.nextDouble(),
         leftEyeDirection: -3.14 + random.nextDouble() * (3.14),
         rightEyeDirection: -3.14 + random.nextDouble() * (3.14),
-        faceColor: _faceColors[random.nextInt(_faceColors.length - 1)]);
+        faceColor: faceColors[random.nextInt(faceColors.length - 1)]);
   }
 }
 
