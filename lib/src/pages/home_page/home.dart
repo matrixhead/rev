@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rev/src/common/bloc/app_bloc.dart';
 import 'package:rev/src/pages/chat_page/chat.dart';
 import 'package:rev/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
@@ -29,12 +30,12 @@ class HomePageView extends StatelessWidget {
       builder: (context, state) {
         return BackButtonListener(
           onBackButtonPressed: () async {
-          if (state.page.pageNumber == 0) {
-            return false;
-          } else {
-            context.read<HomeCubit>().setPage(page: 0, withAnimation: true);
-            return true;
-          }
+            if (state.page.pageNumber == 0) {
+              return false;
+            } else {
+              context.read<HomeCubit>().setPage(page: 0, withAnimation: true);
+              return true;
+            }
           },
           child: Stack(
             children: [Stage(), ChatOverlay()],
@@ -144,7 +145,18 @@ class Stage extends StatelessWidget {
                 ));
               },
               child: Icon(Icons.recent_actors)),
-          title: Text("Friends"),
+          title: BlocBuilder<AppBloc, AppState>(
+            builder: (context, state) {
+              return GestureDetector(
+                  onDoubleTap: () {
+                    final snackBar = SnackBar(
+                      content: Text('Currently on patch ${state.patchNumber}.'),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
+                  child: Text("Friends"));
+            },
+          ),
           actions: [
             IconButton(onPressed: () {}, icon: Icon(Icons.add_comment)),
             IconButton(
@@ -276,7 +288,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           child: const Text('Ok'),
           onPressed: () {
             widget.onSubmit(_controller.text);
-           context.pop();
+            context.pop();
           },
         ),
       ],

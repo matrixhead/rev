@@ -13,3 +13,6 @@ class SetThemeMode extends AppEvent {
 
   SetThemeMode({required this.themeMode});
 }
+
+class Init extends AppEvent{
+}

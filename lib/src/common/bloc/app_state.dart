@@ -6,12 +6,19 @@ enum AppStatus { authenticated, unauthenticated, notOnboarded }
 class AppState extends Equatable {
   final AppStatus appStatus;
   final ThemeMode themeMode;
+  final int patchNumber;
 
-  const AppState({this.appStatus = AppStatus.unauthenticated, this.themeMode = ThemeMode.system});
+  const AppState(
+      {this.appStatus = AppStatus.unauthenticated,
+      this.themeMode = ThemeMode.system,
+      this.patchNumber = 0});
 
-  AppState copyWith({AppStatus? appStatus, ThemeMode? themeMode}) =>
-      AppState(appStatus: appStatus ?? this.appStatus,themeMode:themeMode ?? this.themeMode );
+  AppState copyWith({AppStatus? appStatus, ThemeMode? themeMode, int? patchNumber}) => AppState(
+      appStatus: appStatus ?? this.appStatus,
+      themeMode: themeMode ?? this.themeMode,
+      patchNumber: patchNumber ?? this.patchNumber,
+      );
 
   @override
-  List<Object?> get props => [appStatus,themeMode];
+  List<Object?> get props => [appStatus, themeMode, patchNumber];
 }
