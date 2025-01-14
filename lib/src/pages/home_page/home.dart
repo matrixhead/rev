@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rev/src/common/bloc/app_bloc.dart';
+import 'package:rev/src/common/widgets/rounded_button.dart';
 import 'package:rev/src/pages/chat_page/chat.dart';
 import 'package:rev/src/pages/home_page/cubit/home_cubit.dart';
 import 'package:revolt_client/revolt_client.dart';
@@ -134,62 +135,122 @@ class Stage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: InkWell(
-              onLongPress: () async {
-                final user = await context.read<RevoltClient>().fetchSelf();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('${user.username}#${user.discriminator}'),
-                  duration: const Duration(seconds: 1),
-                ));
-              },
-              child: Icon(Icons.recent_actors)),
-          title: BlocBuilder<AppBloc, AppState>(
-            builder: (context, state) {
-              return GestureDetector(
-                  onDoubleTap: () {
-                    final snackBar = SnackBar(
-                      content: Text('Currently on patch ${state.patchNumber}.'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  },
-                  child: Text("Friends"));
-            },
-          ),
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.add_comment)),
-            IconButton(
-                onPressed: () => _addFriendDialog(
-                      context,
-                      onSubmit: context.read<HomeCubit>().submitFriendRequest,
+    return Scaffold(body: BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return SafeArea(
+          child: Row(
+            children: [
+              SizedBox(width: 70, child: Rail()),
+              Expanded(
+                child: Column(
+                  children: [
+                    AppBar(
+                      leading: InkWell(
+                          onLongPress: () async {
+                            final user =
+                                await context.read<RevoltClient>().fetchSelf();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  '${user.username}#${user.discriminator}'),
+                              duration: const Duration(seconds: 1),
+                            ));
+                          },
+                          child: Icon(Icons.recent_actors)),
+                      title: BlocBuilder<AppBloc, AppState>(
+                        builder: (context, state) {
+                          return GestureDetector(
+                              onDoubleTap: () {
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                      'Currently on patch ${state.patchNumber}.'),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              },
+                              child: Text("Friends"));
+                        },
+                      ),
+                      actions: [
+                        IconButton(
+                            onPressed: () {}, icon: Icon(Icons.add_comment)),
+                        IconButton(
+                            onPressed: () => _addFriendDialog(
+                                  context,
+                                  onSubmit: context
+                                      .read<HomeCubit>()
+                                      .submitFriendRequest,
+                                ),
+                            icon: Icon(Icons.person_add))
+                      ],
                     ),
-                icon: Icon(Icons.person_add))
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              child: IncomingFriendsBanner(),
+                              onTap: () => _pendingRequestDialog(context),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemBuilder: (context, index) {
+                                  return Listitem(
+                                      user: state.friends.elementAt(index));
+                                },
+                                itemCount: state.friends.length,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ));
+  }
+}
+
+class Rail extends StatelessWidget {
+  const Rail({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(40), bottomRight: Radius.circular(40)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LayoutBuilder(builder: (context, constraints) {
+                return RoundedButton(
+                  onPressed: () {},
+                  dimension: constraints.maxWidth,
+                  child: Icon(
+                    Icons.settings,
+                  ),
+                );
+              }),
+            )
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
-              return Column(
-                children: [
-                  InkWell(
-                    child: IncomingFriendsBanner(),
-                    onTap: () => _pendingRequestDialog(context),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Listitem(user: state.friends.elementAt(index));
-                      },
-                      itemCount: state.friends.length,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ));
+      ),
+    );
   }
 }
 
