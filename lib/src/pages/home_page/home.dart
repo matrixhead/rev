@@ -231,12 +231,13 @@ class Rail extends StatelessWidget {
             topRight: Radius.circular(40), bottomRight: Radius.circular(40)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Divider(thickness: .7,),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 4),
               child: LayoutBuilder(builder: (context, constraints) {
                 return RoundedButton(
                   onPressed: () {},

@@ -81,43 +81,48 @@ class _MessagesListState extends State<MessagesList> {
         if (state.messages case Iterable<RevMessage> messages) {
           return NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,
-            child: ListView.builder(
-              reverse: true,
-              controller: _controller,
-              itemBuilder: (context, index) {
-                final message = messages.elementAt(index);
-                return SizedBox(
-                    height: 80,
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            GooglyEyes(
-                                seed: state
-                                    .userNameForId(message.author)
-                                    .hashCode,
-                                size: 50),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  state.userNameForId(message.author),
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal:  8.0),
+              child: ListView.builder(
+                reverse: true,
+                controller: _controller,
+                itemBuilder: (context, index) {
+                  final message = messages.elementAt(index);
+                  return SizedBox(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              GooglyEyes(
+                                  seed: state
+                                      .userNameForId(message.author)
+                                      .hashCode,
+                                  size: 50),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      state.userNameForId(message.author),
+                                      style:
+                                          Theme.of(context).textTheme.titleMedium,
+                                    ),
+                                    Flexible(child: Text(message.content)),
+                                  ],
                                 ),
-                                Text(message.content),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ));
-              },
-              itemCount: messages.length,
+                      ));
+                },
+                itemCount: messages.length,
+              ),
             ),
           );
         } else {
